@@ -26,3 +26,21 @@ feature/* : 기능 개발 브랜치
 - fix: Retrofit baseUrl 설정 오류 수정
 - docs: README 초기 작성
 - refactor: Repository 구조 개선
+
+## Naming Convention
+
+- 변수/함수: camelCase
+- 클래스: PascalCase
+- 상수: UPPER_SNAKE_CASE
+
+## PR 템플릿
+### 📌 변경 사항
+- 무엇을 했는지 간단히 설명
+
+### 🧪 테스트
+- [ ] 로컬 테스트 완료
+- [ ] 빌드 성공
+
+### ⚠️ 참고 사항
+- 리뷰어가 알아야 할 내용
+- 고민했던 부분
