@@ -3,6 +3,10 @@ Archiveat 안드로이드 개발을 위한 프로젝트입니다.
 
 Jetpack Compose를 기반으로 개발을 진행합니다.
 
+## 📁 프로젝트 구조
+<img width="240" height="573" alt="image" src="https://github.com/user-attachments/assets/9a088fb0-5074-41da-823f-5a29f06ba262" />
+
+
 ## 📌 브랜치 가이드
 main : 배포 가능 상태 유지
 
