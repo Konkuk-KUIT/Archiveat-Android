@@ -26,7 +26,7 @@ fun tagColorsFor(variant: TagVariant): TagColors {
             HomeTabType.ALL -> TagColors(c.white, c.deepIndigo)
             HomeTabType.INSPIRATION -> TagColors(c.white, c.primary)
             HomeTabType.DEEP_DIVE -> TagColors(c.white, c.sub_2)
-            HomeTabType.GROWTH -> TagColors(c.black, c.sub_1)
+            HomeTabType.GROWTH -> TagColors(c.white, c.sub_1)
             HomeTabType.VIEW_EXPANSION -> TagColors(c.white, c.sub_3)
         }
 
