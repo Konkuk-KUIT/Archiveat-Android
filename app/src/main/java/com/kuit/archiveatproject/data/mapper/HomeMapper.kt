@@ -3,6 +3,7 @@ package com.kuit.archiveatproject.data.mapper
 import com.kuit.archiveatproject.data.dto.response.HomeContentCardDto
 import com.kuit.archiveatproject.data.dto.response.HomeResponseDto
 import com.kuit.archiveatproject.data.dto.response.HomeTabDto
+import com.kuit.archiveatproject.domain.model.HomeCardType
 import com.kuit.archiveatproject.domain.model.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.GreetingUiModel
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
@@ -33,7 +34,7 @@ fun HomeContentCardDto.toUiModel(): HomeContentCardUiModel {
         archiveId = archiveId,
         tabType = HomeTabType.from(tabLabelTypeOrFallback()),
         tabLabel = tabLabel,
-        cardType = cardType,
+        cardType = HomeCardType.fromLabel(cardType),
         title = title,
         thumbnailUrl = thumbnailUrl
     )
