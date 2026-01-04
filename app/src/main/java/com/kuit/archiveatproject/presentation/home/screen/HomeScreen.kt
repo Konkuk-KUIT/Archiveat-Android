@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.core.component.TopLogoBar
+import com.kuit.archiveatproject.presentation.home.component.GreetingBar
 
 @Composable
 fun HomeScreen(
@@ -21,6 +22,13 @@ fun HomeScreen(
     ) {
         item {
             TopLogoBar()
+        }
+        item {
+            GreetingBar(
+                "archiveat",
+                "좋은 아침이에요!",
+                "오늘도 한 걸음 성장해볼까요?"
+                )
         }
     }
 }
