@@ -1,5 +1,6 @@
 package com.kuit.archiveatproject.ui.theme
 
+import android.R.attr.fontFamily
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
@@ -20,6 +21,7 @@ data class ArchiveatTypography(
     val Heading_1_semibold: TextStyle,
     val Heading_2_bold: TextStyle,
     val Heading_2_semibold: TextStyle,
+    val Subhead_1_bold: TextStyle,
     val Subhead_1_semibold: TextStyle,
     val Subhead_1_medium: TextStyle,
     val Subhead_2_semibold: TextStyle,
@@ -52,6 +54,11 @@ val defaultArchiveatTypography = ArchiveatTypography(
         fontSize = 20.sp,
         lineHeight = 20.sp
     ),
+    Subhead_1_bold = TextStyle(
+        fontFamily = ArchiveatFontBold,
+        fontSize = 18.sp,
+        lineHeight = 25.2.sp // 행간 140%
+    ),
     Subhead_1_semibold = TextStyle(
         fontFamily = ArchiveatFontSemiBold,
         fontSize = 18.sp,
@@ -80,7 +87,7 @@ val defaultArchiveatTypography = ArchiveatTypography(
     Body_1_medium = TextStyle(
         fontFamily = ArchiveatFontMedium,
         fontSize = 14.sp,
-        lineHeight = 14.sp
+        lineHeight = 19.6.sp // 행간 140%
     ),
     Body_1_regular = TextStyle(
         fontFamily = ArchiveatFontRegular,
