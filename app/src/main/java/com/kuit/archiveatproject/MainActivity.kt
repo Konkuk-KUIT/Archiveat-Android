@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,20 +57,22 @@ class MainActivity : ComponentActivity() {
                     currentDestination?.route in bottomNavRoutes
 
 
-                Scaffold(
-                    containerColor = Color(0xFFF1F3F6),
+                Scaffold(//0xFFF1F3F6
+                    containerColor = Color(0xFFFFFFFF),
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(
-                                    RoundedCornerShape(
-                                        topStart = 30.dp,
-                                        topEnd = 30.dp
-                                    )
+                                .shadow(
+                                    elevation = 12.dp,
+                                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
+                                    clip = false
                                 )
-                                .background(Color.White)
+                                .background(
+                                    Color.White,
+                                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                                )
                         ) {
                             BottomNavBar(
                                 visible = showBottomBar,
