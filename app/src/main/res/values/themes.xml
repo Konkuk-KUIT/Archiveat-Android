@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- app 기본 테마 -->
     <style name="Theme.ArchiveatProject" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Splash Screen 전용 테마 -->
+    <style name="Theme.ArchiveatProject.Splash"
+        parent="Theme.SplashScreen">
+
+        <item name="windowSplashScreenBackground">
+            @color/primary
+        </item>
+
+        <item name="windowSplashScreenAnimatedIcon">
+            @drawable/ic_onboarding
+        </item>
+
+        <item name="postSplashScreenTheme">
+            @style/Theme.ArchiveatProject
+        </item>
+
+    </style>
 </resources>
