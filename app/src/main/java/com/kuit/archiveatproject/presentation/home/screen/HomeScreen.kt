@@ -1,26 +1,71 @@
 package com.kuit.archiveatproject.presentation.home.screen
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.core.component.TopLogoBar
+import com.kuit.archiveatproject.domain.model.HomeTabType
+import com.kuit.archiveatproject.presentation.home.component.GreetingBar
+import com.kuit.archiveatproject.presentation.home.component.HomeCategoryTabBar
+import com.kuit.archiveatproject.presentation.home.model.HomeTabUiModel
+
+//임시 변수(서버 구현 후 삭제 예정)
+private val mockTabs = listOf(
+    HomeTabUiModel(HomeTabType.ALL, "전체", "흩어진 모든 지식을 한눈에"),
+    HomeTabUiModel(HomeTabType.INSPIRATION, "영감수집", "잠깐의 틈을 채워줄 인사이트"),
+    HomeTabUiModel(HomeTabType.DEEP_DIVE, "집중탐구", "깊이 파고드는 시간"),
+    HomeTabUiModel(HomeTabType.GROWTH, "성장한입", "잠깐의 틈을 채워줄, 현재의 관심사와 맞닿은 인사이트"),
+    HomeTabUiModel(HomeTabType.VIEW_EXPANSION, "관점확장", "생각의 크기를 키워주는 깊이 있는 통찰"),
+)
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier
 ){
-    LazyColumn(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+    var selectedTab by remember { mutableStateOf(HomeTabType.ALL) }
+
+    Column(
+        modifier = modifier.fillMaxSize()
     ) {
-        item {
-            TopLogoBar()
+        // 고정 영역
+        TopLogoBar()
+
+        GreetingBar(
+            "archiveat",
+            "좋은 아침이에요!",
+            "오늘도 한 걸음 성장해볼까요?"
+        )
+
+        HomeCategoryTabBar(
+            tabs = mockTabs,
+            selectedTab = selectedTab,
+            onTabSelected = { selectedTab = it }
+        )
+
+        // 탭별로 바뀌는 영역
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            when (selectedTab) {
+                HomeTabType.ALL -> AllScreen()
+                HomeTabType.INSPIRATION -> InspirationScreen()
+                HomeTabType.DEEP_DIVE -> DeepDiveScreen()
+                HomeTabType.GROWTH -> GrowthScreen()
+                HomeTabType.VIEW_EXPANSION -> ViewExtensionScreen()
+            }
         }
     }
 }
