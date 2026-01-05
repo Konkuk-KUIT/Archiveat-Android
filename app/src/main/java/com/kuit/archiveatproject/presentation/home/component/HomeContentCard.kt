@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +37,8 @@ fun HomeContentCard(
     subtitle: String,       // "저장한 'Topic' 아티클 요약" / ... <- 서버로부터 Topic 받기
     contentSnippet: String, // 아래 요약문 <- 삭제 요청 중(?)
     modifier: Modifier = Modifier,
+    isClickable: Boolean = true,
+    containerColor: Color = ArchiveatProjectTheme.colors.white,
     onClick: (HomeContentCardUiModel) -> Unit = {},
 ) {
     val shape = RoundedCornerShape(30.dp)
@@ -43,8 +46,9 @@ fun HomeContentCard(
     Column(
         modifier = modifier
             .clip(shape)
-            .background(ArchiveatProjectTheme.colors.white)
-            .clickable { onClick(card) }
+            .background(containerColor)
+            .then(if (isClickable) Modifier.clickable { onClick(card) }
+            else Modifier)
             .fillMaxWidth()
     ) {
         AsyncImage(
