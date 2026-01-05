@@ -81,7 +81,7 @@ fun HomeContentCardCarousel(
     val pagerHeight = frameHeight
 
     // 중앙 정렬: 화면 폭으로 좌/우 padding 계산
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp // (주석) 화면 폭 dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp // 화면 폭 dp
     val sidePadding = ((screenWidth - frameWidth) / 2).coerceAtLeast(0.dp)
 
     // Int.MAX_VALUE -> 페이지, 실제 데이터: page % cards.size
