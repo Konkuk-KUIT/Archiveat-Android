@@ -72,7 +72,7 @@ fun HomeContentCardCarousel(
     // 그림자 파라미터
     val shadowBlur = 3.dp
     val shadowOffsetY = 3.dp
-    val shadowPad = shadowBlur + 2.dp  // ✅ blur보다 살짝 크게(잘림 방지 여백)
+    val shadowPad = shadowBlur + 2.dp  // blur보다 살짝 크게(잘림 방지 여백)
 
     // 그림자 포함 프레임 크기
     val frameWidth = cardWidth + shadowPad * 2
