@@ -7,6 +7,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.kuit.archiveatproject.R
 
@@ -37,72 +38,86 @@ val defaultArchiveatTypography = ArchiveatTypography(
     Heading_1_bold = TextStyle(
         fontFamily = ArchiveatFontBold,
         fontSize = 22.sp,
-        lineHeight = 22.sp
+        lineHeight = 1.4.em, // 행간 140%
+        letterSpacing = (-0.002).em,
     ),
     Heading_1_semibold = TextStyle(
         fontFamily = ArchiveatFontSemiBold,
         fontSize = 22.sp,
-        lineHeight = 22.sp
+        lineHeight = 1.4.em, // 행간 140%
+        letterSpacing = (-0.002).em,
     ),
     Heading_2_bold = TextStyle(
         fontFamily = ArchiveatFontBold,
         fontSize = 20.sp,
-        lineHeight = 20.sp
+        lineHeight = 1.4.em, // 행간 140%
+        letterSpacing = (-0.002).em,
     ),
     Heading_2_semibold = TextStyle(
         fontFamily = ArchiveatFontSemiBold,
         fontSize = 20.sp,
-        lineHeight = 20.sp
+        lineHeight = 1.4.em, // 행간 140%
+        letterSpacing = (-0.002).em,
     ),
     Subhead_1_bold = TextStyle(
         fontFamily = ArchiveatFontBold,
         fontSize = 18.sp,
-        lineHeight = 25.2.sp // 행간 140%
+        lineHeight = 1.4.em, // 행간 140%
+        letterSpacing = (-0.002).em,
     ),
     Subhead_1_semibold = TextStyle(
         fontFamily = ArchiveatFontSemiBold,
         fontSize = 18.sp,
-        lineHeight = 18.sp
+        lineHeight = 1.45.em, // 행간 145%
+        letterSpacing = (-0.002).em,
     ),
     Subhead_1_medium = TextStyle(
         fontFamily = ArchiveatFontMedium,
         fontSize = 18.sp,
-        lineHeight = 18.sp
+        lineHeight = 1.45.em, // 행간 145%
+        letterSpacing = (-0.002).em,
     ),
     Subhead_2_semibold = TextStyle(
         fontFamily = ArchiveatFontSemiBold,
         fontSize = 16.sp,
-        lineHeight = 16.sp
+        lineHeight = 1.45.em, // 행간 145%
+        letterSpacing = (-0.002).em,
     ),
     Subhead_2_medium = TextStyle(
         fontFamily = ArchiveatFontMedium,
         fontSize = 16.sp,
-        lineHeight = 16.sp
+        lineHeight = 1.45.em, // 행간 145%
+        letterSpacing = (-0.002).em,
     ),
     Body_1_semibold = TextStyle(
         fontFamily = ArchiveatFontSemiBold,
         fontSize = 14.sp,
-        lineHeight = 14.sp
+        lineHeight = 1.45.em, // 행간 145%
+        letterSpacing = (-0.002).em,
     ),
     Body_1_medium = TextStyle(
         fontFamily = ArchiveatFontMedium,
         fontSize = 14.sp,
-        lineHeight = 19.6.sp // 행간 140%
+        lineHeight = 1.45.em, // 행간 145%
+        letterSpacing = (-0.002).em,
     ),
     Body_1_regular = TextStyle(
         fontFamily = ArchiveatFontRegular,
         fontSize = 14.sp,
-        lineHeight = 14.sp
+        lineHeight = 1.45.em, // 행간 145%
+        letterSpacing = (-0.002).em,
     ),
     Caption_semibold = TextStyle(
         fontFamily = ArchiveatFontSemiBold,
         fontSize = 12.sp,
-        lineHeight = 12.sp
+        lineHeight = 1.4.em, // 행간 140%
+        letterSpacing = (-0.002).em,
     ),
     Caption_medium = TextStyle(
         fontFamily = ArchiveatFontMedium,
         fontSize = 12.sp,
-        lineHeight = 12.sp
+        lineHeight = 1.4.em, // 행간 140%
+        letterSpacing = (-0.002).em,
     ),
 )
 
