@@ -324,62 +324,87 @@ private fun Modifier.colorMatrixLayer(filter: ColorFilter): Modifier =
 )
 @Composable
 fun HomeContentCardCarouselPrev() {
+    val urls1 = listOf("https://picsum.photos/id/10/800/600")
+    val urls2 = listOf(
+        "https://picsum.photos/id/11/800/600",
+        "https://picsum.photos/id/12/800/600"
+    )
+    val urls3 = listOf(
+        "https://picsum.photos/id/13/800/600",
+        "https://picsum.photos/id/14/800/600",
+        "https://picsum.photos/id/15/800/600"
+    )
+    val urls4 = listOf(
+        "https://picsum.photos/id/16/800/600",
+        "https://picsum.photos/id/17/800/600",
+        "https://picsum.photos/id/18/800/600",
+        "https://picsum.photos/id/19/800/600"
+    )
+    val urls6 = listOf(
+        "https://picsum.photos/id/20/800/600",
+        "https://picsum.photos/id/21/800/600",
+        "https://picsum.photos/id/22/800/600",
+        "https://picsum.photos/id/23/800/600",
+        "https://picsum.photos/id/24/800/600",
+        "https://picsum.photos/id/25/800/600"
+    )
+
     val dummyCards = listOf(
         HomeContentCardUiModel(
             archiveId = 1,
             tabType = HomeTabType.INSPIRATION,
             tabLabel = "영감수집",
             cardType = HomeCardType.AI_SUMMARY,
-            title = "2025 UI 디자인 트렌드: 글래스모피즘의 귀환",
-            thumbnailUrl = "https://picsum.photos/200/300"
+            title = "0장(플레이스홀더)도 캐러셀에서 잘 보이나?",
+            imageUrls = emptyList()
         ),
         HomeContentCardUiModel(
             archiveId = 2,
             tabType = HomeTabType.DEEP_DIVE,
             tabLabel = "집중탐구",
             cardType = HomeCardType.AI_SUMMARY,
-            title = "AI 에이전트, 검색을 넘어 '행동'으로",
-            thumbnailUrl = "https://picsum.photos/200/300"
+            title = "1장 케이스",
+            imageUrls = urls1
         ),
         HomeContentCardUiModel(
             archiveId = 3,
             tabType = HomeTabType.GROWTH,
             tabLabel = "성장한입",
-            cardType = HomeCardType.AI_SUMMARY,
-            title = "사회초년생을 위한 ETF 투자 바이블",
-            thumbnailUrl = "https://picsum.photos/200/300"
+            cardType = HomeCardType.COLLECTION,
+            title = "2장 케이스 (세로 2분할)",
+            imageUrls = urls2
         ),
         HomeContentCardUiModel(
             archiveId = 4,
             tabType = HomeTabType.VIEW_EXPANSION,
             tabLabel = "관점확장",
-            cardType = HomeCardType.AI_SUMMARY,
-            title = "알고리즘을 이해하다 · 추천 시스템 뒤에 숨은 계산법",
-            thumbnailUrl = "https://picsum.photos/200/300"
+            cardType = HomeCardType.COLLECTION,
+            title = "3장 케이스 (세로 3분할)",
+            imageUrls = urls3
         ),
         HomeContentCardUiModel(
             archiveId = 5,
             tabType = HomeTabType.INSPIRATION,
             tabLabel = "영감수집",
-            cardType = HomeCardType.AI_SUMMARY,
-            title = "데이터의 바다를 항해하다 · 빅데이터 분석으로 본 트렌드",
-            thumbnailUrl = "https://picsum.photos/200/300"
+            cardType = HomeCardType.COLLECTION,
+            title = "4장 케이스 (2x2 격자)",
+            imageUrls = urls4
         ),
         HomeContentCardUiModel(
             archiveId = 6,
             tabType = HomeTabType.DEEP_DIVE,
             tabLabel = "집중탐구",
-            cardType = HomeCardType.AI_SUMMARY,
-            title = "\"돈도 기업도 한국을 떠났다\" 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)?",
-            thumbnailUrl = "https://picsum.photos/200/300"
+            cardType = HomeCardType.COLLECTION,
+            title = "6장 케이스 (4장만 + 오버레이)",
+            imageUrls = urls6
         ),
         HomeContentCardUiModel(
             archiveId = 7,
             tabType = HomeTabType.GROWTH,
             tabLabel = "성장한입",
-            cardType = HomeCardType.AI_SUMMARY,
-            title = "같은 3000만원 수익, 세금은 제각각?",
-            thumbnailUrl = "https://picsum.photos/200/300"
+            cardType = HomeCardType.COLLECTION,
+            title = "타이틀 긴 케이스도 체크",
+            imageUrls = urls4
         ),
     )
     Column(
