@@ -30,13 +30,18 @@ fun HomeTabDto.toUiModel(): HomeTabUiModel {
 }
 
 fun HomeContentCardDto.toUiModel(): HomeContentCardUiModel {
+    // 이미지 여러 개라면
+    val urls = imageUrls
+        .filter { it.isNotBlank() }
+        .ifEmpty { listOfNotNull(thumbnailUrl).filter { it.isNotBlank() } }
+
     return HomeContentCardUiModel(
         archiveId = archiveId,
         tabType = HomeTabType.from(tabLabelTypeOrFallback()),
         tabLabel = tabLabel,
         cardType = HomeCardType.fromLabel(cardType),
         title = title,
-        thumbnailUrl = thumbnailUrl
+        imageUrls = urls,
     )
 }
 
