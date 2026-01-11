@@ -2,8 +2,10 @@ package com.kuit.archiveatproject.presentation.home.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -22,27 +24,38 @@ fun HomeCategoryTabBar(
     onTabSelected: (HomeTabType) -> Unit,
     modifier: Modifier = Modifier
 ){
-    LazyRow(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(ArchiveatProjectTheme.colors.white),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(
-            space = 10.dp,
-            alignment = Alignment.CenterHorizontally
-        )
-    ) {
-        items(tabs) { tab ->
-            CategoryTabItem(
-                label = tab.label,
-                tabType = tab.type,
-                selected = tab.type == selectedTab,
-                onClick = { onTabSelected(tab.type) }
+            .background(ArchiveatProjectTheme.colors.white)
+    ){
+        LazyRow(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(ArchiveatProjectTheme.colors.white),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 10.dp,
+                alignment = Alignment.CenterHorizontally
             )
+        ) {
+            items(tabs) { tab ->
+                CategoryTabItem(
+                    label = tab.label,
+                    tabType = tab.type,
+                    selected = tab.type == selectedTab,
+                    onClick = { onTabSelected(tab.type) }
+                )
+            }
         }
+        SubMessageComponent(
+            subMessage = selectedTab.subMessage,
+            colorType = selectedTab.color(),
+            modifier = Modifier.padding(start = 21.dp)
+        )
     }
-}
 
+}
 
 @Preview(showBackground = true)
 @Composable
