@@ -24,6 +24,9 @@ fun HomeCategoryTabBar(
     onTabSelected: (HomeTabType) -> Unit,
     modifier: Modifier = Modifier
 ){
+    val selectedTabUiModel =
+        tabs.firstOrNull { it.type == selectedTab }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -48,11 +51,13 @@ fun HomeCategoryTabBar(
                 )
             }
         }
-        SubMessageComponent(
-            subMessage = selectedTab.subMessage,
-            colorType = selectedTab.color(),
-            modifier = Modifier.padding(start = 21.dp)
-        )
+        selectedTabUiModel?.let { tab ->
+            SubMessageComponent(
+                subMessage = tab.subMessage,
+                colorType = tab.type.color(),
+                modifier = Modifier.padding(start = 21.dp)
+            )
+        }
     }
 
 }
