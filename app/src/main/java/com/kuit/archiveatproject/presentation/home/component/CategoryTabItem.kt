@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.domain.model.HomeTabType
 import com.kuit.archiveatproject.domain.model.HomeTabType.INSPIRATION
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
@@ -36,7 +37,9 @@ fun CategoryTabItem(
 
     Column(
         modifier = Modifier
-            .clickable(onClick = onClick)
+            .noRippleClickable {
+                onClick()
+            }
             .padding(horizontal = 10.dp, vertical = 12.dp)
     ) {
         Text(

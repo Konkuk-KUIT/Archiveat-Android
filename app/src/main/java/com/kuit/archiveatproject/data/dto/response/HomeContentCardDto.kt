@@ -17,6 +17,11 @@ data class HomeContentCardDto(
     @SerialName("title")
     val title: String,
 
+    // 여러 장 이미지
+    @SerialName("imageUrls")
+    val imageUrls: List<String> = emptyList(),
+
+    // 서버가 아직 thumbnailUrl만 줄 때
     @SerialName("thumbnailUrl")
-    val thumbnailUrl: String
+    val thumbnailUrl: String? = null,
 )

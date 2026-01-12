@@ -9,5 +9,8 @@ data class HomeContentCardUiModel(
     val tabLabel: String,
     val cardType: HomeCardType,
     val title: String,
-    val thumbnailUrl: String
-)
+    val imageUrls: List<String>,
+) {
+    // 기존 코드 호환용
+    val thumbnailUrl: String? get() = imageUrls.firstOrNull()
+}
