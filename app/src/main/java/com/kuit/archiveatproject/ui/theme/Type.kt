@@ -30,6 +30,7 @@ data class ArchiveatTypography(
     val Body_1_semibold: TextStyle,
     val Body_1_medium: TextStyle,
     val Body_1_regular: TextStyle,
+    val Body_2_medium: TextStyle,
     val Caption_semibold: TextStyle,
     val Caption_medium: TextStyle
 )
@@ -106,6 +107,12 @@ val defaultArchiveatTypography = ArchiveatTypography(
         fontSize = 14.sp,
         lineHeight = 1.45.em, // 행간 145%
         letterSpacing = (-0.002).em,
+    ),
+    Body_2_medium = TextStyle(
+        fontFamily = ArchiveatFontMedium,
+        fontSize = 14.sp,
+        lineHeight = 1.40.em, // 행간 140%
+        letterSpacing = 0.em,
     ),
     Caption_semibold = TextStyle(
         fontFamily = ArchiveatFontSemiBold,
