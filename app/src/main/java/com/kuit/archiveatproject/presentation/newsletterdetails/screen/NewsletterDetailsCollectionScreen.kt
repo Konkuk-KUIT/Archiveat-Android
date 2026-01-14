@@ -29,7 +29,7 @@ fun NewsletterDetailsCollectionScreen(
     items: List<CollectionComponentUiModel>,
     onBack: () -> Unit,
     onClickItem: (Long) -> Unit,
-    onToggleChecked: (Long, Boolean) -> Unit = { _, _ -> }, // (서버/VM 연동 대비: id, newChecked)
+    onToggleChecked: (Long, Boolean) -> Unit = { _, _ -> }, // 서버/VM 연동 대비: id, newChecked
     modifier: Modifier = Modifier,
 ) {
     // 임시: 나중에 VM 붙이면 삭제
@@ -60,15 +60,18 @@ fun NewsletterDetailsCollectionScreen(
             modifier = Modifier
         )
 
-        Box(modifier = Modifier.weight(1f)
-            .background(ArchiveatProjectTheme.colors.gray50)) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .background(ArchiveatProjectTheme.colors.gray50)
+        ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     start = 20.dp, end = 20.dp,
                     top = 14.dp, bottom = 27.dp
                 ),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(
                     items = stateItems,
@@ -136,6 +139,17 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 ),
                 CollectionComponentUiModel(
                     id = 4L,
+                    categoryLabel = "국제경제",
+                    sourceIcon = "",
+                    sourceLabel = "Instagram",
+                    minutesLabel = "3분",
+                    thumbnailUrl = "",
+                    title = "중동전쟁 오일쇼크! (~24.10 진행상황)",
+                    subtitle = "제5차 중동전쟁 발발 위기?",
+                    isChecked = false
+                ),
+                CollectionComponentUiModel(
+                    id = 5L,
                     categoryLabel = "국제경제",
                     sourceIcon = "",
                     sourceLabel = "Instagram",

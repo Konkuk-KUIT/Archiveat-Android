@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    kotlin("kapt")
 }
 
 val properties = Properties().apply {
@@ -68,6 +69,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.datastore.preferences)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -98,10 +100,13 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // Hilt
+//    implementation(libs.hilt.android)
+//    implementation(libs.hilt.core)
+//    implementation(libs.hilt.navigation.compose)
+//    ksp(libs.hilt.android.compiler)
+//    ksp(libs.hilt.compiler)
+//    ksp(libs.hilt.manager)
     implementation(libs.hilt.android)
-    implementation(libs.hilt.core)
     implementation(libs.hilt.navigation.compose)
-    ksp(libs.hilt.android.compiler)
-    ksp(libs.hilt.compiler)
-    ksp(libs.hilt.manager)
+    kapt(libs.hilt.android.compiler)
 }

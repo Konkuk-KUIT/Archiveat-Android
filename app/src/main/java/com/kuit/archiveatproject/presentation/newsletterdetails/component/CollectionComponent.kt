@@ -60,7 +60,7 @@ data class CollectionComponentUiModel(
 fun CollectionComponent(
     model: CollectionComponentUiModel,
     onToggleChecked: (Long) -> Unit,
-    onClick: (Long) -> Unit,
+    onClick: (Long) -> Unit, // id ->
     modifier: Modifier = Modifier,
 //        .width(335.dp)
 ) {
