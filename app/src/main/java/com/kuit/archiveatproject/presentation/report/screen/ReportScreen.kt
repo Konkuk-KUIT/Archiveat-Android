@@ -1,16 +1,44 @@
 package com.kuit.archiveatproject.presentation.report.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.kuit.archiveatproject.presentation.report.component.ReportChartComponent
 import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
+import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun ReportScreen(
     uiState: ReportUiState,
     modifier: Modifier = Modifier
 ){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = ArchiveatProjectTheme.colors.white)
+            .padding(start = 20.dp)
+    ){
+        Text(
+            text = "리포트",
+            style = ArchiveatProjectTheme.typography.Heading_1_bold,
+            color = ArchiveatProjectTheme.colors.black
+        )
+    }
+    ReportChartComponent(
+        totalSavedCount = uiState.totalSavedCount,
+        totalReadCount = uiState.totalReadCount,
+        readPercentage = uiState.readPercentage,
+        lightPercentage = uiState.lightPercentage,
+        nowPercentage = uiState.nowPercentage,
+        interestGaps = uiState.interestGaps
+    )
 
 }
 
