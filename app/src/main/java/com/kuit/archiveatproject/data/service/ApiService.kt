@@ -8,6 +8,6 @@ interface ApiService {
     @GET("/explore")
     suspend fun getExplore(): ExploreResponseDto
 
-    @GET("report")
+    @GET("/report")
     suspend fun getReport(): ReportResponseDto
 }
