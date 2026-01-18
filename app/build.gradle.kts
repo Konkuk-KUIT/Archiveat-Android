@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    kotlin("kapt")
 }
 
 val properties = Properties().apply {
@@ -67,7 +68,10 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.ui)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -77,6 +81,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.androidx.ui.tooling)
     // navigation
     implementation(libs.androidx.navigation.compose)
 
@@ -93,13 +99,15 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlin.serialization.converter)
-    implementation(libs.kotlinx.serialization.json)
 
     // Hilt
+//    implementation(libs.hilt.android)
+//    implementation(libs.hilt.core)
+//    implementation(libs.hilt.navigation.compose)
+//    ksp(libs.hilt.android.compiler)
+//    ksp(libs.hilt.compiler)
+//    ksp(libs.hilt.manager)
     implementation(libs.hilt.android)
-    implementation(libs.hilt.core)
     implementation(libs.hilt.navigation.compose)
-    ksp(libs.hilt.android.compiler)
-    ksp(libs.hilt.compiler)
-    ksp(libs.hilt.manager)
+    kapt(libs.hilt.android.compiler)
 }
