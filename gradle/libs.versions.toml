@@ -20,6 +20,7 @@ hilt = "2.57.2"
 hiltNavigationCompose = "1.2.0"
 hiltManager = "1.0.0"
 ksp = "2.0.21-1.0.28"
+foundationLayout = "1.10.0"
 foundation = "1.10.0"
 datastore = "1.1.1"
 runtime = "1.10.0"
@@ -62,6 +63,7 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 hilt-manager = {group = "androidx.hilt" , name = "hilt-compiler", version.ref = "hiltManager"}
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomCompiler" }
 androidx-room-ktx     = { group = "androidx.room", name = "room-ktx",     version.ref = "roomCompiler" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
