@@ -1,8 +1,11 @@
 package com.kuit.archiveatproject.presentation.report.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,26 +22,31 @@ fun ReportScreen(
     uiState: ReportUiState,
     modifier: Modifier = Modifier
 ){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = ArchiveatProjectTheme.colors.white)
-            .padding(start = 20.dp)
-    ){
-        Text(
-            text = "리포트",
-            style = ArchiveatProjectTheme.typography.Heading_1_bold,
-            color = ArchiveatProjectTheme.colors.black
+    Column(
+
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = ArchiveatProjectTheme.colors.white)
+                .padding(start = 20.dp, top = 55.dp, bottom = 12.dp)
+        ){
+            Text(
+                text = "리포트",
+                style = ArchiveatProjectTheme.typography.Heading_1_bold,
+                color = ArchiveatProjectTheme.colors.black
+            )
+        }
+        Spacer(Modifier.height(24.dp))
+        ReportChartComponent(
+            totalSavedCount = uiState.totalSavedCount,
+            totalReadCount = uiState.totalReadCount,
+            readPercentage = uiState.readPercentage,
+            lightPercentage = uiState.lightPercentage,
+            nowPercentage = uiState.nowPercentage,
+            interestGaps = uiState.interestGaps
         )
     }
-    ReportChartComponent(
-        totalSavedCount = uiState.totalSavedCount,
-        totalReadCount = uiState.totalReadCount,
-        readPercentage = uiState.readPercentage,
-        lightPercentage = uiState.lightPercentage,
-        nowPercentage = uiState.nowPercentage,
-        interestGaps = uiState.interestGaps
-    )
 
 }
 
