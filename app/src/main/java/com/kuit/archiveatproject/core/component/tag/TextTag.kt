@@ -1,6 +1,5 @@
 package com.kuit.archiveatproject.core.component.tag
 
-import android.R.attr.text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +25,7 @@ fun TextTag(
     variant: TagVariant,
     modifier: Modifier = Modifier,
     colors: TagColors? = null, // 필요하면 직접 색 지정(override)
+    style: TextStyle = ArchiveatProjectTheme.typography.Body_1_semibold
 ) {
     val resolved = colors ?: tagColorsFor(variant)
 
@@ -37,7 +38,7 @@ fun TextTag(
         Text(
             text = text,
             color = resolved.text,
-            style = ArchiveatProjectTheme.typography.Body_1_semibold,
+            style = style,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

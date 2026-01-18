@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,8 +50,8 @@ private fun HomeContentThumbnail(
     val visible = urls.take(4)
     val extraCount = (urls.size - 4).coerceAtLeast(0)
 
-    val divider = 1.dp
-    val dividerColor = ArchiveatProjectTheme.colors.gray300
+    val divider = 3.dp
+    val dividerColor = ArchiveatProjectTheme.colors.gray200
 
     Box(modifier = modifier.background(ArchiveatProjectTheme.colors.gray100)) {
         when (visible.size) {
@@ -82,76 +83,121 @@ private fun HomeContentThumbnail(
 
             2 -> {
                 Row(Modifier.fillMaxSize()) {
-                    TileImage(url = visible[0], modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight())
-                    Spacer(Modifier
-                        .height(divider)
-                        .fillMaxHeight()
-                        .background(dividerColor))
-                    TileImage(url = visible[1], modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight())
+                    TileImage(
+                        url = visible[0],
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    )
+                    Spacer(
+                        Modifier
+                            .width(divider)
+                            .fillMaxHeight()
+                            .background(dividerColor)
+                    )
+                    TileImage(
+                        url = visible[1],
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    )
                 }
             }
 
             3 -> {
                 Row(Modifier.fillMaxSize()) {
-                    TileImage(url = visible[0], modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight())
-                    Spacer(Modifier
-                        .height(divider)
-                        .fillMaxHeight()
-                        .background(dividerColor))
-                    TileImage(url = visible[1], modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight())
-                    Spacer(Modifier
-                        .height(divider)
-                        .fillMaxHeight()
-                        .background(dividerColor))
-                    TileImage(url = visible[2], modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight())
+                    TileImage(
+                        url = visible[0],
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    )
+                    Spacer(
+                        Modifier
+                            .width(divider)
+                            .fillMaxHeight()
+                            .background(dividerColor)
+                    )
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    ) {
+                        TileImage(
+                            url = visible[1],
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                        )
+                        Spacer(
+                            Modifier
+                                .height(divider)
+                                .fillMaxWidth()
+                                .background(dividerColor)
+                        )
+                        TileImage(
+                            url = visible[2],
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                        )
+                    }
                 }
             }
 
             else -> {
                 // 4개: 2x2 그리드
                 Column(Modifier.fillMaxSize()) {
-                    Row(Modifier
-                        .weight(1f)
-                        .fillMaxWidth()) {
-                        TileImage(url = visible[0], modifier = Modifier
+                    Row(
+                        Modifier
                             .weight(1f)
-                            .fillMaxHeight())
-                        Spacer(Modifier
-                            .width(divider)
-                            .fillMaxHeight()
-                            .background(dividerColor))
-                        TileImage(url = visible[1], modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight())
+                            .fillMaxWidth()
+                    ) {
+                        TileImage(
+                            url = visible[0], modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        )
+                        Spacer(
+                            Modifier
+                                .width(divider)
+                                .fillMaxHeight()
+                                .background(dividerColor)
+                        )
+                        TileImage(
+                            url = visible[1], modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        )
                     }
-                    Spacer(Modifier
-                        .height(divider)
-                        .fillMaxWidth()
-                        .background(dividerColor))
-                    Row(Modifier
-                        .weight(1f)
-                        .fillMaxWidth()) {
-                        TileImage(url = visible[2], modifier = Modifier
+                    Spacer(
+                        Modifier
+                            .height(divider)
+                            .fillMaxWidth()
+                            .background(dividerColor)
+                    )
+                    Row(
+                        Modifier
                             .weight(1f)
-                            .fillMaxHeight())
-                        Spacer(Modifier
-                            .width(divider)
-                            .fillMaxHeight()
-                            .background(dividerColor))
+                            .fillMaxWidth()
+                    ) {
+                        TileImage(
+                            url = visible[2], modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        )
+                        Spacer(
+                            Modifier
+                                .width(divider)
+                                .fillMaxHeight()
+                                .background(dividerColor)
+                        )
 
-                        Box(Modifier
-                            .weight(1f)
-                            .fillMaxHeight()) {
+                        Box(
+                            Modifier
+                                .weight(1f)
+                                .fillMaxHeight()
+                        ) {
                             TileImage(url = visible[3], modifier = Modifier.fillMaxSize())
 
                             // 5개 이상이면 마지막 타일에 +N 오버레이
@@ -164,9 +210,9 @@ private fun HomeContentThumbnail(
                                 ) {
                                     Text(
                                         text = "+$extraCount",
-                                        color = Color.White,
+                                        color = ArchiveatProjectTheme.colors.gray50,
                                         fontSize = 18.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.SemiBold
                                     )
                                 }
                             }
@@ -183,6 +229,14 @@ private fun TileImage(
     url: String,
     modifier: Modifier = Modifier,
 ) {
+    // // // // //
+    if (LocalInspectionMode.current) {
+        // Preview에서는 네트워크 이미지 대신 더미 박스
+        Box(modifier = modifier.background(ArchiveatProjectTheme.colors.gray200))
+        return
+    }
+    // // // // //
+
     AsyncImage(
         model = url,
         contentDescription = null,  // 서버에서 받아와야할 듯
@@ -279,9 +333,16 @@ fun HomeContentCard(
     }
 }
 
-@Preview(showBackground = false)
+@Preview(showBackground = true)
 @Composable
 private fun HomeContentCardPrev() {
+    ArchiveatProjectTheme {
+        HomeContentCardPrevContent()
+    }
+}
+
+@Composable
+private fun HomeContentCardPrevContent() {
     val urls1 = listOf("https://picsum.photos/id/1/800/600")
     val urls2 = listOf(
         "https://picsum.photos/id/1/800/600",
@@ -308,9 +369,9 @@ private fun HomeContentCardPrev() {
     )
 
 
-    LazyColumn (
+    LazyColumn(
         Modifier.padding(top = 60.dp)
-    ){
+    ) {
         item {
             HomeContentCard(
                 card = HomeContentCardUiModel(
