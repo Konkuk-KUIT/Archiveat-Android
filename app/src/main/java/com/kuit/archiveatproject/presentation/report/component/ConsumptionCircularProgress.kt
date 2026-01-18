@@ -81,7 +81,7 @@ fun ConsumptionCircularProgress(
 @Composable
 private fun ConsumptionCircularProgressPreview() {
     ConsumptionCircularProgress(
-        percentage = 70,
+        percentage = 97,
         modifier = Modifier.padding(16.dp)
     )
 }
