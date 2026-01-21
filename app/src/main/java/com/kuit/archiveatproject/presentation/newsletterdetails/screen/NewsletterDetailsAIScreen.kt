@@ -1,6 +1,10 @@
 package com.kuit.archiveatproject.presentation.newsletterdetails.screen
 
+import android.R.attr.enabled
+import android.R.attr.onClick
+import android.R.attr.text
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,10 +13,13 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,9 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -34,9 +43,9 @@ import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
 import com.kuit.archiveatproject.domain.model.HomeCardType
 import com.kuit.archiveatproject.domain.model.HomeTabType
-import com.kuit.archiveatproject.presentation.newsletterdetails.component.AIPreviewTextComponent
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.AISummaryComponent
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.AiSectionUiModel
+import com.kuit.archiveatproject.presentation.newsletterdetails.component.MemoComponent
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 // 임시 //
@@ -53,21 +62,23 @@ data class NewsletterDetailsAiUiModel(
     val contentTitle: String,       // "2025 UI 디자인 트렌드: ..."
     val userName: String,
     val aiSections: List<AiSectionUiModel>,
-    val previewText: String,
+    val memo: String,
 )
 
 @Composable
-fun  NewsletterDetailsAIScreen(
+fun NewsletterDetailsAIScreen(
     model: NewsletterDetailsAiUiModel,
     onBack: () -> Unit,
-    onClickMore: () -> Unit,
+    onClickWebView: () -> Unit,
+    onClickDone: () -> Unit,
     modifier: Modifier = Modifier,
-){
+    fromAI: Boolean = true,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
-            .padding(horizontal = 20.dp)
+            .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         BackTopBar(
             title = "",
@@ -78,6 +89,7 @@ fun  NewsletterDetailsAIScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)
         ) {
             Spacer(Modifier.height(12.dp))
 
@@ -164,20 +176,47 @@ fun  NewsletterDetailsAIScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            Text(
-                text = "본문 미리보기",
-                style = ArchiveatProjectTheme.typography.Subhead_1_semibold,
-                color = ArchiveatProjectTheme.colors.gray800
+            MemoComponent(
+                memo = model.memo,
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(18.dp))
 
-            AIPreviewTextComponent(
-                text = model.previewText,
-                onClickMore = onClickMore
-            )
-
-            Spacer(Modifier.height(28.dp))
+            // 버튼
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(if (fromAI) ArchiveatProjectTheme.colors.gray100 else ArchiveatProjectTheme.colors.black)
+                    .clickable(onClick = onClickWebView),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "원본 콘텐츠 보러 가기 (WebView)",
+                    color = if (fromAI) ArchiveatProjectTheme.colors.black else ArchiveatProjectTheme.colors.white,
+                    style = ArchiveatProjectTheme.typography.Subhead_2_semibold
+                )
+            }
+            if (fromAI) {
+                Spacer(Modifier.height(18.dp))
+                Box(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .height(46.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(ArchiveatProjectTheme.colors.gray950)
+                        .clickable(onClick = onClickDone),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "다 읽었어요",
+                        color = ArchiveatProjectTheme.colors.white,
+                        style = ArchiveatProjectTheme.typography.Subhead_2_semibold
+                    )
+                }
+            }
+            Spacer(Modifier.height(4.dp))
         }
     }
 }
@@ -213,14 +252,6 @@ private fun NewsletterDetailsAIScreenPreview() {
                         text = HomeCardType.AI_SUMMARY.label,
                         variant = TagVariant.CardType(HomeCardType.AI_SUMMARY)
                     ),
-                    TagUiModel(
-                        text = "하이",
-                        variant = TagVariant.Custom
-                    ),
-                    TagUiModel(
-                        text = "호이",
-                        variant = TagVariant.Custom
-                    )
                 ),
                 contentTitle = "2025 UI 디자인 트렌드:\n글래스모피즘의 귀환",
                 userName = "잉비",
@@ -238,11 +269,12 @@ private fun NewsletterDetailsAIScreenPreview() {
                         body = "가독성을 해치지 않기 위해 배경 블러(Blur) 값을 높이고, 테두리(Border)를 명확하게 사용하는 것이 핵심 차별점입니다."
                     )
                 ),
-                previewText = "불과 5년 전, 드리블(Dribbble)을 휩쓸었던 글래스모피즘이 돌아왔습니다. 하지만 이번엔 다릅니다. 애플 비전 프로가 쏘아 올린 '공간 UI'의 대중화로 인해, 평면적인 화면에서도 깊이감을 표현하는 것이 필수적인 UX 요소가 되었기 때문입니다.\u2028\n" +
-                        "이번 테크크런치 아티클에서는 단순한 유행을 넘어, 개발자와 디자이너가 당장 실무에 적용해야 할 '기능적 글래스모피즘'의 3가지 법칙을 소개합니다. 특히 다크 모드에서의 명암비 해결법은 어쩌고 저쩌고 칸이 채워져있어야할듯요..."
+                memo = "가독성을 해치지 않기 위해 배경 블러(Blur) 값을 높이고, 테두리(Border)를 명확하게 사용하는 것이 핵심 차별점입니다."
             ),
             onBack = {},
-            onClickMore = {}
+            onClickWebView = {},
+            onClickDone = {},
+            fromAI = false
         )
     }
 }
