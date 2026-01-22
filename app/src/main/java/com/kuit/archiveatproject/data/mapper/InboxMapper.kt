@@ -13,7 +13,7 @@ import com.kuit.archiveatproject.domain.entity.InboxItem
 import com.kuit.archiveatproject.domain.entity.InboxTopic
 import com.kuit.archiveatproject.domain.entity.LlmStatus
 
-fun ExploreInboxResponseDto.toEntity(): Inbox {
+fun ExploreInboxResponseDto.toInboxEntity(): Inbox {
     return Inbox(
         inbox = inbox.map { it.toEntity() }
     )

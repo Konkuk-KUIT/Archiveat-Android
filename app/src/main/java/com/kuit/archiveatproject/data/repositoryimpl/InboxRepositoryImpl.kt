@@ -1,6 +1,6 @@
 package com.kuit.archiveatproject.data.repositoryimpl
 
-import com.kuit.archiveatproject.data.mapper.toEntity
+import com.kuit.archiveatproject.data.mapper.toInboxEntity
 import com.kuit.archiveatproject.data.service.ApiService
 import com.kuit.archiveatproject.domain.entity.Inbox
 import com.kuit.archiveatproject.domain.repository.InboxRepository
@@ -11,6 +11,6 @@ class InboxRepositoryImpl @Inject constructor(
 ) : InboxRepository {
 
     override suspend fun getInbox(): Inbox {
-        return apiService.getExploreInbox().toEntity()
+        return apiService.getExploreInbox().toInboxEntity()
     }
 }
