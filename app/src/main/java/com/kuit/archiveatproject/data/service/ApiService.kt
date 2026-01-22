@@ -1,13 +1,14 @@
 package com.kuit.archiveatproject.data.service
 
 import com.kuit.archiveatproject.data.dto.request.InboxClassificationRequestDto
-import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxResponseDto
+import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewslettersResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.InboxClassificationResponseDto
-import retrofit2.http.GET
 import com.kuit.archiveatproject.data.dto.response.report.ReportResponseDto
+import com.kuit.archiveatproject.data.dto.response.user.UserMetadataResponseDto
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -34,4 +35,7 @@ interface ApiService {
 
     @GET("/report")
     suspend fun getReport(): ReportResponseDto
+
+    @GET("/user/metadata")
+    suspend fun getUserMetadata(): UserMetadataResponseDto
 }

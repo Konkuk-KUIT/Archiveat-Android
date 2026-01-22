@@ -6,12 +6,14 @@ import com.kuit.archiveatproject.data.repositoryimpl.InboxClassificationReposito
 import com.kuit.archiveatproject.data.repositoryimpl.InboxRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.ReportRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.TokenRepositoryImpl
+import com.kuit.archiveatproject.data.repositoryimpl.UserMetadataRepositoryImpl
 import com.kuit.archiveatproject.domain.repository.ExploreRepository
 import com.kuit.archiveatproject.domain.repository.ExploreTopicNewslettersRepository
 import com.kuit.archiveatproject.domain.repository.InboxClassificationRepository
 import com.kuit.archiveatproject.domain.repository.InboxRepository
 import com.kuit.archiveatproject.domain.repository.ReportRepository
 import com.kuit.archiveatproject.domain.repository.TokenRepository
+import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -50,6 +52,12 @@ abstract class RepositoryModule {
     abstract fun bindReportRepository(
         impl: ReportRepositoryImpl
     ): ReportRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserMetadataRepository(
+        impl: UserMetadataRepositoryImpl
+    ): UserMetadataRepository
 
     @Binds
     @Singleton
