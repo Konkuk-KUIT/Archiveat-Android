@@ -1,8 +1,16 @@
 package com.kuit.archiveatproject.di
 
 import com.kuit.archiveatproject.data.repositoryimpl.ExploreRepositoryImpl
+import com.kuit.archiveatproject.data.repositoryimpl.ExploreTopicNewslettersRepositoryImpl
+import com.kuit.archiveatproject.data.repositoryimpl.InboxClassificationRepositoryImpl
+import com.kuit.archiveatproject.data.repositoryimpl.InboxRepositoryImpl
+import com.kuit.archiveatproject.data.repositoryimpl.ReportRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.TokenRepositoryImpl
 import com.kuit.archiveatproject.domain.repository.ExploreRepository
+import com.kuit.archiveatproject.domain.repository.ExploreTopicNewslettersRepository
+import com.kuit.archiveatproject.domain.repository.InboxClassificationRepository
+import com.kuit.archiveatproject.domain.repository.InboxRepository
+import com.kuit.archiveatproject.domain.repository.ReportRepository
 import com.kuit.archiveatproject.domain.repository.TokenRepository
 import dagger.Binds
 import dagger.Module
@@ -18,6 +26,30 @@ abstract class RepositoryModule {
     abstract fun bindExploreRepository(
         impl: ExploreRepositoryImpl
     ): ExploreRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindInboxRepository(
+        impl: InboxRepositoryImpl
+    ): InboxRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindExploreTopicNewslettersRepository(
+        impl: ExploreTopicNewslettersRepositoryImpl
+    ): ExploreTopicNewslettersRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindInboxClassificationRepository(
+        impl: InboxClassificationRepositoryImpl
+    ): InboxClassificationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReportRepository(
+        impl: ReportRepositoryImpl
+    ): ReportRepository
 
     @Binds
     @Singleton
