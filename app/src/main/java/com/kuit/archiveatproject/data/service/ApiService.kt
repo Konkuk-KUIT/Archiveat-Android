@@ -1,6 +1,7 @@
 package com.kuit.archiveatproject.data.service
 
 import com.kuit.archiveatproject.data.dto.request.InboxClassificationRequestDto
+import com.kuit.archiveatproject.data.dto.request.UserMetadataSubmitRequestDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewslettersResponseDto
@@ -10,6 +11,7 @@ import com.kuit.archiveatproject.data.dto.response.user.UserMetadataResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -38,4 +40,9 @@ interface ApiService {
 
     @GET("/user/metadata")
     suspend fun getUserMetadata(): UserMetadataResponseDto
+
+    @POST("/user/metadata")
+    suspend fun submitUserMetadata(
+        @Body body: UserMetadataSubmitRequestDto,
+    ): Unit
 }
