@@ -193,7 +193,10 @@ fun LoginStep3(
  * 허용: 한글, 영문(대/소), 숫자, '_' '.'
  */
 private fun isNicknameCharAllowed(ch: Char): Boolean {
-    return ch.isLetterOrDigit() || ch == '_' || ch == '.' || isKorean(ch)
+    return (ch in 'a'..'z') ||
+            (ch in 'A'..'Z') ||
+            (ch in '0'..'9') ||
+            ch == '_' || ch == '.' || isKorean(ch)
 }
 
 private fun isKorean(ch: Char): Boolean {
