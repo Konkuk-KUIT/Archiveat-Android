@@ -7,7 +7,7 @@ import com.kuit.archiveatproject.domain.entity.UserMetadataCategory
 import com.kuit.archiveatproject.domain.entity.UserMetadataResult
 import com.kuit.archiveatproject.domain.entity.UserMetadataTopic
 
-fun UserMetadataResponseDto.toUserMetadataEntity(): UserMetadataResult {
+fun UserMetadataResponseDto.toEntity(): UserMetadataResult {
     return UserMetadataResult(
         employmentTypes = employmentTypes,
         availabilityOptions = availabilityOptions,

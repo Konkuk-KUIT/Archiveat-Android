@@ -2,6 +2,7 @@ package com.kuit.archiveatproject.data.service
 
 import com.kuit.archiveatproject.data.dto.request.InboxClassificationRequestDto
 import com.kuit.archiveatproject.data.dto.request.UserMetadataSubmitRequestDto
+import com.kuit.archiveatproject.data.dto.response.CollectionDetailsResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewslettersResponseDto
@@ -45,4 +46,9 @@ interface ApiService {
     suspend fun submitUserMetadata(
         @Body body: UserMetadataSubmitRequestDto,
     ): Unit
+
+    @GET("/collections/{collectionId}")
+    suspend fun getCollectionDetails(
+        @Path("collectionId") collectionId: Long,
+    ): CollectionDetailsResponseDto
 }

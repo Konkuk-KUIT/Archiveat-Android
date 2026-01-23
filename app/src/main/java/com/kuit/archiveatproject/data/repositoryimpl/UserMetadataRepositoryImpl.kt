@@ -1,7 +1,7 @@
 package com.kuit.archiveatproject.data.repositoryimpl
 
 import com.kuit.archiveatproject.data.mapper.toRequestDto
-import com.kuit.archiveatproject.data.mapper.toUserMetadataEntity
+import com.kuit.archiveatproject.data.mapper.toEntity
 import com.kuit.archiveatproject.data.service.ApiService
 import com.kuit.archiveatproject.domain.entity.UserMetadataResult
 import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
@@ -13,7 +13,7 @@ class UserMetadataRepositoryImpl @Inject constructor(
 ) : UserMetadataRepository {
 
     override suspend fun getUserMetadata(): UserMetadataResult {
-        return apiService.getUserMetadata().toUserMetadataEntity()
+        return apiService.getUserMetadata().toEntity()
     }
 
     override suspend fun submitUserMetadata(request: UserMetadataSubmit): Unit {

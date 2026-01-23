@@ -1,6 +1,6 @@
 package com.kuit.archiveatproject.data.repositoryimpl
 
-import com.kuit.archiveatproject.data.mapper.toTopicNewslettersEntity
+import com.kuit.archiveatproject.data.mapper.toEntity
 import com.kuit.archiveatproject.data.service.ApiService
 import com.kuit.archiveatproject.domain.entity.ExploreTopicNewsletters
 import com.kuit.archiveatproject.domain.repository.ExploreTopicNewslettersRepository
@@ -19,6 +19,6 @@ class ExploreTopicNewslettersRepositoryImpl @Inject constructor(
             topicId = topicId,
             page = page,
             size = size
-        ).toTopicNewslettersEntity()
+        ).toEntity()
     }
 }
