@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,11 +35,11 @@ fun PrimaryRoundedButton(
     isLoading: Boolean = false,
     fullWidth: Boolean = true,
     cornerRadiusDp: Int = 16,
-    minHeightDp: Int = 50,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
+    heightDp: Int = 50,
+    horizontalPaddingDp: Int = 16,
     containerColor: Color = ArchiveatProjectTheme.colors.primary,
     contentColor: Color = ArchiveatProjectTheme.colors.white,
-    leading: (@Composable (() -> Unit))? = null, // 버튼 텍스트 앞 ui
+    leading: (@Composable (() -> Unit))? = null,
 ) {
     val shape = RoundedCornerShape(cornerRadiusDp.dp)
     val actualEnabled = enabled && !isLoading
@@ -50,41 +50,47 @@ fun PrimaryRoundedButton(
         shape = shape,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-             contentColor = contentColor,
+            contentColor = contentColor,
             disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
-        contentPadding = contentPadding,
+        contentPadding = PaddingValues(0.dp),
         modifier = modifier
             .then(if (fullWidth) Modifier.fillMaxWidth() else Modifier)
-            .heightIn(min = minHeightDp.dp),
+            .height(heightDp.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = horizontalPaddingDp.dp),
+            contentAlignment = Alignment.Center
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-            } else if (leading != null) {
-                Box(
-                    modifier = Modifier.size(18.dp),
-                    contentAlignment = Alignment.Center
-                ) { leading() }
-                Spacer(modifier = Modifier.width(8.dp))
-            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                } else if (leading != null) {
+                    Box(
+                        modifier = Modifier.size(18.dp),
+                        contentAlignment = Alignment.Center
+                    ) { leading() }
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
 
-            Text(
-                text = text,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.labelLarge,
-            )
+                Text(
+                    text = text,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
         }
     }
 }
+
 
 @Preview
 @Composable
@@ -95,7 +101,7 @@ private fun PrimaryRoundedButtonPrev() {
     ) {
         PrimaryRoundedButton(
             text = "이메일로 1초만에 시작하기",
-            onClick = {}
+            onClick = {},
         )
         PrimaryRoundedButton(
             text = "이메일로 1초만에 시작하기",
@@ -105,14 +111,13 @@ private fun PrimaryRoundedButtonPrev() {
         PrimaryRoundedButton(
             text = "다음",
             onClick = {},
-            minHeightDp = 52
         )
         PrimaryRoundedButton(
             text = "이전",
             onClick = {},
-            minHeightDp = 52,
             contentColor = ArchiveatProjectTheme.colors.gray600,
-            containerColor = ArchiveatProjectTheme.colors.gray200
+            containerColor = ArchiveatProjectTheme.colors.gray200,
+            heightDp = 100
         )
     }
 }
