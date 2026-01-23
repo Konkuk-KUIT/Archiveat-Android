@@ -13,16 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
-import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
@@ -31,10 +24,6 @@ fun LoginStep1(
     onStartWithEmail: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val TiltWarpFamily = FontFamily(
-        Font(R.font.tilt_warp_regular, weight = FontWeight.Normal)
-    )
-
     Box(
         modifier = modifier
             .background(ArchiveatProjectTheme.colors.white)
@@ -67,13 +56,7 @@ fun LoginStep1(
 
                 Text(
                     text = "archiveat",
-                    style = TextStyle(
-                        fontFamily = TiltWarpFamily,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Normal,
-                        letterSpacing = 0.sp,
-                        lineHeight = 1.4.em,
-                    ),
+                    style = ArchiveatProjectTheme.typography.Logo_regular,
                     color = ArchiveatProjectTheme.colors.primary,
                 )
             }
