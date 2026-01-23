@@ -4,7 +4,7 @@ import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewslette
 import com.kuit.archiveatproject.domain.entity.ExploreTopicNewsletterItem
 import com.kuit.archiveatproject.domain.entity.ExploreTopicNewsletters
 
-fun ExploreTopicNewslettersResponseDto.toTopicNewslettersEntity(): ExploreTopicNewsletters {
+fun ExploreTopicNewslettersResponseDto.toEntity(): ExploreTopicNewsletters {
     return ExploreTopicNewsletters(
         topicId = topicId,
         topicName = topicName,

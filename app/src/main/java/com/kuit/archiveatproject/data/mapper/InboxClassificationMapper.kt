@@ -7,7 +7,7 @@ import com.kuit.archiveatproject.domain.entity.InboxClassificationCategory
 import com.kuit.archiveatproject.domain.entity.InboxClassificationResult
 import com.kuit.archiveatproject.domain.entity.InboxClassificationTopic
 
-fun InboxClassificationResponseDto.toInboxClassificationEntity(): InboxClassificationResult {
+fun InboxClassificationResponseDto.toEntity(): InboxClassificationResult {
     return InboxClassificationResult(
         userNewsletterId = userNewsletterId,
         newsletterId = newsletterId,

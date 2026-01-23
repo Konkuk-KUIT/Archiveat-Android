@@ -7,20 +7,20 @@ import com.kuit.archiveatproject.domain.model.Explore
 import com.kuit.archiveatproject.domain.model.ExploreCategory
 import com.kuit.archiveatproject.domain.model.ExploreTopic
 
-fun ExploreResponseDto.toDomain(): Explore =
+fun ExploreResponseDto.toEntity(): Explore =
     Explore(
         inboxCount = inboxCount,
-        categories = categories.map { it.toDomain() },
+        categories = categories.map { it.toEntity() },
     )
 
-private fun ExploreCategoryDto.toDomain(): ExploreCategory =
+private fun ExploreCategoryDto.toEntity(): ExploreCategory =
     ExploreCategory(
         id = id,
         name = name,
-        topics = topics.map { it.toDomain() },
+        topics = topics.map { it.toEntity() },
     )
 
-private fun ExploreTopicDto.toDomain(): ExploreTopic =
+private fun ExploreTopicDto.toEntity(): ExploreTopic =
     ExploreTopic(
         id = id,
         name = name,

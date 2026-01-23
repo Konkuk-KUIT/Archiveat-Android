@@ -1,7 +1,7 @@
 package com.kuit.archiveatproject.data.repositoryimpl
 
 import com.kuit.archiveatproject.data.dto.request.InboxClassificationRequestDto
-import com.kuit.archiveatproject.data.mapper.toInboxClassificationEntity
+import com.kuit.archiveatproject.data.mapper.toEntity
 import com.kuit.archiveatproject.data.service.ApiService
 import com.kuit.archiveatproject.domain.entity.InboxClassificationResult
 import com.kuit.archiveatproject.domain.repository.InboxClassificationRepository
@@ -24,6 +24,6 @@ class InboxClassificationRepositoryImpl @Inject constructor(
                 topicId = topicId,
                 memo = memo,
             )
-        ).toInboxClassificationEntity()
+        ).toEntity()
     }
 }

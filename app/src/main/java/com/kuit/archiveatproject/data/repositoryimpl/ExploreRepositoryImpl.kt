@@ -1,6 +1,6 @@
 package com.kuit.archiveatproject.data.repositoryimpl
 
-import com.kuit.archiveatproject.data.mapper.toDomain
+import com.kuit.archiveatproject.data.mapper.toEntity
 import com.kuit.archiveatproject.data.service.ApiService
 import com.kuit.archiveatproject.domain.model.Explore
 import com.kuit.archiveatproject.domain.repository.ExploreRepository
@@ -13,6 +13,6 @@ class ExploreRepositoryImpl @Inject constructor(
 ) : ExploreRepository {
 
     override suspend fun getExplore(): Explore {
-        return apiService.getExplore().toDomain()
+        return apiService.getExplore().toEntity()
     }
 }
