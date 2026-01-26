@@ -95,7 +95,7 @@ fun InboxItemComponent(
                     val timeOrProcessing = InboxFormatters.ampmTime(item.createdAt) ?: "분석 중"
 
                     Row(
-                        modifier = modifier
+                        modifier = Modifier
                             .height(25.dp)
                             .clip(RoundedCornerShape(44.79.dp))
                             .background(ArchiveatProjectTheme.colors.gray50)
@@ -126,7 +126,7 @@ fun InboxItemComponent(
                     val time = InboxFormatters.doneTimeLabel(item.createdAt).orEmpty()
                     if (time.isNotBlank()) {
                         Row(
-                            modifier = modifier
+                            modifier = Modifier
                                 .height(25.dp)
                                 .clip(RoundedCornerShape(44.79.dp))
                                 .background(ArchiveatProjectTheme.colors.gray50)
@@ -287,8 +287,8 @@ private fun DoneBottomRow(
             modifier = Modifier
                 .clip(RoundedCornerShape(4.dp))
                 .background(ArchiveatProjectTheme.colors.gray900)
-                .padding(horizontal = 6.dp, vertical = 3.dp)
-                .clickable(onClick = onEdit),
+                .clickable(onClick = onEdit)
+                .padding(horizontal = 6.dp, vertical = 3.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
