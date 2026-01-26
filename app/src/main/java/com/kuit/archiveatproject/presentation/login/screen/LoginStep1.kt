@@ -96,7 +96,7 @@ fun LoginStep1(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_logo),
+                    painter = painterResource(id = R.drawable.ic_logo_simple),
                     contentDescription = "archiveat logo",
                     modifier = Modifier.size(107.58594.dp)
                 )

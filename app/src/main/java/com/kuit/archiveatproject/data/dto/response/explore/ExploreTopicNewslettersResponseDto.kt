@@ -3,7 +3,7 @@ package com.kuit.archiveatproject.data.dto.response.explore
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class ExploreTopicNewslettersResponseDto(
     @SerialName("topicId")
     val topicId: Long, // 1

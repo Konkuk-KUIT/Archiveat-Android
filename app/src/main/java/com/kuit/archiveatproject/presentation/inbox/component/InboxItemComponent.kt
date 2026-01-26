@@ -161,9 +161,11 @@ fun InboxItemComponent(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-            } else{
+            } else {
+                val title = item.title.orEmpty()
+
                 Text(
-                    text = contentUrl,
+                    text = title,
                     style = TextStyle(
                         fontFamily = ArchiveatFontSemiBold,
                         fontSize = 16.sp,
@@ -312,7 +314,8 @@ private fun InboxItemComponentLoadingPreview() {
                 domainName = null,
                 createdAt = "2026-01-18T14:30:00+09:00",
                 category = null,
-                topic = null
+                topic = null,
+                title = null,
             ),
             onDelete = {},
             onOpenOriginal = {},
@@ -333,7 +336,8 @@ private fun InboxItemComponentDonePreview() {
                 domainName = "Youtube",
                 createdAt = "2026-01-18T14:30:00+09:00",
                 category = InboxCategory(id = 1, name = "경제"),
-                topic = InboxTopic(id = 1, name = "경제전망")
+                topic = InboxTopic(id = 1, name = "경제전망"),
+                title = "\"돈도 기업도 한국을 떠난다\" 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)",
             ),
             onDelete = {},
             onOpenOriginal = {},

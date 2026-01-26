@@ -108,22 +108,24 @@ private fun sampleInbox(): Inbox {
                         domainName = null,
                         createdAt = "2026-01-18T14:30:00+09:00",
                         category = null,
-                        topic = null
+                        topic = null,
+                        title = null,
                     ),
                     // 완료
                     InboxItem(
                         newsletterId = 102,
                         llmStatus = LlmStatus.DONE,
-                        contentUrl = "“돈도 기업도 한국을 떠난다” 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)",
+                        contentUrl = "\"돈도 기업도 한국을 떠난다\" 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)",
                         domainName = "Youtube",
                         createdAt = "2026-01-18T14:30:00+09:00",
                         category = InboxCategory(id = 1, name = "경제"),
-                        topic = InboxTopic(id = 1, name = "경제전망")
+                        topic = InboxTopic(id = 1, name = "경제전망"),
+                        title = "\"돈도 기업도 한국을 떠난다\" 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)",
                     )
                 )
             ),
             InboxDateGroup(
-                date = "2026-01-26",
+                date = "2026-01-27",
                 count = 1,
                 items = listOf(
                     InboxItem(
@@ -133,7 +135,8 @@ private fun sampleInbox(): Inbox {
                         domainName = null,
                         createdAt = null,
                         category = null,
-                        topic = null
+                        topic = null,
+                        title = null,
                     )
                 )
             ),
@@ -148,12 +151,13 @@ private fun sampleInbox(): Inbox {
                         domainName = null,
                         createdAt = null,
                         category = null,
-                        topic = null
+                        topic = null,
+                        title = null,
                     )
                 )
             ),
             InboxDateGroup(
-                date = "2026-01-25",
+                date = "2026-01-26",
                 count = 1,
                 items = listOf(
                     InboxItem(
@@ -163,7 +167,8 @@ private fun sampleInbox(): Inbox {
                         domainName = null,
                         createdAt = null,
                         category = null,
-                        topic = null
+                        topic = null,
+                        title = "\"돈도 기업도 한국을 떠난다\" 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)",
                     )
                 )
             )
