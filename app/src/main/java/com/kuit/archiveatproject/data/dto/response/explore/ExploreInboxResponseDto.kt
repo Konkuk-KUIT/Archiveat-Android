@@ -27,6 +27,10 @@ data class InboxItemDto(
     val llmStatus: LlmStatusDto,
     @SerialName("contentUrl")
     val contentUrl: String? = null,
+
+    @SerialName("title")
+    val title: String? = null,
+
     @SerialName("domainName")
     val domainName: String? = null, // google
     @SerialName("createdAt")

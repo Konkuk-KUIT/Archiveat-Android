@@ -32,6 +32,9 @@ private fun InboxItemDto.toEntity(): InboxItem {
         newsletterId = newsletterId,
         llmStatus = llmStatus.toEntity(),
         contentUrl = contentUrl,
+
+        title = title,
+
         domainName = domainName,
         createdAt = createdAt,
         category = category.toEntityOrNull(),

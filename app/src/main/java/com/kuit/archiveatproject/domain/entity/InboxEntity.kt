@@ -14,6 +14,9 @@ data class InboxItem(
     val newsletterId: Long,
     val llmStatus: LlmStatus,
     val contentUrl: String?,
+
+    val title: String?,
+
     val domainName: String?,
     val createdAt: String?,
     val category: InboxCategory?,
