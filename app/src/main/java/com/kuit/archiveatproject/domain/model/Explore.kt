@@ -1,19 +1,18 @@
 package com.kuit.archiveatproject.domain.model
 
 data class Explore(
+    val inboxCount: Int,
     val categories: List<ExploreCategory>,
-    val topics: List<ExploreTopic>,
 )
 
 data class ExploreCategory(
     val id: Long,
     val name: String,
+    val topics: List<ExploreTopic>,
 )
 
 data class ExploreTopic(
     val id: Long,
-    val categoryId: Long,
     val name: String,
-    val readArticleCount: Int,
-    val unreadArticleCount: Int,
+    val newsletterCount: Int,
 )
