@@ -50,7 +50,7 @@ fun LoginStep1(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val density = LocalDensity.current
+             val density = LocalDensity.current
 
             Box(
                 modifier = Modifier
