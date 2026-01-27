@@ -16,7 +16,25 @@ class UserMetadataRepositoryImpl @Inject constructor(
         return apiService.getUserMetadata().toEntity()
     }
 
-    override suspend fun submitUserMetadata(request: UserMetadataSubmit): Unit {
-        apiService.submitUserMetadata(request.toRequestDto())
+    override suspend fun submitUserMetadata(
+        request: UserMetadataSubmit
+    ): Result<Unit> {
+        return try {
+            val response = apiService.submitUserMetadata(
+                request.toRequestDto()
+            )
+
+            if (response.isSuccess) {
+                Result.success(Unit)
+            } else {
+                Result.failure(
+                    RuntimeException(
+                        "UserMetadata submit failed: ${response.message}"
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
