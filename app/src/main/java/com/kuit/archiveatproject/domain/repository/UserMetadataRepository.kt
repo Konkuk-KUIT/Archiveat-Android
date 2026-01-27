@@ -6,5 +6,5 @@ import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 interface UserMetadataRepository {
     suspend fun getUserMetadata(): UserMetadataResult
 
-    suspend fun submitUserMetadata(request: UserMetadataSubmit): Unit
+    suspend fun submitUserMetadata(request: UserMetadataSubmit): Result<Unit>
 }
