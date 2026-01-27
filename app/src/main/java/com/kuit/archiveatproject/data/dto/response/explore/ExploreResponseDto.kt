@@ -1,4 +1,4 @@
-package com.kuit.archiveatproject.data.dto.response
+package com.kuit.archiveatproject.data.dto.response.explore
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

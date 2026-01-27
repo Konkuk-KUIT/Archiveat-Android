@@ -29,12 +29,13 @@ fun BackTopBar(
     modifier: Modifier = Modifier,
     title: String = "",
     onBack: () -> Unit,
+    height: Int = 45,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(ArchiveatProjectTheme.colors.white)
-            .height(45.dp)
+            .height(height.dp)
             .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
