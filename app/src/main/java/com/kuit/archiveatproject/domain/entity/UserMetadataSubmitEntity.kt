@@ -1,5 +1,7 @@
 package com.kuit.archiveatproject.domain.entity
 
+import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
+
 data class UserMetadataSubmit(
     val employmentType: String,
     val availability: UserAvailability,

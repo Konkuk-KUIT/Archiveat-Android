@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.R
@@ -25,7 +24,6 @@ import com.kuit.archiveatproject.presentation.onboarding.component.OnboardingSli
 import com.kuit.archiveatproject.presentation.onboarding.model.OnboardingButtonStyle
 import com.kuit.archiveatproject.presentation.onboarding.model.OnboardingSlideModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
-import com.kuit.archiveatproject.ui.theme.Gray200
 
 val onboardingSlides = listOf(
     OnboardingSlideModel(
@@ -67,11 +65,11 @@ fun OnboardingScreen(
             .background(ArchiveatProjectTheme.colors.white)
     ) {
 
-        // 🔹 상단 콘텐츠 영역
+        // 상단 콘텐츠 영역
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 88.dp) // ⭐ 버튼 영역만큼 확보
+                .padding(bottom = 88.dp)
         ) {
 
             Spacer(Modifier.height(95.dp))
@@ -86,11 +84,10 @@ fun OnboardingScreen(
             OnboardingSlideContent(
                 slide = onboardingSlides[currentPage],
                 modifier = Modifier.fillMaxSize()
-                // ❌ weight 제거
             )
         }
 
-        // 🔹 하단 고정 버튼 래퍼
+        // 하단 고정 버튼 래퍼
         OnboardingBottomWrapper(
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
