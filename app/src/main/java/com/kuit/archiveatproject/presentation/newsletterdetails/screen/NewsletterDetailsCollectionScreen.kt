@@ -48,7 +48,8 @@ fun NewsletterDetailsCollectionScreen(
     ) {
         BackTopBar(
             onBack = onBack,
-            modifier = Modifier.padding(horizontal = 20.dp)
+            modifier = Modifier.padding(horizontal = 20.dp),
+            height = 45
         )
         CollectionTopBar(
             userName = userName,

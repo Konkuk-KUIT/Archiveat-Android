@@ -32,7 +32,7 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingUiEvent.OnEmploymentSelected -> {
                 _uiState.update {
                     it.copy(
-                        selectedEmployment = event.employment
+                        selectedEmploymentType = event.employment.type
                     )
                 }
             }
@@ -99,7 +99,7 @@ class OnboardingViewModel @Inject constructor(
         val state = _uiState.value
 
         // 필수 값 검증
-        if (state.selectedEmployment == null || state.availability == null) {
+        if (state.selectedEmploymentType == null || state.availability == null) {
             _uiState.update {
                 it.copy(errorMessage = "필수 정보를 선택해주세요.")
             }
@@ -107,7 +107,7 @@ class OnboardingViewModel @Inject constructor(
         }
 
         val submitEntity = UserMetadataSubmit(
-            employmentType = state.selectedEmployment.type,
+            employmentType = state.selectedEmploymentType,
             availability = state.availability,
             interests = UserInterests(
                 now = state.selectedInterests,
