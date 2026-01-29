@@ -2,9 +2,11 @@ package com.kuit.archiveatproject.presentation.onboarding.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
+import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -73,7 +75,7 @@ class OnboardingViewModel @Inject constructor(
             }.onSuccess { result ->
                 _uiState.update {
                     it.copy(
-                        employmentOptions = result.employmentTypes,
+                        employmentOptions = mapEmploymentTypes(result.employmentTypes),
                         availabilityOptions = result.availabilityOptions,
                         interestCategories = result.categories,
                         isLoading = false
@@ -105,7 +107,7 @@ class OnboardingViewModel @Inject constructor(
         }
 
         val submitEntity = UserMetadataSubmit(
-            employmentType = state.selectedEmployment,
+            employmentType = state.selectedEmployment.type,
             availability = state.availability,
             interests = UserInterests(
                 now = state.selectedInterests,
@@ -146,6 +148,38 @@ class OnboardingViewModel @Inject constructor(
 
         _uiState.update {
             it.copy(step = OnboardingStep.INTERESTS)
+        }
+    }
+
+    private fun mapEmploymentTypes(
+        types: List<String>
+    ): List<JobUiModel> {
+        return types.map { type ->
+            when (type) {
+                "STUDENT" -> JobUiModel(
+                    type = type,
+                    label = "대학생",
+                    iconRes = R.drawable.ic_job_student
+                )
+
+                "EMPLOYEE" -> JobUiModel(
+                    type = type,
+                    label = "직장인",
+                    iconRes = R.drawable.ic_job_student
+                )
+
+                "FREELANCER" -> JobUiModel(
+                    type = type,
+                    label = "프리랜서",
+                    iconRes = R.drawable.ic_job_student
+                )
+
+                else -> JobUiModel(
+                    type = type,
+                    label = type,
+                    iconRes = R.drawable.ic_job_student
+                )
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.kuit.archiveatproject.presentation.onboarding.viewmodel
 import com.kuit.archiveatproject.domain.entity.UserAvailability
 import com.kuit.archiveatproject.domain.entity.UserInterestGroup
 import com.kuit.archiveatproject.domain.entity.UserMetadataCategory
+import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
 
 /**
  * 이 온보딩 화면이 가질 수 있는 상태 정의
@@ -12,12 +13,12 @@ data class OnboardingUiState(
     val step: OnboardingStep = OnboardingStep.BASIC_INFO,
 
     // 서버에서 내려준 메타데이터 (GET)
-    val employmentOptions: List<String> = emptyList(),
+    val employmentOptions: List<JobUiModel> = emptyList(),
     val availabilityOptions: List<String> = emptyList(),
     val interestCategories: List<UserMetadataCategory> = emptyList(),
 
     // 사용자가 선택한 값
-    val selectedEmployment: String? = null,
+    val selectedEmployment: JobUiModel? = null,
     val availability: UserAvailability? = null,
     val selectedInterests: List<UserInterestGroup> = emptyList(),
 
@@ -48,7 +49,7 @@ sealed interface OnboardingUiEvent {
     object OnEnter : OnboardingUiEvent
 
     data class OnEmploymentSelected(
-        val employment: String
+        val employment: JobUiModel
     ) : OnboardingUiEvent
 
     data class OnAvailabilityChanged(
