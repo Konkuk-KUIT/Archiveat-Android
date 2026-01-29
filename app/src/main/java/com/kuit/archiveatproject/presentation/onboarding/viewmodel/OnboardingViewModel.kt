@@ -3,6 +3,7 @@ package com.kuit.archiveatproject.presentation.onboarding.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.R
+import com.kuit.archiveatproject.domain.entity.UserAvailability
 import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
@@ -22,6 +23,9 @@ class OnboardingViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState
 
+    private fun Set<TimeSlot>.toggle(timeSlot: TimeSlot): Set<TimeSlot> =
+        if (contains(timeSlot)) this - timeSlot else this + timeSlot
+
     fun onEvent(event: OnboardingUiEvent) {
         when (event) {
 
@@ -37,11 +41,31 @@ class OnboardingViewModel @Inject constructor(
                 }
             }
 
-            is OnboardingUiEvent.OnAvailabilityChanged -> {
-                _uiState.update {
-                    it.copy(
-                        availability = event.availability
-                    )
+            is OnboardingUiEvent.OnTimeSlotToggled -> {
+                _uiState.update { state ->
+                    when (event.mode) {
+                        ReadingMode.LIGHT -> {
+                            if (event.timeSlot in state.deepReadingTimes) {
+                                state
+                            } else {
+                                state.copy(
+                                    lightReadingTimes =
+                                        state.lightReadingTimes.toggle(event.timeSlot)
+                                )
+                            }
+                        }
+
+                        ReadingMode.DEEP -> {
+                            if (event.timeSlot in state.lightReadingTimes) {
+                                state
+                            } else {
+                                state.copy(
+                                    deepReadingTimes =
+                                        state.deepReadingTimes.toggle(event.timeSlot)
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -76,7 +100,9 @@ class OnboardingViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         employmentOptions = mapEmploymentTypes(result.employmentTypes),
-                        availabilityOptions = result.availabilityOptions,
+                        availabilityOptions = result.availabilityOptions.map {
+                            TimeSlot.valueOf(it)
+                        },
                         interestCategories = result.categories,
                         isLoading = false
                     )
@@ -99,7 +125,9 @@ class OnboardingViewModel @Inject constructor(
         val state = _uiState.value
 
         // 필수 값 검증
-        if (state.selectedEmploymentType == null || state.availability == null) {
+        if (state.selectedEmploymentType == null ||
+            (state.lightReadingTimes.isEmpty() && state.deepReadingTimes.isEmpty())
+        ) {
             _uiState.update {
                 it.copy(errorMessage = "필수 정보를 선택해주세요.")
             }
@@ -108,7 +136,10 @@ class OnboardingViewModel @Inject constructor(
 
         val submitEntity = UserMetadataSubmit(
             employmentType = state.selectedEmploymentType,
-            availability = state.availability,
+            availability = UserAvailability(
+                light = state.lightReadingTimes.toList(),
+                deep = state.deepReadingTimes.toList()
+            ),
             interests = UserInterests(
                 now = state.selectedInterests,
                 future = emptyList()

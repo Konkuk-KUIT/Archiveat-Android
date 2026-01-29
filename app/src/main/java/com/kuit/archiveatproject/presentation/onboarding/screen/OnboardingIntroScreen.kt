@@ -17,10 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.R
-import com.kuit.archiveatproject.presentation.onboarding.component.OnboardingActionButton
-import com.kuit.archiveatproject.presentation.onboarding.component.OnboardingBottomWrapper
-import com.kuit.archiveatproject.presentation.onboarding.component.OnboardingIndicator
-import com.kuit.archiveatproject.presentation.onboarding.component.OnboardingSlideContent
+import com.kuit.archiveatproject.presentation.onboarding.component.intro.OnboardingActionButton
+import com.kuit.archiveatproject.presentation.onboarding.component.intro.OnboardingBottomWrapper
+import com.kuit.archiveatproject.presentation.onboarding.component.intro.OnboardingIndicator
+import com.kuit.archiveatproject.presentation.onboarding.component.intro.OnboardingSlideContent
 import com.kuit.archiveatproject.presentation.onboarding.model.OnboardingButtonStyle
 import com.kuit.archiveatproject.presentation.onboarding.model.OnboardingSlideModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
