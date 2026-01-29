@@ -1,8 +1,11 @@
 package com.kuit.archiveatproject.data.repositoryimpl
 
+import com.kuit.archiveatproject.core.util.ApiException
 import com.kuit.archiveatproject.data.mapper.toRequestDto
 import com.kuit.archiveatproject.data.mapper.toEntity
 import com.kuit.archiveatproject.data.service.ApiService
+import com.kuit.archiveatproject.data.util.requireData
+import com.kuit.archiveatproject.data.util.requireSuccess
 import com.kuit.archiveatproject.domain.entity.UserMetadataResult
 import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
@@ -13,28 +16,14 @@ class UserMetadataRepositoryImpl @Inject constructor(
 ) : UserMetadataRepository {
 
     override suspend fun getUserMetadata(): UserMetadataResult {
-        return apiService.getUserMetadata().toEntity()
+        val dto = apiService.getUserMetadata().requireData()
+        return dto.toEntity()
     }
 
     override suspend fun submitUserMetadata(
         request: UserMetadataSubmit
-    ): Result<Unit> {
-        return try {
-            val response = apiService.submitUserMetadata(
-                request.toRequestDto()
-            )
-
-            if (response.isSuccess) {
-                Result.success(Unit)
-            } else {
-                Result.failure(
-                    RuntimeException(
-                        "UserMetadata submit failed: ${response.message}"
-                    )
-                )
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    ): Result<Unit> = runCatching {
+        apiService.submitUserMetadata(request.toRequestDto()).requireSuccess()
+        Unit
     }
 }

@@ -3,6 +3,7 @@ package com.kuit.archiveatproject.data.repositoryimpl
 import com.kuit.archiveatproject.data.dto.request.InboxClassificationRequestDto
 import com.kuit.archiveatproject.data.mapper.toEntity
 import com.kuit.archiveatproject.data.service.ApiService
+import com.kuit.archiveatproject.data.util.requireData
 import com.kuit.archiveatproject.domain.entity.InboxClassificationResult
 import com.kuit.archiveatproject.domain.repository.InboxClassificationRepository
 import javax.inject.Inject
@@ -17,13 +18,15 @@ class InboxClassificationRepositoryImpl @Inject constructor(
         topicId: Long,
         memo: String,
     ): InboxClassificationResult {
-        return apiService.patchInboxClassification(
+        val dto = apiService.patchInboxClassification(
             userNewsletterId = userNewsletterId,
             body = InboxClassificationRequestDto(
                 categoryId = categoryId,
                 topicId = topicId,
                 memo = memo,
             )
-        ).toEntity()
+        ).requireData()
+
+        return dto.toEntity()
     }
 }
