@@ -33,10 +33,14 @@ data class OnboardingUiState(
         get() = selectedEmploymentType != null
     // 다음 버튼 활성화 조건
     val isNextEnabled: Boolean
-        get() = isStep2Visible &&
-                (lightReadingTimes.isNotEmpty() || deepReadingTimes.isNotEmpty())
-}
+        get() {
+            val totalSelected = lightReadingTimes.size + deepReadingTimes.size
+            val allSelected = availabilityOptions.size
 
+            return totalSelected == allSelected ||
+                    (lightReadingTimes.isNotEmpty() && deepReadingTimes.isNotEmpty())
+        }
+}
 
 /**
  * 온보딩 단계
