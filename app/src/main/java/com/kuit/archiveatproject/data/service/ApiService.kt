@@ -20,29 +20,29 @@ import retrofit2.http.Query
 
 interface ApiService {
     @GET("/explore")
-    suspend fun getExplore(): ExploreResponseDto
+    suspend fun getExplore(): BaseResponse<ExploreResponseDto>
 
     @GET("/explore/inbox")
-    suspend fun getExploreInbox(): ExploreInboxResponseDto
+    suspend fun getExploreInbox(): BaseResponse<ExploreInboxResponseDto>
 
     @GET("/explore/topic/{topicId}/user-newsletters")
     suspend fun getTopicUserNewsletters(
         @Path("topicId") topicId: Long,
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 20,
-    ): ExploreTopicNewslettersResponseDto
+    ): BaseResponse<ExploreTopicNewslettersResponseDto>
 
     @PATCH("/explore/inbox/{userNewsletterId}/classification")
     suspend fun patchInboxClassification(
         @Path("userNewsletterId") userNewsletterId: Long,
         @Body body: InboxClassificationRequestDto,
-    ): InboxClassificationResponseDto
+    ): BaseResponse<InboxClassificationResponseDto>
 
     @GET("/report")
-    suspend fun getReport(): ReportResponseDto
+    suspend fun getReport(): BaseResponse<ReportResponseDto>
 
     @GET("/user/metadata")
-    suspend fun getUserMetadata(): UserMetadataResponseDto
+    suspend fun getUserMetadata(): BaseResponse<UserMetadataResponseDto>
 
     @POST("/user/metadata")
     suspend fun submitUserMetadata(
@@ -52,15 +52,15 @@ interface ApiService {
     @PATCH("/newsletters/{userNewsletterId}")
     suspend fun patchNewsletterRead(
         @Path("userNewsletterId") userNewsletterId: Long,
-    ): Unit
+    ): BaseResponse<Unit>
 
     @PATCH("/newsletters/{userNewsletterId}/simple")
     suspend fun patchNewsletterSimple(
         @Path("userNewsletterId") userNewsletterId: Long,
-    ): NewsletterSimpleResponseDto
+    ): BaseResponse<NewsletterSimpleResponseDto>
 
     @GET("/collections/{collectionId}")
     suspend fun getCollectionDetails(
         @Path("collectionId") collectionId: Long,
-    ): CollectionDetailsResponseDto
+    ): BaseResponse<CollectionDetailsResponseDto>
 }
