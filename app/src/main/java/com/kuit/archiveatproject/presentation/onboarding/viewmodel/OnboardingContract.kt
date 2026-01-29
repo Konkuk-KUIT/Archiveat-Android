@@ -19,7 +19,8 @@ data class OnboardingUiState(
 
     // 사용자가 선택한 값
     val selectedEmploymentType: String? = null,
-    val availability: UserAvailability? = null,
+    val lightReadingTimes: Set<TimeSlot> = emptySet(),
+    val deepReadingTimes: Set<TimeSlot> = emptySet(),
     val selectedInterests: List<UserInterestGroup> = emptyList(),
 
     // UI 상태
@@ -27,9 +28,13 @@ data class OnboardingUiState(
     val isSubmitSuccess: Boolean = false,
     val errorMessage: String? = null,
 ) {
+    // step2 노출 조건
+    val isStep2Visible: Boolean
+        get() = selectedEmploymentType != null
     // 다음 버튼 활성화 조건
     val isNextEnabled: Boolean
-        get() = selectedEmploymentType != null && availability != null
+        get() = isStep2Visible &&
+                (lightReadingTimes.isNotEmpty() || deepReadingTimes.isNotEmpty())
 }
 
 
@@ -52,15 +57,30 @@ sealed interface OnboardingUiEvent {
         val employment: JobUiModel
     ) : OnboardingUiEvent
 
-    data class OnAvailabilityChanged(
-        val availability: UserAvailability
+    // Step 2
+    data class OnTimeSlotToggled(
+        val mode: ReadingMode,
+        val timeSlot: TimeSlot
     ) : OnboardingUiEvent
 
-    object OnNextStep : OnboardingUiEvent
-
+    // Step 3
     data class OnInterestsSelected(
         val interests: List<UserInterestGroup>
     ) : OnboardingUiEvent
 
+    // Navigation
+    object OnNextStep : OnboardingUiEvent
     object OnSubmit : OnboardingUiEvent
+}
+
+enum class TimeSlot {
+    MORNING,    // 등굣길(아침)
+    LUNCHTIME,  // 공강/점심
+    EVENING,    // 하굣길(저녁)
+    BEDTIME     // 자기 전
+}
+
+enum class ReadingMode {
+    LIGHT,  // 가볍게 읽기 (10분 미만)
+    DEEP    // 몰입해 읽기 (10분 이상)
 }
