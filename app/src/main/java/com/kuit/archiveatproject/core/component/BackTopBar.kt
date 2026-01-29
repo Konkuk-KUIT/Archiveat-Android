@@ -29,7 +29,7 @@ fun BackTopBar(
     modifier: Modifier = Modifier,
     title: String = "",
     onBack: () -> Unit,
-    height: Int = 45,
+    height: Int = 56,
 ) {
     Row(
         modifier = Modifier
