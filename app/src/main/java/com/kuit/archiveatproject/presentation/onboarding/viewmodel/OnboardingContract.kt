@@ -18,7 +18,7 @@ data class OnboardingUiState(
     val interestCategories: List<UserMetadataCategory> = emptyList(),
 
     // 사용자가 선택한 값
-    val selectedEmployment: JobUiModel? = null,
+    val selectedEmploymentType: String? = null,
     val availability: UserAvailability? = null,
     val selectedInterests: List<UserInterestGroup> = emptyList(),
 
@@ -29,7 +29,7 @@ data class OnboardingUiState(
 ) {
     // 다음 버튼 활성화 조건
     val isNextEnabled: Boolean
-        get() = selectedEmployment != null && availability != null
+        get() = selectedEmploymentType != null && availability != null
 }
 
 
