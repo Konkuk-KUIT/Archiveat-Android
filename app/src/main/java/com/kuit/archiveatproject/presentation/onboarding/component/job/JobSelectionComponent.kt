@@ -1,4 +1,4 @@
-package com.kuit.archiveatproject.presentation.onboarding.component
+package com.kuit.archiveatproject.presentation.onboarding.component.job
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

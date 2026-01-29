@@ -8,6 +8,7 @@ import com.kuit.archiveatproject.domain.entity.UserAvailability
 import com.kuit.archiveatproject.domain.entity.UserInterestGroup
 import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
+import com.kuit.archiveatproject.presentation.onboarding.viewmodel.TimeSlot
 
 fun UserMetadataSubmit.toRequestDto(): UserMetadataSubmitRequestDto {
     return UserMetadataSubmitRequestDto(
@@ -18,11 +19,19 @@ fun UserMetadataSubmit.toRequestDto(): UserMetadataSubmitRequestDto {
 }
 
 private fun UserAvailability.toDto(): UserAvailabilityDto {
+
+    fun modesFor(slot: TimeSlot): List<String> {
+        val modes = mutableListOf<String>()
+        if (slot in light) modes.add("LIGHT")
+        if (slot in deep) modes.add("DEEP")
+        return modes
+    }
+
     return UserAvailabilityDto(
-        prefMorning = prefMorning,
-        prefLunch = prefLunch,
-        prefEvening = prefEvening,
-        prefBedtime = prefBedtime,
+        prefMorning = modesFor(TimeSlot.MORNING),
+        prefLunch = modesFor(TimeSlot.LUNCHTIME),
+        prefEvening = modesFor(TimeSlot.EVENING),
+        prefBedtime = modesFor(TimeSlot.BEDTIME)
     )
 }
 
