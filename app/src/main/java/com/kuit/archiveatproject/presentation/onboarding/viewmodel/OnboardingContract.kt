@@ -14,7 +14,7 @@ data class OnboardingUiState(
 
     // 서버에서 내려준 메타데이터 (GET)
     val employmentOptions: List<JobUiModel> = emptyList(),
-    val availabilityOptions: List<String> = emptyList(),
+    val availabilityOptions: List<TimeSlot> = emptyList(),
     val interestCategories: List<UserMetadataCategory> = emptyList(),
 
     // 사용자가 선택한 값

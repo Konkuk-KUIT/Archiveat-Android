@@ -1,4 +1,4 @@
-package com.kuit.archiveatproject.presentation.onboarding.component
+package com.kuit.archiveatproject.presentation.onboarding.component.intro
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
-import com.kuit.archiveatproject.ui.theme.Gray200
 
 @Composable
 fun OnboardingIndicator(

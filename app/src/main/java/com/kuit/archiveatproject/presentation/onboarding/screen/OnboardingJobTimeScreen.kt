@@ -1,6 +1,7 @@
 package com.kuit.archiveatproject.presentation.onboarding.screen
 
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -15,11 +16,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.R
-import com.kuit.archiveatproject.presentation.onboarding.component.JobSelectionComponent
+import com.kuit.archiveatproject.presentation.onboarding.component.job.JobSelectionComponent
+import com.kuit.archiveatproject.presentation.onboarding.component.time.TimeSelectionComponent
 import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiEvent
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiState
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
+import com.kuit.archiveatproject.presentation.onboarding.viewmodel.ReadingMode
+import com.kuit.archiveatproject.presentation.onboarding.viewmodel.TimeSlot
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
@@ -33,14 +37,24 @@ fun OnboardingJobTimeScreen(
         uiState = uiState,
         onJobSelected = { job ->
             viewModel.onEvent(OnboardingUiEvent.OnEmploymentSelected(job))
+        },
+        onTimeSlotClicked = { mode, slot ->
+            viewModel.onEvent(
+                OnboardingUiEvent.OnTimeSlotToggled(
+                    mode = mode,
+                    timeSlot = slot
+                )
+            )
         }
     )
+
 }
 
 @Composable
 private fun OnboardingJobTimeContent(
     uiState: OnboardingUiState,
     onJobSelected: (JobUiModel) -> Unit,
+    onTimeSlotClicked: (ReadingMode, TimeSlot) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
@@ -63,6 +77,7 @@ private fun OnboardingJobTimeContent(
             Spacer(Modifier.height(23.dp))
         }
 
+        // ===== Step 1: 직업 선택 =====
         item {
             JobSelectionComponent(
                 jobs = uiState.employmentOptions,
@@ -71,15 +86,20 @@ private fun OnboardingJobTimeContent(
             )
         }
 
-        item {
-            if (uiState.selectedEmploymentType != null) {
-                Spacer(Modifier.height(32.dp))
+        // ===== Step 2: 가용 시간 (조건부 노출) =====
+        if (uiState.selectedEmploymentType != null) {
+            item {
+                Spacer(Modifier.height(23.dp))
 
-//                AvailabilitySelectionComponent(
-//                    lightSelected = uiState.lightAvailability,
-//                    deepSelected = uiState.deepAvailability,
-//                    onToggle = onAvailabilityToggle
-//                )
+                TimeSelectionComponent(
+                    timeSlots = uiState.availabilityOptions,
+                    lightSelected = uiState.lightReadingTimes,
+                    deepSelected = uiState.deepReadingTimes,
+                    onTimeClicked = { mode, slot ->
+                        onTimeSlotClicked(mode, slot)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }
@@ -90,39 +110,57 @@ private fun OnboardingJobTimeContent(
 private fun OnboardingJobTimeScreenPreview() {
 
     val previewJobs = listOf(
-        JobUiModel(
-            type = "STUDENT",
-            label = "대학생",
-            iconRes = R.drawable.ic_job_student
-        ),
-        JobUiModel(
-            type = "EMPLOYEE",
-            label = "직장인",
-            iconRes = R.drawable.ic_job_student
-        ),
-        JobUiModel(
-            type = "FREELANCER",
-            label = "프리랜서",
-            iconRes = R.drawable.ic_job_student
-        ),
-        JobUiModel(
-            type = "OTHER",
-            label = "기타",
-            iconRes = R.drawable.ic_job_student
-        )
+        JobUiModel("STUDENT", "대학생", R.drawable.ic_job_student),
+        JobUiModel("EMPLOYEE", "직장인", R.drawable.ic_job_student),
+        JobUiModel("FREELANCER", "프리랜서", R.drawable.ic_job_student),
+        JobUiModel("OTHER", "기타", R.drawable.ic_job_student)
     )
 
-    var selectedJob by remember { mutableStateOf<String?>(null) }
+    val previewTimeSlots = listOf(
+        TimeSlot.MORNING,
+        TimeSlot.LUNCHTIME,
+        TimeSlot.EVENING,
+        TimeSlot.BEDTIME
+    )
+
+    // ===== Preview 전용 상태 =====
+    var selectedEmploymentType by remember { mutableStateOf<String?>(null) }
+    var lightReadingTimes by remember { mutableStateOf(setOf<TimeSlot>()) }
+    var deepReadingTimes by remember { mutableStateOf(setOf<TimeSlot>()) }
 
     ArchiveatProjectTheme {
         OnboardingJobTimeContent(
             uiState = OnboardingUiState(
                 employmentOptions = previewJobs,
-                selectedEmploymentType = selectedJob
+                availabilityOptions = previewTimeSlots,
+                selectedEmploymentType = selectedEmploymentType,
+                lightReadingTimes = lightReadingTimes,
+                deepReadingTimes = deepReadingTimes
             ),
             onJobSelected = { job ->
-                selectedJob = job.type
+                selectedEmploymentType = job.type
+            },
+            onTimeSlotClicked = { mode, slot ->
+                when (mode) {
+                    ReadingMode.LIGHT -> {
+                        if (slot !in deepReadingTimes) {
+                            lightReadingTimes =
+                                lightReadingTimes.toggle(slot)
+                        }
+                    }
+
+                    ReadingMode.DEEP -> {
+                        if (slot !in lightReadingTimes) {
+                            deepReadingTimes =
+                                deepReadingTimes.toggle(slot)
+                        }
+                    }
+                }
             }
+
         )
     }
 }
+
+fun <T> Set<T>.toggle(item: T): Set<T> =
+    if (contains(item)) this - item else this + item

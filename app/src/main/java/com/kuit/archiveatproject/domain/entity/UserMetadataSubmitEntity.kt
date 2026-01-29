@@ -1,6 +1,7 @@
 package com.kuit.archiveatproject.domain.entity
 
 import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
+import com.kuit.archiveatproject.presentation.onboarding.viewmodel.TimeSlot
 
 data class UserMetadataSubmit(
     val employmentType: String,
@@ -9,10 +10,8 @@ data class UserMetadataSubmit(
 )
 
 data class UserAvailability(
-    val prefMorning: List<String>,
-    val prefLunch: List<String>,
-    val prefEvening: List<String>,
-    val prefBedtime: List<String>,
+    val light: List<TimeSlot>,
+    val deep: List<TimeSlot>
 )
 
 data class UserInterests(
