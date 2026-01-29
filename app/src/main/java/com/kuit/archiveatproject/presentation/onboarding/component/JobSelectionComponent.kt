@@ -24,7 +24,7 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun JobSelectionComponent(
     jobs: List<JobUiModel>,
-    selectedJob: JobUiModel?,
+    selectedEmploymentType: String?,
     onJobSelected: (JobUiModel) -> Unit,
     modifier: Modifier = Modifier
 ){
@@ -65,7 +65,7 @@ fun JobSelectionComponent(
                 JobSelectionItem(
                     title = job.label,
                     icon = painterResource(id = R.drawable.ic_job_student),
-                    isSelected = job == selectedJob,
+                    isSelected = job.type == selectedEmploymentType,
                     onClick = { onJobSelected(job) }
                 )
             }
@@ -103,7 +103,7 @@ private fun JobSelectionComponentPreview() {
     ArchiveatProjectTheme {
         JobSelectionComponent(
             jobs = previewJobs,
-            selectedJob = previewJobs[0], // "대학생" 선택 상태
+            selectedEmploymentType = previewJobs[0].type, // "대학생" 선택 상태
             onJobSelected = {}
         )
     }

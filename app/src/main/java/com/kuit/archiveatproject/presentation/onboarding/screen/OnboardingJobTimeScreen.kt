@@ -66,9 +66,21 @@ private fun OnboardingJobTimeContent(
         item {
             JobSelectionComponent(
                 jobs = uiState.employmentOptions,
-                selectedJob = uiState.selectedEmployment,
+                selectedEmploymentType = uiState.selectedEmploymentType,
                 onJobSelected = onJobSelected
             )
+        }
+
+        item {
+            if (uiState.selectedEmploymentType != null) {
+                Spacer(Modifier.height(32.dp))
+
+//                AvailabilitySelectionComponent(
+//                    lightSelected = uiState.lightAvailability,
+//                    deepSelected = uiState.deepAvailability,
+//                    onToggle = onAvailabilityToggle
+//                )
+            }
         }
     }
 }
@@ -100,16 +112,16 @@ private fun OnboardingJobTimeScreenPreview() {
         )
     )
 
-    var selectedJob by remember { mutableStateOf<JobUiModel?>(null) }
+    var selectedJob by remember { mutableStateOf<String?>(null) }
 
     ArchiveatProjectTheme {
         OnboardingJobTimeContent(
             uiState = OnboardingUiState(
                 employmentOptions = previewJobs,
-                selectedEmployment = selectedJob
+                selectedEmploymentType = selectedJob
             ),
             onJobSelected = { job ->
-                selectedJob = job
+                selectedJob = job.type
             }
         )
     }
