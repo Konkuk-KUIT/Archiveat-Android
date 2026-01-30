@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.domain.entity.UserAvailability
+import com.kuit.archiveatproject.domain.entity.UserInterestGroup
 import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
@@ -14,6 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.find
+import kotlin.collections.map
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
@@ -213,4 +216,52 @@ class OnboardingViewModel @Inject constructor(
             }
         }
     }
+
+    fun toggleInterest(
+        current: List<UserInterestGroup>,
+        categoryId: Long,
+        topicId: Long
+    ): List<UserInterestGroup> {
+
+        val group = current.find { it.categoryId == categoryId }
+
+        return if (group == null) {
+            current + UserInterestGroup(
+                categoryId = categoryId,
+                topicIds = listOf(topicId)
+            )
+        } else {
+            val newTopics =
+                if (topicId in group.topicIds)
+                    group.topicIds - topicId
+                else
+                    group.topicIds + topicId
+
+            if (newTopics.isEmpty()) {
+                current - group
+            } else {
+                current.map {
+                    if (it.categoryId == categoryId)
+                        it.copy(topicIds = newTopics)
+                    else it
+                }
+            }
+        }
+    }
+
+    fun onInterestToggled(
+        categoryId: Long,
+        topicId: Long
+    ) {
+        _uiState.update { state ->
+            state.copy(
+                selectedInterests = toggleInterest(
+                    current = state.selectedInterests,
+                    categoryId = categoryId,
+                    topicId = topicId
+                )
+            )
+        }
+    }
+
 }
