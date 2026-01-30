@@ -118,6 +118,7 @@ private fun OnboardingJobTimeContent(
 
                     TimeSelectionComponent(
                         timeSlots = uiState.availabilityOptions,
+                        employmentType = uiState.selectedEmploymentType,
                         lightSelected = uiState.lightReadingTimes,
                         deepSelected = uiState.deepReadingTimes,
                         onTimeClicked = { mode, slot ->

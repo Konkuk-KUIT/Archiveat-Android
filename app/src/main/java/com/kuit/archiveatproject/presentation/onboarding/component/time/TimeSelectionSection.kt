@@ -15,6 +15,7 @@ fun TimeSelectionSection(
     timeSlots: List<TimeSlot>,
     selectedTimes: Set<TimeSlot>,
     disabledTimes: Set<TimeSlot>,
+    employmentType: String,
     onTimeClicked: (TimeSlot) -> Unit
 ) {
     Text(
@@ -28,6 +29,7 @@ fun TimeSelectionSection(
         timeSlots = timeSlots,
         selectedTimes = selectedTimes,
         disabledTimes = disabledTimes,
+        employmentType = employmentType,
         onTimeClicked = onTimeClicked
     )
 }
