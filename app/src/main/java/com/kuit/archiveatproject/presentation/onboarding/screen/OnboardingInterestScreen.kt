@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -14,7 +15,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +32,7 @@ import com.kuit.archiveatproject.domain.entity.UserMetadataTopic
 import com.kuit.archiveatproject.domain.model.HomeTabType
 import com.kuit.archiveatproject.presentation.onboarding.component.OnboardingNextButton
 import com.kuit.archiveatproject.presentation.onboarding.component.interest.InterestCategorySection
+import com.kuit.archiveatproject.presentation.onboarding.component.interest.InterestTextChip
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiEvent
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiState
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
@@ -88,7 +92,6 @@ private fun OnboardingInterestContent(
             modifier = Modifier.padding(horizontal = 26.dp)
         ) {
 
-
         }
 
         Spacer(Modifier.height(16.dp))
@@ -117,14 +120,12 @@ private fun OnboardingInterestContent(
                         style = ArchiveatProjectTheme.typography.Body_2_medium,
                         color = ArchiveatProjectTheme.colors.gray400
                     )
-                    TextTag(
+                    InterestTextChip(
                         text = "영감수집",
-                        variant = TagVariant.Tab(HomeTabType.INSPIRATION)
                     )
                     Spacer(Modifier.width(2.5.dp))
-                    TextTag(
+                    InterestTextChip(
                         text = "집중탐구",
-                        variant = TagVariant.Tab(HomeTabType.DEEP_DIVE)
                     )
                     Text(
                         text = " 로 확실히 챙겨드리고,",
@@ -132,6 +133,7 @@ private fun OnboardingInterestContent(
                         color = ArchiveatProjectTheme.colors.gray400
                     )
                 }
+                Spacer(Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -140,14 +142,12 @@ private fun OnboardingInterestContent(
                         style = ArchiveatProjectTheme.typography.Body_2_medium,
                         color = ArchiveatProjectTheme.colors.gray400
                     )
-                    TextTag(
+                    InterestTextChip(
                         text = "성장한입",
-                        variant = TagVariant.Tab(HomeTabType.GROWTH)
                     )
                     Spacer(Modifier.width(2.5.dp))
-                    TextTag(
+                    InterestTextChip(
                         text = "관점확장",
-                        variant = TagVariant.Tab(HomeTabType.VIEW_EXPANSION)
                     )
                     Text(
                         text = " 으로 가능성을 열어드릴게요",
@@ -155,6 +155,7 @@ private fun OnboardingInterestContent(
                         color = ArchiveatProjectTheme.colors.gray400
                     )
                 }
+                Spacer(Modifier.height(28.dp))
             }
 
             uiState.interestCategories.forEach { category ->
@@ -170,7 +171,7 @@ private fun OnboardingInterestContent(
                 }
             }
         }
-
+        Spacer(Modifier.height(14.dp))
         // ===== CTA =====
         OnboardingNextButton(
             text = if (isSubmitEnabled)
@@ -222,40 +223,96 @@ private fun toggleInterest(
     }
 }
 
-@Preview(showBackground = true)
+private val previewCategories = listOf(
+    UserMetadataCategory(
+        id = 1,
+        name = "IT/과학",
+        topics = listOf(
+            UserMetadataTopic(1, "인공지능"),
+            UserMetadataTopic(2, "백엔드/인프라"),
+            UserMetadataTopic(3, "프론트엔드"),
+            UserMetadataTopic(4, "데이터/보안"),
+            UserMetadataTopic(5, "테크 트렌드"),
+            UserMetadataTopic(6, "블록체인"),
+        )
+    ),
+    UserMetadataCategory(
+        id = 2,
+        name = "경제",
+        topics = listOf(
+            UserMetadataTopic(7, "주식/투자"),
+            UserMetadataTopic(8, "부동산"),
+            UserMetadataTopic(9, "가상 화폐"),
+            UserMetadataTopic(10, "창업/스타트업"),
+            UserMetadataTopic(11, "브랜드/마케팅"),
+            UserMetadataTopic(12, "거시경제"),
+        )
+    ),
+    UserMetadataCategory(
+        id = 3,
+        name = "국제",
+        topics = listOf(
+            UserMetadataTopic(13, "지정학/외교"),
+            UserMetadataTopic(14, "미국/중국"),
+            UserMetadataTopic(15, "글로벌 비즈니스"),
+            UserMetadataTopic(16, "기후/에너지"),
+        )
+    ),
+    UserMetadataCategory(
+        id = 4,
+        name = "문화",
+        topics = listOf(
+            UserMetadataTopic(17, "영화/OTT"),
+            UserMetadataTopic(18, "음악"),
+            UserMetadataTopic(19, "도서/아트"),
+            UserMetadataTopic(20, "팝컬처/트렌드"),
+            UserMetadataTopic(21, "공간/플레이스"),
+            UserMetadataTopic(22, "디자인/예술"),
+        )
+    ),
+    UserMetadataCategory(
+        id = 5,
+        name = "생활",
+        topics = listOf(
+            UserMetadataTopic(23, "주니어/취업"),
+            UserMetadataTopic(24, "업무 생산성"),
+            UserMetadataTopic(25, "리더십/조직"),
+            UserMetadataTopic(26, "심리/마인드"),
+            UserMetadataTopic(27, "건강/리빙"),
+        )
+    )
+)
+
+@Preview(
+    showBackground = true,
+)
 @Composable
 fun OnboardingInterestContentPreview() {
-    OnboardingInterestContent(
-        uiState = OnboardingUiState(
-            interestCategories = listOf(
-                UserMetadataCategory(
-                    id = 1,
-                    name = "IT/과학",
-                    topics = listOf(
-                        UserMetadataTopic(1, "인공지능"),
-                        UserMetadataTopic(2, "백엔드/인프라"),
-                        UserMetadataTopic(3, "프론트엔드"),
-                        UserMetadataTopic(4, "백엔드/인프라"),
-                        UserMetadataTopic(5, "프론트엔드")
-                    )
-                ),
-                UserMetadataCategory(
-                    id = 2,
-                    name = "경제",
-                    topics = listOf(
-                        UserMetadataTopic(4, "주식/투자"),
-                        UserMetadataTopic(5, "부동산")
-                    )
-                )
-            ),
-            selectedInterests = listOf(
-                UserInterestGroup(
-                    categoryId = 1,
-                    topicIds = listOf(1, 3)
-                )
+
+    var uiState by remember {
+        mutableStateOf(
+            OnboardingUiState(
+                interestCategories = previewCategories,
+                selectedInterests = emptyList()
             )
-        ),
-        onTopicToggled = { _, _ -> },
-        onSubmitClicked = {}
-    )
+        )
+    }
+
+    ArchiveatProjectTheme {
+        OnboardingInterestContent(
+            uiState = uiState,
+            onTopicToggled = { categoryId, topicId ->
+                uiState = uiState.copy(
+                    selectedInterests = toggleInterest(
+                        current = uiState.selectedInterests,
+                        categoryId = categoryId,
+                        topicId = topicId
+                    )
+                )
+            },
+            onSubmitClicked = {
+                // Preview에서는 noop
+            }
+        )
+    }
 }
