@@ -22,7 +22,7 @@ fun ReportStatusDto.toDomain() =
     ReportStatus(
         totalSavedCount = totalSavedCount,
         totalReadCount = totalReadCount,
-        percentage = percentage
+        percentage = totalReadCount/totalSavedCount * 100
     )
 
 fun ReportBalanceDto.toDomain() =
