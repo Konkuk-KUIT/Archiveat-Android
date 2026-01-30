@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
 import com.kuit.archiveatproject.domain.entity.UserInterestGroup
@@ -88,11 +89,7 @@ private fun OnboardingInterestContent(
         Spacer(Modifier.height(44.dp))
 
         // ===== Header =====
-        Column(
-            modifier = Modifier.padding(horizontal = 26.dp)
-        ) {
-
-        }
+        BackTopBar(onBack = {})
 
         Spacer(Modifier.height(16.dp))
 
