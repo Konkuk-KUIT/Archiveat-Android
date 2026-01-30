@@ -49,15 +49,7 @@ fun OnboardingInterestScreen(
     OnboardingInterestContent(
         uiState = uiState,
         onTopicToggled = { categoryId, topicId ->
-            // 지금 contract 기준: UI에서 list 만들어서 전달
-            val updated = toggleInterest(
-                current = uiState.selectedInterests,
-                categoryId = categoryId,
-                topicId = topicId
-            )
-            viewModel.onEvent(
-                OnboardingUiEvent.OnInterestsSelected(updated)
-            )
+            viewModel.onInterestToggled(categoryId, topicId)
         },
         onSubmitClicked = {
             viewModel.onEvent(OnboardingUiEvent.OnSubmit)
