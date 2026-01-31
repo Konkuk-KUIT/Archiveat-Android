@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -32,11 +36,22 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+
+private val EMAIL_REGEX =
+    Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)+$")
+
+private fun isValidEmail(raw: String, maxLen: Int): Boolean {
+    val email = raw.trim()
+    return email.isNotEmpty() &&
+            email.length <= maxLen &&
+            EMAIL_REGEX.matches(email)
+}
 
 @Composable
 fun LoginStep3(
@@ -49,17 +64,23 @@ fun LoginStep3(
     val passwordFocusRequester = remember { FocusRequester() }
 
     // 길이 제한
-    val emailMinLen = 1
-    val emailMaxLen = 15
-    val passwordMinLen = 1
-    val passwordMaxLen = 15
+    val emailMaxLen = 254 // RFC 5321 표준
+
+    val passwordMinLen = 8
+    val passwordMaxLen = 20 // 128
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val isEmailValid = email.length in emailMinLen..emailMaxLen
+    var isPasswordVisible by remember { mutableStateOf(false) }
+
+    val emailTrimmed = email.trim()
+
+    val isEmailValid = isValidEmail(email, emailMaxLen)
     val isPasswordValid = password.length in passwordMinLen..passwordMaxLen
     val isFormValid = isEmailValid && isPasswordValid
+
+    val showPasswordError = password.isNotEmpty() && !isPasswordValid
 
     Column(
         modifier = modifier
@@ -116,7 +137,7 @@ fun LoginStep3(
                 value = email,
                 onValueChange = { input ->
                     email = input
-                        .take(emailMaxLen) // 15자 넘으면 자르기
+                        .take(emailMaxLen) // 254자 넘으면 자르기
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -203,9 +224,23 @@ fun LoginStep3(
                             style = ArchiveatProjectTheme.typography.Body_2_medium,
                             color = ArchiveatProjectTheme.colors.gray400
                         )
+                        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                            Icon(
+                                imageVector = if (isPasswordVisible)
+                                    androidx.compose.material.icons.Icons.Filled.VisibilityOff
+                                else
+                                    androidx.compose.material.icons.Icons.Filled.Visibility,
+                                contentDescription = if (isPasswordVisible) "비밀번호 숨기기" else "비밀번호 보기",
+                                tint = ArchiveatProjectTheme.colors.gray400
+                            )
+                        }
                     }
                 },
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (isPasswordVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
@@ -214,7 +249,7 @@ fun LoginStep3(
                     onDone = {
                         keyboard?.hide()
                         focusManager.clearFocus(force = true)
-                        if (isFormValid) onComplete(email, password)
+                        if (isFormValid) onComplete(emailTrimmed, password)
                     }
                 ),
                 colors = TextFieldDefaults.colors(
@@ -227,6 +262,19 @@ fun LoginStep3(
                     cursorColor = ArchiveatProjectTheme.colors.gray950
                 )
             )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(
+                text = "비밀번호는 8자 이상이어야 합니다.",
+                style = ArchiveatProjectTheme.typography.Caption_medium,
+                color = if (showPasswordError) {
+                    ArchiveatProjectTheme.colors.sub_2
+                } else {
+                    ArchiveatProjectTheme.colors.gray400
+                },
+                modifier = Modifier.padding(horizontal = 13.dp),
+            )
         }
 
         PrimaryRoundedButton(
@@ -235,7 +283,7 @@ fun LoginStep3(
                 if (!isFormValid) return@PrimaryRoundedButton
                 keyboard?.hide()
                 focusManager.clearFocus(force = true) // 키보드 내림
-                onComplete(email, password) // (email: String, password: String) -> Unit
+                onComplete(emailTrimmed, password) // (email: String, password: String) -> Unit
             },
             enabled = isFormValid,
             modifier = Modifier
