@@ -4,6 +4,7 @@ import com.kuit.archiveatproject.data.dto.request.InboxClassificationRequestDto
 import com.kuit.archiveatproject.data.dto.request.UserMetadataSubmitRequestDto
 import com.kuit.archiveatproject.data.dto.response.BaseResponse
 import com.kuit.archiveatproject.data.dto.response.CollectionDetailsResponseDto
+import com.kuit.archiveatproject.data.dto.response.HomeResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewslettersResponseDto
@@ -19,6 +20,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
+    @GET("/home")
+    suspend fun getHome(): BaseResponse<HomeResponseDto>
+
     @GET("/explore")
     suspend fun getExplore(): BaseResponse<ExploreResponseDto>
 

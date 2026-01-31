@@ -1,4 +1,6 @@
-package com.kuit.archiveatproject.domain.entity
+package com.kuit.archiveatproject.domain.model
+
+import com.kuit.archiveatproject.domain.entity.LlmStatus
 
 data class Explore(
     val inboxCount: Int,
