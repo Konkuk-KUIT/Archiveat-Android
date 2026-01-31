@@ -1,22 +1,28 @@
 package com.kuit.archiveatproject.presentation.report.model
 
-data class ReportUiState(
-    val referenceDate: String,
-    val totalSavedCount: Int,
-    val totalReadCount: Int,
-    val readPercentage: Int,
-    val lightPercentage: Int,
-    val nowPercentage: Int,
-    val interestGaps: List<InterestGapUiItem>,
+import com.kuit.archiveatproject.domain.entity.RecentReadNewsletter
 
-    // 주간 ai 종합 피드백
-    val weeklyFeedbackDateRange: String, // 1월 19일-1월 25일
-    val weeklyFeedbackBody: String
-    /*
-    지난 주 AI 분야에 80%의 시간을 사용하셨네요.
-    저장 분야를 보니 건강에도 관심이 많으신데,
-    관련 콘텐츠를 확인해볼까요?
-     */
+data class ReportUiState(
+    val referenceDate: String = "",
+
+    // 핵심 소비 현황
+    val totalSavedCount: Int = 0,
+    val totalReadCount: Int = 0,
+    val readPercentage: Int = 0,
+
+    // 리딩 밸런스
+    val lightPercentage: Int = 0,
+    val nowPercentage: Int = 0,
+
+    // 관심사별 소비 격차
+    val interestGaps: List<InterestGapUiItem> = emptyList(),
+
+    // 최근 학습 기록
+    val recentReadNewsletters: List<RecentReadNewsletterUiItem> = emptyList(),
+
+    // 주간 AI 종합 피드백
+    val weeklyFeedbackDateRange: String = "",
+    val weeklyFeedbackBody: String = ""
 )
 
 data class InterestGapUiItem(
@@ -24,4 +30,11 @@ data class InterestGapUiItem(
     val savedCount: Int,
     val readCount: Int,
     val gap: Int
+)
+
+data class RecentReadNewsletterUiItem(
+    val id: Long,
+    val title: String,
+    val categoryName: String,
+    val lastViewedAt: String
 )
