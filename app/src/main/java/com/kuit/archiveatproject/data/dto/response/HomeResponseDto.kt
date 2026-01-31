@@ -72,5 +72,5 @@ data class HomeContentCollectionCardDto(
     @SerialName("mediumCardSummary")
     val mediumCardSummary: String,
     @SerialName("thumbnailUrls")
-    val thumbnailUrls: List<String>
+    val thumbnailUrls: List<String> = emptyList(),
 )
