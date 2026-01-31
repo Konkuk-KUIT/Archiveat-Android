@@ -1,7 +1,8 @@
-package com.kuit.archiveatproject.domain.model
+package com.kuit.archiveatproject.domain.entity
 
 data class Explore(
     val inboxCount: Int,
+    val exploreLlmStatus: LlmStatus,
     val categories: List<ExploreCategory>,
 )
 
