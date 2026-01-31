@@ -53,6 +53,7 @@ data class TopicDto(
     @SerialName("name") val name: String? = null, // AI
 )
 
+// ExploreInboxResponseDto 에서도 같이 사용
 @Serializable
 enum class LlmStatusDto {
     @SerialName("PENDING") PENDING,
