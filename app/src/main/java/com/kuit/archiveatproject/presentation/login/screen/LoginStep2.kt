@@ -132,10 +132,11 @@ fun LoginStep2(
             onClick = { onNext(items.associate { it.id to it.checked }) },
             enabled = requiredChecked,
             modifier = Modifier
-                .padding(horizontal = 31.dp)
+                .padding(horizontal = 20.dp)
                 .padding(bottom = 14.dp),
-            cornerRadiusDp = 50,
+            cornerRadiusDp = 12,
             heightDp = 50,
+            containerColor = ArchiveatProjectTheme.colors.deepPurple
         )
     }
 }

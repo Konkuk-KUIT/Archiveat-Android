@@ -15,6 +15,8 @@ val Sub_2 = Color(0xFFFD6D4C)
 val Sub_3 = Color(0xFFFFB617)
 val Inverse = Color(0xFF393945)
 val DeepIndigo = Color(0xFF3A3B5D)
+
+val DeepPurple = Color(0xFF39169C)
 val Gray50 = Color(0xFFF2F3F6)
 val Gray100 = Color(0xFFE2E3E9)
 val Gray200 = Color(0xFFD5DAE3)
@@ -38,6 +40,7 @@ data class ArchiveatColors(
     val sub_3: Color,
     val inverse: Color,
     val deepIndigo: Color,
+    val deepPurple: Color,
     val gray50: Color,
     val gray100: Color,
     val gray200: Color,
@@ -62,6 +65,7 @@ val defaultArchiveatColors = ArchiveatColors(
     sub_3 = Sub_3,
     inverse = Inverse,
     deepIndigo = DeepIndigo,
+    deepPurple = DeepPurple,
     gray50 = Gray50,
     gray100 = Gray100,
     gray200 = Gray200,
