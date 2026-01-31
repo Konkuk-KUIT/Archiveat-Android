@@ -15,10 +15,10 @@ data class HomeResponseDto(
     val tabs: List<HomeTabDto>,
 
     @SerialName("contentCards")
-    val contentCards: List<HomeContentCardDto>,
+    val contentCards: List<HomeContentCardDto> = emptyList(),
 
     @SerialName("contentCollectionCards")
-    val contentCollectionCards: List<HomeContentCollectionCardDto>
+    val contentCollectionCards: List<HomeContentCollectionCardDto> = emptyList(),
 )
 
 @Serializable
