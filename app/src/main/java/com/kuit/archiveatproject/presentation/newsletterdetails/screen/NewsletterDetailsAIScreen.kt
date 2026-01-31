@@ -241,7 +241,7 @@ private fun NewsletterDetailsAIScreenPreview() {
                 imageUrl = "", // 프리뷰에서는 빈 값으로 placeholder 보이게
                 tags = listOf(
                     TagUiModel(
-                        text = HomeTabType.INSPIRATION.label,
+                        text = "영감수집",
                         variant = TagVariant.Tab(HomeTabType.INSPIRATION)
                     ),
                     TagUiModel(

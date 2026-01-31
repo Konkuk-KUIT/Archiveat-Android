@@ -58,8 +58,8 @@ private fun TopicDto?.toEntityOrNull(): InboxTopic? {
     return InboxTopic(id = dto.id, name = dto.name)
 }
 
-
-private fun LlmStatusDto.toEntity(): LlmStatus = when (this) {
+// ExploreMapper 에서도 함께 사용
+fun LlmStatusDto.toEntity(): LlmStatus = when (this) {
     LlmStatusDto.PENDING -> LlmStatus.PENDING
     LlmStatusDto.RUNNING -> LlmStatus.RUNNING
     LlmStatusDto.DONE -> LlmStatus.DONE
