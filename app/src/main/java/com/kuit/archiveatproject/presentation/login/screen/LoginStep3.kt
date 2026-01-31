@@ -160,7 +160,7 @@ fun LoginStep3(
                         modifier = Modifier.padding(end = 10.dp)
                     ) {
                         Text(
-                            text = "${email.length}/$emailMaxLen",
+                            text = "${emailTrimmed.length}/$emailMaxLen",
                             style = ArchiveatProjectTheme.typography.Body_2_medium,
                             color = ArchiveatProjectTheme.colors.gray400
                         )
