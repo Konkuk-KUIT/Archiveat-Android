@@ -10,7 +10,4 @@ data class ReportStatusDto(
 
     @SerialName("totalReadCount")
     val totalReadCount: Int,
-
-    @SerialName("percentage")
-    val percentage: Int
 )
