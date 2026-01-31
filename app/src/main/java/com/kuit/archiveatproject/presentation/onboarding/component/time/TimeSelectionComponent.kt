@@ -28,6 +28,7 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun TimeSelectionComponent(
     timeSlots: List<TimeSlot>,
+    employmentType: String,
     lightSelected: Set<TimeSlot>,
     deepSelected: Set<TimeSlot>,
     onTimeClicked: (ReadingMode, TimeSlot) -> Unit,
@@ -66,6 +67,7 @@ fun TimeSelectionComponent(
             timeSlots = timeSlots,
             selectedTimes = lightSelected,
             disabledTimes = deepSelected,
+            employmentType = employmentType,
             onTimeClicked = { slot ->
                 onTimeClicked(ReadingMode.LIGHT, slot)
             }
@@ -78,6 +80,7 @@ fun TimeSelectionComponent(
             timeSlots = timeSlots,
             selectedTimes = deepSelected,
             disabledTimes = lightSelected,
+            employmentType = employmentType,
             onTimeClicked = { slot ->
                 onTimeClicked(ReadingMode.DEEP, slot)
             }
@@ -107,6 +110,7 @@ private fun TimeSelectionComponentPreview() {
 
         TimeSelectionComponent(
             timeSlots = timeSlots,
+            employmentType = "EMPLOYEE",
             lightSelected = lightSelected,
             deepSelected = deepSelected,
             onTimeClicked = { mode, slot ->
