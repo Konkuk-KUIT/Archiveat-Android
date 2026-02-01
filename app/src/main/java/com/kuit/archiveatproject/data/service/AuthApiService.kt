@@ -21,6 +21,7 @@ interface AuthApiService {
 
     @POST("/auth/reissue")
     suspend fun reissue(): BaseResponse<AuthTokenResponseDto>
+    // NOTE: 로그인 유지 단계에서 CookieJar/Authenticator와 함께 실제 사용 예정
 
     @POST("/auth/logout")
     suspend fun logout(): BaseResponse<Unit>
