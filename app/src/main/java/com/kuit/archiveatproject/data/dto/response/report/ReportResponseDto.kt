@@ -5,14 +5,29 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ReportResponseDto(
-    @SerialName("referenceDate")
-    val referenceDate: String,
+    @SerialName("weekLabel")
+    val weekLabel: String,
 
-    @SerialName("status")
-    val status: ReportStatusDto,
+    @SerialName("aiComment")
+    val aiComment: String,
 
-    @SerialName("balance")
-    val balance: ReportBalanceDto,
+    @SerialName("totalSavedCount")
+    val totalSavedCount: Int,
+
+    @SerialName("totalReadCount")
+    val totalReadCount: Int,
+
+    @SerialName("lightCount")
+    val lightCount: Int,
+
+    @SerialName("deepCount")
+    val deepCount: Int,
+
+    @SerialName("nowCount")
+    val nowCount: Int,
+
+    @SerialName("futureCount")
+    val futureCount: Int,
 
     @SerialName("interestGaps")
     val interestGaps: List<ReportInterestGapDto>
