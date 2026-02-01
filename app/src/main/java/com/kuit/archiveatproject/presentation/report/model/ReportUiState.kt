@@ -11,8 +11,7 @@ data class ReportUiState(
     val readPercentage: Int = 0,
 
     // 리딩 밸런스
-    val lightPercentage: Int = 0,
-    val nowPercentage: Int = 0,
+    val balance: ReportBalanceUiState = ReportBalanceUiState(),
 
     // 관심사별 소비 격차
     val interestGaps: List<InterestGapUiItem> = emptyList(),
@@ -37,4 +36,11 @@ data class RecentReadNewsletterUiItem(
     val title: String,
     val categoryName: String,
     val lastViewedAt: String
+)
+
+data class ReportBalanceUiState(
+    val lightPercentage: Int = 0,
+    val deepPercentage: Int = 0,
+    val nowPercentage: Int = 0,
+    val futurePercentage: Int = 0
 )

@@ -27,8 +27,10 @@ fun ReportStatusDto.toDomain() =
 
 fun ReportBalanceDto.toDomain() =
     ReportBalance(
-        lightPercentage = lightPercentage,
-        nowPercentage = nowPercentage
+        lightPercentage = lightCount/(lightCount+deepCount)*100,
+        deepPercentage = deepCount/(lightCount+deepCount)*100,
+        nowPercentage = nowCount/(nowCount+futureCount)*100,
+        futurePercentage = futureCount/(nowCount+futureCount)*100
     )
 
 fun ReportInterestGapDto.toDomain() =
