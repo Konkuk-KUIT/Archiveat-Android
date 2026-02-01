@@ -44,3 +44,31 @@ data class ReportBalanceUiState(
     val nowPercentage: Int = 0,
     val futurePercentage: Int = 0
 )
+
+// 소비 밸런스 판단 함수
+fun ReportUiState.toKnowledgePosition(): KnowledgePosition {
+    val timeAxis =
+        if (balance.nowPercentage >= balance.futurePercentage)
+            TimeAxis.NOW
+        else
+            TimeAxis.FUTURE
+
+    val depthAxis =
+        if (balance.lightPercentage >= balance.deepPercentage)
+            DepthAxis.LIGHT
+        else
+            DepthAxis.DEEP
+
+    return KnowledgePosition(
+        timeAxis = timeAxis,
+        depthAxis = depthAxis
+    )
+}
+
+enum class TimeAxis { NOW, FUTURE }
+enum class DepthAxis { LIGHT, DEEP }
+
+data class KnowledgePosition(
+    val timeAxis: TimeAxis,
+    val depthAxis: DepthAxis
+)
