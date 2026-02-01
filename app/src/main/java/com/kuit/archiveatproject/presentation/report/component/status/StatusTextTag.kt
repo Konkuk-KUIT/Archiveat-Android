@@ -37,7 +37,7 @@ fun StatusTextTag(
         Text(
             text = text,
             style = ArchiveatProjectTheme.typography.Caption_semibold,
-            color = ArchiveatProjectTheme.colors.primary
+            color = textColor
         )
     }
 }
