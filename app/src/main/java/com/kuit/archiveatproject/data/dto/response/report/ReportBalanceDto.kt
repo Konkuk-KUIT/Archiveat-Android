@@ -5,9 +5,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ReportBalanceDto(
-    @SerialName("lightPercentage")
-    val lightPercentage: Int,
+    @SerialName("lightCount")
+    val lightCount: Int,
 
-    @SerialName("nowPercentage")
-    val nowPercentage: Int
+    @SerialName("deepCount")
+    val deepCount: Int,
+
+    @SerialName("nowCount")
+    val nowCount: Int,
+
+    @SerialName("futureCount")
+    val futureCount: Int
 )

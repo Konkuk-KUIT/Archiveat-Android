@@ -14,5 +14,4 @@ class ReportStatusViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ReportUiState())
     val uiState: StateFlow<ReportUiState> = _uiState
 
-
 }
