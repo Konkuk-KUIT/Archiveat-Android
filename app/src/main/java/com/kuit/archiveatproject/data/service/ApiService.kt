@@ -10,7 +10,11 @@ import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewslettersResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.InboxClassificationResponseDto
 import com.kuit.archiveatproject.data.dto.response.newsletter.NewsletterSimpleResponseDto
+import com.kuit.archiveatproject.data.dto.response.report.ReportBalanceDto
+import com.kuit.archiveatproject.data.dto.response.report.ReportInterestGapDto
+import com.kuit.archiveatproject.data.dto.response.report.ReportInterestGapResponseDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportResponseDto
+import com.kuit.archiveatproject.data.dto.response.report.ReportStatusDto
 import com.kuit.archiveatproject.data.dto.response.user.UserMetadataResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -20,9 +24,11 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
+    // home
     @GET("/home")
     suspend fun getHome(): BaseResponse<HomeResponseDto>
 
+    // explore
     @GET("/explore")
     suspend fun getExplore(): BaseResponse<ExploreResponseDto>
 
@@ -42,9 +48,20 @@ interface ApiService {
         @Body body: InboxClassificationRequestDto,
     ): BaseResponse<InboxClassificationResponseDto>
 
+    // report
     @GET("/report")
     suspend fun getReport(): BaseResponse<ReportResponseDto>
 
+    @GET("/report/weekly/consumption")
+    suspend fun getReportStatus(): BaseResponse<ReportStatusDto>
+
+    @GET("/report/weekly/balance")
+    suspend fun getReportBalance(): BaseResponse<ReportBalanceDto>
+
+    @GET("/report/weekly/gap")
+    suspend fun getReportInterestGap(): BaseResponse<ReportInterestGapResponseDto>
+
+    // user
     @GET("/user/metadata")
     suspend fun getUserMetadata(): BaseResponse<UserMetadataResponseDto>
 
@@ -53,6 +70,7 @@ interface ApiService {
         @Body body: UserMetadataSubmitRequestDto,
     ): BaseResponse<Unit>
 
+    // newsletter
     @PATCH("/newsletters/{userNewsletterId}")
     suspend fun patchNewsletterRead(
         @Path("userNewsletterId") userNewsletterId: Long,
@@ -63,6 +81,7 @@ interface ApiService {
         @Path("userNewsletterId") userNewsletterId: Long,
     ): BaseResponse<NewsletterSimpleResponseDto>
 
+    // collection
     @GET("/collections/{collectionId}")
     suspend fun getCollectionDetails(
         @Path("collectionId") collectionId: Long,
