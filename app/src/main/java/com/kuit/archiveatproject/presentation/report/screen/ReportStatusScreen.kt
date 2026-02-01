@@ -31,6 +31,7 @@ import com.kuit.archiveatproject.presentation.report.component.status.RecentNews
 import com.kuit.archiveatproject.presentation.report.component.status.ReportStatusBoxComponent
 import com.kuit.archiveatproject.presentation.report.component.status.StatusTextTag
 import com.kuit.archiveatproject.presentation.report.model.RecentReadNewsletterUiItem
+import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportStatusViewModel
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
@@ -166,8 +167,12 @@ private fun ReportStatusContentPreview() {
                 totalSavedCount = 120,
                 totalReadCount = 42,
                 readPercentage = 70,
-                lightPercentage = 0,
-                nowPercentage = 0,
+                balance = ReportBalanceUiState(
+                    lightPercentage = 50,
+                    deepPercentage = 50,
+                    nowPercentage = 50,
+                    futurePercentage = 50
+                ),
                 interestGaps = emptyList(),
                 recentReadNewsletters = listOf(
                     RecentReadNewsletterUiItem(
