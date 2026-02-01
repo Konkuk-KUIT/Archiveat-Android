@@ -65,9 +65,9 @@ fun ReportBalanceDto.toDomain(): ReportBalance {
 
     return ReportBalance(
         lightPercentage = if (readingTotal == 0) 0 else (lightCount * 100) / readingTotal,
-        deepPercentage = if (readingTotal == 0) 0 else (deepCount * 100) / readingTotal,
+        deepPercentage = if (readingTotal == 0) 0 else 100 - (lightCount * 100) / readingTotal,
         nowPercentage = if (timeTotal == 0) 0 else (nowCount * 100) / timeTotal,
-        futurePercentage = if (timeTotal == 0) 0 else (futureCount * 100) / timeTotal,
+        futurePercentage = if (timeTotal == 0) 0 else 100 - (nowCount * 100) / timeTotal,
         patternTitle = patternTitle.orEmpty(),
         patternDescription = patternDescription.orEmpty(),
         patternQuote = patternQuote.orEmpty()
