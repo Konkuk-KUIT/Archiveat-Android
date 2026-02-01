@@ -4,6 +4,7 @@ import com.kuit.archiveatproject.data.dto.request.auth.CheckEmailRequestDto
 import com.kuit.archiveatproject.data.dto.request.auth.LoginRequestDto
 import com.kuit.archiveatproject.data.dto.request.auth.SignupRequestDto
 import com.kuit.archiveatproject.data.service.AuthApiService
+import com.kuit.archiveatproject.data.util.requireData
 import com.kuit.archiveatproject.domain.repository.AuthRepository
 import com.kuit.archiveatproject.domain.repository.TokenRepository
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class AuthRepositoryImpl @Inject constructor(
                 nickname = nickname
             )
         )
-        val token = res.data.accessToken
+        val token = res.requireData().accessToken
         tokenRepository.saveAccessToken(token)
         return token
     }
@@ -35,30 +36,32 @@ class AuthRepositoryImpl @Inject constructor(
                 password = password
             )
         )
-        val token = res.data.accessToken
+        val token = res.requireData().accessToken
         tokenRepository.saveAccessToken(token)
         return token
     }
 
     override suspend fun logout() {
-        // 서버에도 로그아웃 요청 (refreshToken 무효화 등)
-        authApiService.logout()
-
-        // 로컬 accessToken 삭제
-        tokenRepository.clearAccessToken()
+        try {
+            // 서버에 로그아웃 요청 (실패할 수도 있음)
+            authApiService.logout()
+        } finally {
+            // 로컬 로그아웃은 무조건 보장
+            tokenRepository.clearAccessToken()
+        }
     }
 
     override suspend fun checkEmail(email: String): Boolean {
         val res = authApiService.checkEmail(
             CheckEmailRequestDto(email = email)
         )
-        return res.data
+        return res.requireData()
     }
 
     override suspend fun reissue(): String {
         // 이번 MVP(재시작 로그아웃)에서는 보통 안 씀
         val res = authApiService.reissue()
-        val token = res.data.accessToken
+        val token = res.requireData().accessToken
         tokenRepository.saveAccessToken(token)
         return token
     }
