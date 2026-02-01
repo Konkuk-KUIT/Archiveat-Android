@@ -1,14 +1,18 @@
-package com.kuit.archiveatproject.data.dto.response
+package com.kuit.archiveatproject.data.dto.response.explore
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ExploreResponseDto(
+    @SerialName("inboxCount")
+    val inboxCount: Int = 0,
+
+    @SerialName("llmStatus")
+    val llmStatus: LlmStatusDto = LlmStatusDto.DONE,
+
     @SerialName("categories")
     val categories: List<ExploreCategoryDto> = emptyList(),
-    @SerialName("topics")
-    val topics: List<ExploreTopicDto> = emptyList(),
 )
 
 @Serializable
@@ -17,18 +21,16 @@ data class ExploreCategoryDto(
     val id: Long,
     @SerialName("name")
     val name: String,
+    @SerialName("topics")
+    val topics: List<ExploreTopicDto> = emptyList(),
 )
 
 @Serializable
 data class ExploreTopicDto(
     @SerialName("id")
     val id: Long,
-    @SerialName("categoryId")
-    val categoryId: Long,
     @SerialName("name")
     val name: String,
-    @SerialName("readArticleCount")
-    val readArticleCount: Int,
-    @SerialName("unreadArticleCount")
-    val unreadArticleCount: Int,
+    @SerialName("newsletterCount")
+    val newsletterCount: Int,
 )

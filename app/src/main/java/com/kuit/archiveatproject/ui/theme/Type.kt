@@ -1,5 +1,6 @@
 package com.kuit.archiveatproject.ui.theme
 
+import android.R.attr.data
 import android.R.attr.fontFamily
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -16,6 +17,7 @@ val ArchiveatFontBold = FontFamily(Font(R.font.pretendard_bold))
 val ArchiveatFontSemiBold = FontFamily(Font(R.font.pretendard_semibold))
 val ArchiveatFontMedium = FontFamily(Font(R.font.pretendard_medium))
 val ArchiveatFontRegular = FontFamily(Font(R.font.pretendard_regular))
+val ArchiveatLogoFontRegular = FontFamily(Font(R.font.tilt_warp_regular))
 
 data class ArchiveatTypography(
     val Heading_1_bold: TextStyle,
@@ -33,7 +35,10 @@ data class ArchiveatTypography(
     val Body_2_medium: TextStyle,
     val Body_2_semibold: TextStyle,
     val Caption_semibold: TextStyle,
-    val Caption_medium: TextStyle
+    val Caption_medium: TextStyle,
+    val Caption_medium_sec: TextStyle,
+    val Etc_regular: TextStyle,
+    val Logo_regular: TextStyle,
 )
 
 val defaultArchiveatTypography = ArchiveatTypography(
@@ -132,6 +137,24 @@ val defaultArchiveatTypography = ArchiveatTypography(
         fontSize = 12.sp,
         lineHeight = 1.4.em, // 행간 140%
         letterSpacing = (-0.002).em,
+    ),
+    Caption_medium_sec = TextStyle(
+        fontFamily = ArchiveatFontMedium,
+        fontSize = 12.sp,
+        lineHeight = 1.4.em, // 행간 140%
+        letterSpacing = 0.em,
+    ),
+    Etc_regular = TextStyle(
+        fontFamily = ArchiveatFontRegular,
+        fontSize = 12.sp,
+        lineHeight = 1.4.em,
+        letterSpacing = 0.sp,
+    ),
+    Logo_regular = TextStyle(
+        fontFamily = ArchiveatLogoFontRegular,
+        fontSize = 22.sp,
+        lineHeight = 1.4.em,
+        letterSpacing = 0.sp,
     ),
 )
 

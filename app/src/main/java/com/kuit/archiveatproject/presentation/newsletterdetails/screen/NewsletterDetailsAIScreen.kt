@@ -1,8 +1,5 @@
 package com.kuit.archiveatproject.presentation.newsletterdetails.screen
 
-import android.R.attr.enabled
-import android.R.attr.onClick
-import android.R.attr.text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -30,11 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -82,7 +77,8 @@ fun NewsletterDetailsAIScreen(
     ) {
         BackTopBar(
             title = "",
-            onBack = onBack
+            onBack = onBack,
+            height = 45
         )
 
         Column(
@@ -198,7 +194,7 @@ fun NewsletterDetailsAIScreen(
                     style = ArchiveatProjectTheme.typography.Subhead_2_semibold
                 )
             }
-            if (fromAI) {
+            if (fromAI) { // AI 요약으로 들어온 뉴스레터 상세라면 다 읽었어요 버튼(추후에 분리가 필요하다면 분리)
                 Spacer(Modifier.height(18.dp))
                 Box(
                     modifier = modifier
@@ -245,7 +241,7 @@ private fun NewsletterDetailsAIScreenPreview() {
                 imageUrl = "", // 프리뷰에서는 빈 값으로 placeholder 보이게
                 tags = listOf(
                     TagUiModel(
-                        text = HomeTabType.INSPIRATION.label,
+                        text = "영감수집",
                         variant = TagVariant.Tab(HomeTabType.INSPIRATION)
                     ),
                     TagUiModel(
