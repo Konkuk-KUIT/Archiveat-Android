@@ -1,7 +1,7 @@
 package com.kuit.archiveatproject.presentation.onboarding.viewmodel
 
-import com.kuit.archiveatproject.domain.entity.UserAvailability
-import com.kuit.archiveatproject.domain.entity.UserInterestGroup
+import androidx.annotation.DrawableRes
+import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataCategory
 import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
 
@@ -21,7 +21,7 @@ data class OnboardingUiState(
     val selectedEmploymentType: String? = null,
     val lightReadingTimes: Set<TimeSlot> = emptySet(),
     val deepReadingTimes: Set<TimeSlot> = emptySet(),
-    val selectedInterests: List<UserInterestGroup> = emptyList(),
+    val selectedInterests: List<UserInterests> = emptyList(),
 
     // UI 상태
     val isLoading: Boolean = false,
@@ -69,7 +69,7 @@ sealed interface OnboardingUiEvent {
 
     // Step 3
     data class OnInterestsSelected(
-        val interests: List<UserInterestGroup>
+        val interests: List<UserInterests>
     ) : OnboardingUiEvent
 
     // Navigation

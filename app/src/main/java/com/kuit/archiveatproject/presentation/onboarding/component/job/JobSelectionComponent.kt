@@ -64,7 +64,7 @@ fun JobSelectionComponent(
             jobs.forEach { job ->
                 JobSelectionItem(
                     title = job.label,
-                    icon = painterResource(id = R.drawable.ic_job_student),
+                    icon = painterResource(id = job.iconRes),
                     isSelected = job.type == selectedEmploymentType,
                     onClick = { onJobSelected(job) }
                 )
@@ -86,17 +86,17 @@ private fun JobSelectionComponentPreview() {
         JobUiModel(
             type = "EMPLOYEE",
             label = "직장인",
-            iconRes = R.drawable.ic_job_student
+            iconRes = R.drawable.ic_job_employee
         ),
         JobUiModel(
             type = "FREELANCER",
             label = "프리랜서",
-            iconRes = R.drawable.ic_job_student
+            iconRes = R.drawable.ic_job_freelancer
         ),
         JobUiModel(
             type = "OTHER",
             label = "기타",
-            iconRes = R.drawable.ic_job_student
+            iconRes = R.drawable.ic_job_etc
         )
     )
 
