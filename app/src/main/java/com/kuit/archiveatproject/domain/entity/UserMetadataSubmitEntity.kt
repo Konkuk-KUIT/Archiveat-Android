@@ -6,7 +6,7 @@ import com.kuit.archiveatproject.presentation.onboarding.viewmodel.TimeSlot
 data class UserMetadataSubmit(
     val employmentType: String,
     val availability: UserAvailability,
-    val interests: UserInterests,
+    val interests: List<UserInterests>,
 )
 
 data class UserAvailability(
@@ -15,11 +15,6 @@ data class UserAvailability(
 )
 
 data class UserInterests(
-    val now: List<UserInterestGroup>,
-    val future: List<UserInterestGroup>,
-)
-
-data class UserInterestGroup(
     val categoryId: Long,
     val topicIds: List<Long>,
 )
