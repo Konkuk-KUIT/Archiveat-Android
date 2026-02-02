@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.domain.model.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.HomeTabUiModel
+import com.kuit.archiveatproject.presentation.home.util.color
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable

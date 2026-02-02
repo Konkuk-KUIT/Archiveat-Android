@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -24,35 +28,59 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
+private val EMAIL_REGEX =
+    Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)+$")
+
+private fun isValidEmail(raw: String, maxLen: Int): Boolean {
+    val email = raw.trim()
+    return email.isNotEmpty() &&
+            email.length <= maxLen &&
+            EMAIL_REGEX.matches(email)
+}
+
 @Composable
 fun LoginStep3(
     onBack: () -> Unit,
-    onComplete: (nickname: String) -> Unit,
+    onComplete: (email: String, password: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
-
-    val minLen = 2
-    val maxLen = 15
-
-    var nickname by remember { mutableStateOf("") }
-
-    val nicknameText = nickname
-    // 길이 조건
-    val isValid = nicknameText.length in minLen..maxLen
-
     val keyboard = LocalSoftwareKeyboardController.current
+    val passwordFocusRequester = remember { FocusRequester() }
+
+    // 길이 제한
+    val emailMaxLen = 254 // RFC 5321 표준
+
+    val passwordMinLen = 8
+    val passwordMaxLen = 20 // 128
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    var isPasswordVisible by remember { mutableStateOf(false) }
+
+    val emailTrimmed = email.trim()
+
+    val isEmailValid = isValidEmail(email, emailMaxLen)
+    val isPasswordValid = password.length in passwordMinLen..passwordMaxLen
+    val isFormValid = isEmailValid && isPasswordValid
+
+    val showPasswordError = password.isNotEmpty() && !isPasswordValid
 
     Column(
         modifier = modifier
@@ -88,7 +116,7 @@ fun LoginStep3(
                     )
                 }
                 Text(
-                    text = "닉네임을 정해주세요",
+                    text = "이메일과 비밀번호를 입력하세요.",
                     style = ArchiveatProjectTheme.typography.Heading_2_semibold,
                     color = ArchiveatProjectTheme.colors.gray950
                 )
@@ -97,7 +125,7 @@ fun LoginStep3(
             Spacer(modifier = Modifier.height(52.dp))
 
             Text(
-                text = "닉네임",
+                text = "이메일",
                 style = ArchiveatProjectTheme.typography.Subhead_1_semibold,
                 color = ArchiveatProjectTheme.colors.gray950,
                 modifier = Modifier.padding(6.dp),
@@ -106,11 +134,10 @@ fun LoginStep3(
             Spacer(modifier = Modifier.height(14.dp))
 
             TextField(
-                value = nickname,
+                value = email,
                 onValueChange = { input ->
-                    nickname = input
-                        .filter(::isNicknameCharAllowed) // 허용되지 않는 문자는 자동 제거
-                        .take(maxLen) // 15자 넘으면 자르기
+                    email = input
+                        .take(emailMaxLen) // 254자 넘으면 자르기
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -122,7 +149,7 @@ fun LoginStep3(
                 ),
                 placeholder = {
                     Text(
-                        text = "닉네임을 입력해주세요",
+                        text = "이메일을 입력해주세요",
                         style = ArchiveatProjectTheme.typography.Body_2_semibold, // Subhead_2_semibold
                         color = ArchiveatProjectTheme.colors.gray400
                     )
@@ -133,21 +160,96 @@ fun LoginStep3(
                         modifier = Modifier.padding(end = 10.dp)
                     ) {
                         Text(
-                            text = "${nicknameText.length}/$maxLen",
+                            text = "${emailTrimmed.length}/$emailMaxLen",
                             style = ArchiveatProjectTheme.typography.Body_2_medium,
                             color = ArchiveatProjectTheme.colors.gray400
                         )
                     }
                 },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { passwordFocusRequester.requestFocus() }
+                ),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = ArchiveatProjectTheme.colors.gray100,
+                    unfocusedContainerColor = ArchiveatProjectTheme.colors.gray100,
+                    disabledContainerColor = ArchiveatProjectTheme.colors.gray100,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    cursorColor = ArchiveatProjectTheme.colors.gray950
+                )
+            )
+
+            Spacer(modifier = Modifier.height(26.dp))
+
+            Text(
+                text = "비밀번호",
+                style = ArchiveatProjectTheme.typography.Subhead_1_semibold,
+                color = ArchiveatProjectTheme.colors.gray950,
+                modifier = Modifier.padding(6.dp),
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            TextField(
+                value = password,
+                onValueChange = { input -> password = input.take(passwordMaxLen) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .focusRequester(passwordFocusRequester),
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                textStyle = ArchiveatProjectTheme.typography.Subhead_2_semibold.copy(
+                    color = ArchiveatProjectTheme.colors.gray800
+                ),
+                placeholder = {
+                    Text(
+                        text = "비밀번호를 입력해주세요",
+                        style = ArchiveatProjectTheme.typography.Body_2_semibold,
+                        color = ArchiveatProjectTheme.colors.gray400
+                    )
+                },
+                trailingIcon = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(end = 10.dp)
+                    ) {
+                        Text(
+                            text = "${password.length}/$passwordMaxLen",
+                            style = ArchiveatProjectTheme.typography.Body_2_medium,
+                            color = ArchiveatProjectTheme.colors.gray400
+                        )
+                        IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                            Icon(
+                                imageVector = if (isPasswordVisible)
+                                    androidx.compose.material.icons.Icons.Filled.VisibilityOff
+                                else
+                                    androidx.compose.material.icons.Icons.Filled.Visibility,
+                                contentDescription = if (isPasswordVisible) "비밀번호 숨기기" else "비밀번호 보기",
+                                tint = ArchiveatProjectTheme.colors.gray400
+                            )
+                        }
+                    }
+                },
+                visualTransformation = if (isPasswordVisible) {
+                    VisualTransformation.None
+                } else {
+                    PasswordVisualTransformation()
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboard?.hide()
                         focusManager.clearFocus(force = true)
-                        if (isValid) onComplete(nicknameText) // 엔터 누르면 isValid일 떄 onComplete(...
+                        if (isFormValid) onComplete(emailTrimmed, password)
                     }
                 ),
                 colors = TextFieldDefaults.colors(
@@ -164,9 +266,13 @@ fun LoginStep3(
             Spacer(modifier = Modifier.height(14.dp))
 
             Text(
-                text = "한글, 영문 대소문자, 숫자, 특수문자 밑줄(_), 마침표(.)를 포함하여 2~15자를 지원합니다.",
+                text = "비밀번호는 8자 이상이어야 합니다.",
                 style = ArchiveatProjectTheme.typography.Caption_medium,
-                color = ArchiveatProjectTheme.colors.gray400,
+                color = if (showPasswordError) {
+                    ArchiveatProjectTheme.colors.sub_2
+                } else {
+                    ArchiveatProjectTheme.colors.gray400
+                },
                 modifier = Modifier.padding(horizontal = 13.dp),
             )
         }
@@ -174,38 +280,24 @@ fun LoginStep3(
         PrimaryRoundedButton(
             text = "다음",
             onClick = {
-                if (!isValid) return@PrimaryRoundedButton
+                if (!isFormValid) return@PrimaryRoundedButton
                 keyboard?.hide()
                 focusManager.clearFocus(force = true) // 키보드 내림
-                onComplete(nicknameText) // (nickname: String) -> Unit (부모에게 닉네임 전달)
+                onComplete(emailTrimmed, password) // (email: String, password: String) -> Unit
             },
-            enabled = isValid,
+            enabled = isFormValid,
             modifier = Modifier
-                .padding(horizontal = 31.dp)
+                .padding(horizontal = 20.dp)
                 .padding(bottom = 14.dp),
-            cornerRadiusDp = 50,
+            cornerRadiusDp = 12,
             heightDp = 50,
+            containerColor = ArchiveatProjectTheme.colors.deepPurple
         )
     }
-}
-
-/**
- * 허용: 한글, 영문(대/소), 숫자, '_' '.'
- */
-private fun isNicknameCharAllowed(ch: Char): Boolean {
-    return (ch in 'a'..'z') ||
-            (ch in 'A'..'Z') ||
-            (ch in '0'..'9') ||
-            ch == '_' || ch == '.' || isKorean(ch)
-}
-
-private fun isKorean(ch: Char): Boolean {
-    val code = ch.code
-    return (code in 0xAC00..0xD7A3) || (code in 0x3131..0x318E) // 가-힣, ㄱ-ㅎ/ㅏ-ㅣ 범위 허용
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun LoginStep3Preview() {
-    LoginStep3(onBack = {}, onComplete = {})
+    LoginStep3(onBack = {}, onComplete = { a, b -> })
 }

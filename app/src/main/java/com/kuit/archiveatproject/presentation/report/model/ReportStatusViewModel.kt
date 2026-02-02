@@ -11,8 +11,7 @@ import javax.inject.Inject
 class ReportStatusViewModel @Inject constructor(
     private val reportRepository: ReportRepository,
 ) : ViewModel(){
-    //private val _uiState = MutableStateFlow(ReportUiState())
-    //val uiState: StateFlow<ReportUiState> = _uiState
-
+    private val _uiState = MutableStateFlow(ReportUiState())
+    val uiState: StateFlow<ReportUiState> = _uiState
 
 }
