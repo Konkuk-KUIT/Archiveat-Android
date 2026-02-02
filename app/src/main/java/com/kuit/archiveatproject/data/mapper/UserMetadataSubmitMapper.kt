@@ -1,11 +1,9 @@
 package com.kuit.archiveatproject.data.mapper
 
 import com.kuit.archiveatproject.data.dto.request.UserAvailabilityDto
-import com.kuit.archiveatproject.data.dto.request.UserInterestGroupDto
 import com.kuit.archiveatproject.data.dto.request.UserInterestsDto
 import com.kuit.archiveatproject.data.dto.request.UserMetadataSubmitRequestDto
 import com.kuit.archiveatproject.domain.entity.UserAvailability
-import com.kuit.archiveatproject.domain.entity.UserInterestGroup
 import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.TimeSlot
@@ -35,15 +33,11 @@ private fun UserAvailability.toDto(): UserAvailabilityDto {
     )
 }
 
+private fun List<UserInterests>.toDto(): List<UserInterestsDto> =
+    map { it.toDto() }
+
 private fun UserInterests.toDto(): UserInterestsDto {
     return UserInterestsDto(
-        now = now.map { it.toDto() },
-        future = future.map { it.toDto() },
-    )
-}
-
-private fun UserInterestGroup.toDto(): UserInterestGroupDto {
-    return UserInterestGroupDto(
         categoryId = categoryId,
         topicIds = topicIds,
     )
