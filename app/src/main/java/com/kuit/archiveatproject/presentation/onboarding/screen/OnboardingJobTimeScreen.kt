@@ -148,9 +148,9 @@ private fun OnboardingJobTimeScreenPreview() {
 
     val previewJobs = listOf(
         JobUiModel("STUDENT", "대학생", R.drawable.ic_job_student),
-        JobUiModel("EMPLOYEE", "직장인", R.drawable.ic_job_student),
-        JobUiModel("FREELANCER", "프리랜서", R.drawable.ic_job_student),
-        JobUiModel("OTHER", "기타", R.drawable.ic_job_student)
+        JobUiModel("EMPLOYEE", "직장인", R.drawable.ic_job_employee),
+        JobUiModel("FREELANCER", "프리랜서", R.drawable.ic_job_freelancer),
+        JobUiModel("OTHER", "기타", R.drawable.ic_job_etc)
     )
 
     val previewTimeSlots = listOf(

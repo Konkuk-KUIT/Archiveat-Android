@@ -1,12 +1,10 @@
 package com.kuit.archiveatproject.presentation.onboarding.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -25,12 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.core.component.BackTopBar
-import com.kuit.archiveatproject.core.component.tag.TagVariant
-import com.kuit.archiveatproject.core.component.tag.TextTag
-import com.kuit.archiveatproject.domain.entity.UserInterestGroup
+import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataCategory
 import com.kuit.archiveatproject.domain.entity.UserMetadataTopic
-import com.kuit.archiveatproject.domain.model.HomeTabType
 import com.kuit.archiveatproject.presentation.onboarding.component.OnboardingNextButton
 import com.kuit.archiveatproject.presentation.onboarding.component.interest.InterestCategorySection
 import com.kuit.archiveatproject.presentation.onboarding.component.interest.InterestTextChip
@@ -177,16 +172,16 @@ private fun OnboardingInterestContent(
 }
 
 private fun toggleInterest(
-    current: List<UserInterestGroup>,
+    current: List<UserInterests>,
     categoryId: Long,
     topicId: Long
-): List<UserInterestGroup> {
+): List<UserInterests> {
 
     val group = current.find { it.categoryId == categoryId }
 
     return if (group == null) {
         // 아직 해당 카테고리가 없으면 새로 추가
-        current + UserInterestGroup(
+        current + UserInterests(
             categoryId = categoryId,
             topicIds = listOf(topicId)
         )
