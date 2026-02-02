@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.domain.entity.UserAvailability
-import com.kuit.archiveatproject.domain.entity.UserInterestGroup
 import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
@@ -15,8 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.collections.find
-import kotlin.collections.map
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
@@ -143,10 +140,7 @@ class OnboardingViewModel @Inject constructor(
                 light = state.lightReadingTimes.toList(),
                 deep = state.deepReadingTimes.toList()
             ),
-            interests = UserInterests(
-                now = state.selectedInterests,
-                future = emptyList()
-            )
+            interests = state.selectedInterests
         )
 
         viewModelScope.launch {
@@ -218,15 +212,15 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun toggleInterest(
-        current: List<UserInterestGroup>,
+        current: List<UserInterests>,
         categoryId: Long,
         topicId: Long
-    ): List<UserInterestGroup> {
+    ): List<UserInterests> {
 
         val group = current.find { it.categoryId == categoryId }
 
         return if (group == null) {
-            current + UserInterestGroup(
+            current + UserInterests(
                 categoryId = categoryId,
                 topicIds = listOf(topicId)
             )
@@ -263,5 +257,27 @@ class OnboardingViewModel @Inject constructor(
             )
         }
     }
-
 }
+
+val jobs = listOf(
+    JobUiModel(
+        type = "STUDENT",
+        label = "학생",
+        iconRes = R.drawable.ic_job_student
+    ),
+    JobUiModel(
+        type = "EMPLOYEE",
+        label = "직장인",
+        iconRes = R.drawable.ic_job_employee
+    ),
+    JobUiModel(
+        type = "FREELANCER",
+        label = "프리랜서",
+        iconRes = R.drawable.ic_job_freelancer
+    ),
+    JobUiModel(
+        type = "ETC",
+        label = "기타",
+        iconRes = R.drawable.ic_job_etc
+    ),
+)
