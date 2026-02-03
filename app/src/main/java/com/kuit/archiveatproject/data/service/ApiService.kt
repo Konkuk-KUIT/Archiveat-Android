@@ -58,7 +58,6 @@ interface ApiService {
     @PATCH("/explore/inbox/confirmation")
     suspend fun confirmExploreInboxAll(): BaseResponse<Unit>
 
-
     // report
     @GET("/report")
     suspend fun getReport(): BaseResponse<ReportResponseDto>
