@@ -10,9 +10,7 @@ import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxResponseD
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewslettersResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.InboxClassificationResponseDto
-import com.kuit.archiveatproject.data.dto.response.newsletter.NewsletterSimpleResponseDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportBalanceDto
-import com.kuit.archiveatproject.data.dto.response.report.ReportInterestGapDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportInterestGapResponseDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportResponseDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportStatusDto
@@ -82,17 +80,6 @@ interface ApiService {
     suspend fun submitUserMetadata(
         @Body body: UserMetadataSubmitRequestDto,
     ): BaseResponse<Unit>
-
-    // newsletter
-    @PATCH("/newsletters/{userNewsletterId}")
-    suspend fun patchNewsletterRead(
-        @Path("userNewsletterId") userNewsletterId: Long,
-    ): BaseResponse<Unit>
-
-    @PATCH("/newsletters/{userNewsletterId}/simple")
-    suspend fun patchNewsletterSimple(
-        @Path("userNewsletterId") userNewsletterId: Long,
-    ): BaseResponse<NewsletterSimpleResponseDto>
 
     // collection
     @GET("/collections/{collectionId}")
