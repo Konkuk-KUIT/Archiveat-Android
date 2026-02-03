@@ -22,14 +22,13 @@ fun ExploreInboxResponseDto.toEntity(): Inbox {
 private fun InboxDateGroupDto.toEntity(): InboxDateGroup {
     return InboxDateGroup(
         date = date,
-        count = count,
         items = items.map { it.toEntity() }
     )
 }
 
 private fun InboxItemDto.toEntity(): InboxItem {
     return InboxItem(
-        newsletterId = newsletterId,
+        userNewsletterId = userNewsletterId,
         llmStatus = llmStatus.toEntity(),
         contentUrl = contentUrl,
 
