@@ -81,12 +81,6 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindNewsletterRepository(
-        impl: NewsletterRepositoryImpl
-    ): NewsletterRepository
-
-    @Binds
-    @Singleton
     abstract fun bindCollectionRepository(
         impl: CollectionRepositoryImpl
     ): CollectionRepository
@@ -96,4 +90,10 @@ abstract class RepositoryModule {
     abstract fun bindTokenRepository(
         impl: TokenRepositoryImpl
     ): TokenRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNewsletterRepository(
+        impl: NewsletterRepositoryImpl
+    ): NewsletterRepository
 }

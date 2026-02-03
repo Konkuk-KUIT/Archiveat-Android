@@ -52,6 +52,7 @@ data class TopicDto(
 )
 
 // ExploreInboxResponseDto 에서도 같이 사용
+// NewsletterSaveResponseDto 에서도 같이 사용
 @Serializable
 enum class LlmStatusDto {
     @SerialName("PENDING") PENDING,

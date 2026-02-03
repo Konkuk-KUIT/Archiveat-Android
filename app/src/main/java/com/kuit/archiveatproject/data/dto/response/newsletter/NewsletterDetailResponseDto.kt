@@ -4,7 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NewsletterSimpleResponseDto(
+data class NewsletterDetailResponseDto(
+    @SerialName("userNewsletterId")
+    val userNewsletterId: Long,
     @SerialName("categoryName")
     val categoryName: String,
     @SerialName("topicName")
@@ -19,12 +21,12 @@ data class NewsletterSimpleResponseDto(
     val memo: String,
     @SerialName("contentUrl")
     val contentUrl: String,
-    @SerialName("newsletterSimpleSummary")
-    val newsletterSimpleSummary: List<NewsletterSimpleSummaryItemDto> = emptyList()
+    @SerialName("newsletterSummary")
+    val newsletterSummary: List<NewsletterSummaryItemDto> = emptyList()
 )
 
 @Serializable
-data class NewsletterSimpleSummaryItemDto(
+data class NewsletterSummaryItemDto(
     @SerialName("title") val title: String,
     @SerialName("content") val content: String
 )
