@@ -5,6 +5,7 @@ import com.kuit.archiveatproject.data.dto.request.UserMetadataSubmitRequestDto
 import com.kuit.archiveatproject.data.dto.response.BaseResponse
 import com.kuit.archiveatproject.data.dto.response.CollectionDetailsResponseDto
 import com.kuit.archiveatproject.data.dto.response.HomeResponseDto
+import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxEditResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewslettersResponseDto
@@ -47,6 +48,18 @@ interface ApiService {
         @Path("userNewsletterId") userNewsletterId: Long,
         @Body body: InboxClassificationRequestDto,
     ): BaseResponse<InboxClassificationResponseDto>
+
+    @GET("/explore/inbox/{userNewsletterId}")
+    suspend fun getExploreInboxEdit(
+        @Path("userNewsletterId") userNewsletterId: Long
+    ): BaseResponse<ExploreInboxEditResponseDto>
+
+    /**
+     * data: null
+     */
+    @PATCH("/explore/inbox/confirmation")
+    suspend fun confirmExploreInboxAll(): BaseResponse<Unit>
+
 
     // report
     @GET("/report")
