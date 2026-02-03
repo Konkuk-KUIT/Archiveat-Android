@@ -1,7 +1,9 @@
 package com.kuit.archiveatproject.presentation.onboarding.model
 
+import androidx.annotation.DrawableRes
+
 data class JobUiModel(
-    val type: String,      // "STUDENT"
-    val label: String,     // "대학생"
-    val iconRes: Int
+    val type: String,
+    val label: String,
+    @DrawableRes val iconRes: Int,
 )

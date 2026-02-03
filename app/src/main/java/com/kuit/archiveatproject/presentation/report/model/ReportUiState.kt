@@ -42,5 +42,47 @@ data class ReportBalanceUiState(
     val lightPercentage: Int = 0,
     val deepPercentage: Int = 0,
     val nowPercentage: Int = 0,
-    val futurePercentage: Int = 0
+    val futurePercentage: Int = 0,
+
+    val patternTitle: String = "",
+    val patternDescription: String = "",
+    val patternQuote: String = ""
 )
+
+// 소비 밸런스 판단 함수
+fun ReportUiState.toKnowledgePosition(): KnowledgePosition {
+    val timeAxis =
+        if (balance.nowPercentage >= balance.futurePercentage)
+            TimeAxis.NOW
+        else
+            TimeAxis.FUTURE
+
+    val depthAxis =
+        if (balance.lightPercentage >= balance.deepPercentage)
+            DepthAxis.LIGHT
+        else
+            DepthAxis.DEEP
+
+    return KnowledgePosition(
+        timeAxis = timeAxis,
+        depthAxis = depthAxis
+    )
+}
+
+enum class TimeAxis { NOW, FUTURE }
+enum class DepthAxis { LIGHT, DEEP }
+
+data class KnowledgePosition(
+    val timeAxis: TimeAxis,
+    val depthAxis: DepthAxis
+)
+
+// balance 스크린 액션 버튼 text 매핑 함수
+fun KnowledgePosition.toActionButtonText(): String =
+    when (timeAxis to depthAxis) {
+        TimeAxis.NOW to DepthAxis.LIGHT -> "영감 수집하러 가기"
+        TimeAxis.NOW to DepthAxis.DEEP -> "집중 탐구하러 가기"
+        TimeAxis.FUTURE to DepthAxis.LIGHT -> "성장 한입하러 가기"
+        TimeAxis.FUTURE to DepthAxis.DEEP -> "관점 확장하러 가기"
+        else -> ""
+    }

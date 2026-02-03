@@ -12,7 +12,7 @@ data class UserMetadataSubmitRequestDto(
     val availability: UserAvailabilityDto,
 
     @SerialName("interests")
-    val interests: UserInterestsDto,
+    val interests: List<UserInterestsDto>,
 )
 
 @Serializable
@@ -29,14 +29,6 @@ data class UserAvailabilityDto(
 
 @Serializable
 data class UserInterestsDto(
-    @SerialName("now")
-    val now: List<UserInterestGroupDto>,
-    @SerialName("future")
-    val future: List<UserInterestGroupDto>,
-)
-
-@Serializable
-data class UserInterestGroupDto(
     @SerialName("categoryId")
     val categoryId: Long,
     @SerialName("topicIds")
