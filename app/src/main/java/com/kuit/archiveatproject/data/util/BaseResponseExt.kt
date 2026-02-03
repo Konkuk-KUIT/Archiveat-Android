@@ -8,6 +8,6 @@ fun <T> BaseResponse<T>.requireData(): T {
     return data ?: throw ApiException(statusCode, "data is null")
 }
 
-fun BaseResponse<Unit>.requireSuccess() {
+fun <T> BaseResponse<T>.requireSuccess() {
     if (!isSuccess) throw ApiException(statusCode, message)
 }
