@@ -148,7 +148,7 @@ fun InboxItemComponent(
                 Spacer(Modifier.weight(1f))
 
                 DeleteChip(
-                    onClick = { onDelete(item.newsletterId) }
+                    onClick = { onDelete(item.userNewsletterId) }
                 )
             }
 
@@ -308,7 +308,7 @@ private fun InboxItemComponentLoadingPreview() {
     ArchiveatProjectTheme {
         InboxItemComponent(
             item = InboxItem(
-                newsletterId = 101,
+                userNewsletterId = 101,
                 llmStatus = LlmStatus.RUNNING,
                 contentUrl = "https://n.news.naver.com/article/028/0002787393?cds=news_media_pc",
                 domainName = null,
@@ -330,7 +330,7 @@ private fun InboxItemComponentDonePreview() {
     ArchiveatProjectTheme {
         InboxItemComponent(
             item = InboxItem(
-                newsletterId = 102,
+                userNewsletterId = 102,
                 llmStatus = LlmStatus.DONE,
                 contentUrl = "\"돈도 기업도 한국을 떠난다\" 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)",
                 domainName = "Youtube",
