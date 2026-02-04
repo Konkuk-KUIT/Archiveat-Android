@@ -92,7 +92,7 @@ class InboxEditViewModel @Inject constructor(
         _uiState.update { it.copy(memo = newValue, openMenu = OpenMenu.NONE) } // ✅ 메모 입력 시 드롭다운 닫힘
     }
 
-    // 카테고시 선택 시:
+    // 카테고리 선택 시:
     // * selectedCategoryId 갱신
     // * "해당 카테고리에 속한 토픽 목록"에서 첫 토픽으로 selectedTopicId도 갱신
     // * 드롭다운 닫기
