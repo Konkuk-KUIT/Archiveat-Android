@@ -43,7 +43,20 @@ class InboxEditViewModel @Inject constructor(
     /** 수정 화면 조회 API 호출: GET /explore/inbox/{userNewsletterId} */
     fun fetch(userNewsletterId: Long) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null, savedOnce = false) }
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    errorMessage = null,
+                    savedOnce = false,
+                    userNewsletterId = userNewsletterId,
+                    categories = emptyList(),
+                    topics = emptyList(),
+                    selectedCategoryId = null,
+                    selectedTopicId = null,
+                    memo = "",
+                    openMenu = OpenMenu.NONE
+                )
+            }
             runCatching { repo.getExploreInboxEdit(userNewsletterId) }
                 .onSuccess { edit ->
                     _uiState.update { state -> state.applyServerData(edit) }

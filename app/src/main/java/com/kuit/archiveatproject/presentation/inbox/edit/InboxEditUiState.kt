@@ -51,14 +51,20 @@ fun InboxEditUiState.applyServerData(edit: ExploreInboxEdit): InboxEditUiState {
 
     // categoryId가 null이면 "첫 번째 카테고리"를 fallback으로 선택
     val fallbackCategoryId = categories.firstOrNull()?.id
-    val resolvedCategoryId = edit.current.categoryId ?: fallbackCategoryId
+    val resolvedCategoryId =
+        edit.current.categoryId
+            ?.takeIf { cid -> categories.any { it.id == cid } }
+            ?: fallbackCategoryId
 
     // resolvedCategoryId(결정된 카테고리)에 속한 토픽만 모음
     val topicsOfCategory =
         resolvedCategoryId?.let { cid -> topics.filter { it.categoryId == cid } }.orEmpty()
     // topicId가 null이면 해당 카테고리에 속한 첫 번째 토픽을 fallback으로 선택
     val fallbackTopicId = topicsOfCategory.firstOrNull()?.id
-    val resolvedTopicId = edit.current.topicId ?: fallbackTopicId
+    val resolvedTopicId =
+        edit.current.topicId
+            ?.takeIf { tid -> topicsOfCategory.any { it.id == tid } }
+            ?: fallbackTopicId
 
     // UiState에 반영 + 로딩/에러 상태 정리
     return copy(
