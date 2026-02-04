@@ -34,7 +34,7 @@ interface ApiService {
     @GET("/explore/inbox")
     suspend fun getExploreInbox(): BaseResponse<ExploreInboxResponseDto>
 
-    @GET("/explore/topic/{topicId}/user-newsletters")
+    @GET("/explore/topic/{topicId}/user-newsletters") // 토픽 별 뉴스레터 목록 조회
     suspend fun getTopicUserNewsletters(
         @Path("topicId") topicId: Long,
         @Query("page") page: Int = 0,
