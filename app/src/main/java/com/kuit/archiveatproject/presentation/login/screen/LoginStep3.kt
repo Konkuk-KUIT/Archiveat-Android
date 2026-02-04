@@ -55,8 +55,14 @@ private fun isValidEmail(raw: String, maxLen: Int): Boolean {
 
 @Composable
 fun LoginStep3(
+    email: String,
+    password: String,
+    isLoading: Boolean,
+    errorMessage: String?,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
     onBack: () -> Unit,
-    onComplete: (email: String, password: String) -> Unit,
+    onComplete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -68,9 +74,6 @@ fun LoginStep3(
 
     val passwordMinLen = 8
     val passwordMaxLen = 20 // 128
-
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
 
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -136,12 +139,14 @@ fun LoginStep3(
             TextField(
                 value = email,
                 onValueChange = { input ->
-                    email = input
-                        .take(emailMaxLen) // 254자 넘으면 자르기
+                    onEmailChange(
+                        input.take(emailMaxLen) // 254자 넘으면 자르기
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
+                enabled = !isLoading,
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 textStyle = ArchiveatProjectTheme.typography.Subhead_2_semibold.copy(
@@ -197,11 +202,16 @@ fun LoginStep3(
 
             TextField(
                 value = password,
-                onValueChange = { input -> password = input.take(passwordMaxLen) },
+                onValueChange = { input ->
+                    onPasswordChange(
+                        input.take(passwordMaxLen)
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
                     .focusRequester(passwordFocusRequester),
+                enabled = !isLoading,
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 textStyle = ArchiveatProjectTheme.typography.Subhead_2_semibold.copy(
@@ -249,7 +259,7 @@ fun LoginStep3(
                     onDone = {
                         keyboard?.hide()
                         focusManager.clearFocus(force = true)
-                        if (isFormValid) onComplete(emailTrimmed, password)
+                        if (isFormValid) onComplete()
                     }
                 ),
                 colors = TextFieldDefaults.colors(
@@ -275,6 +285,17 @@ fun LoginStep3(
                 },
                 modifier = Modifier.padding(horizontal = 13.dp),
             )
+
+            // 에러 메시지
+            if (!errorMessage.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = errorMessage,
+                    style = ArchiveatProjectTheme.typography.Caption_medium,
+                    color = ArchiveatProjectTheme.colors.sub_2,
+                    modifier = Modifier.padding(horizontal = 13.dp),
+                )
+            }
         }
 
         PrimaryRoundedButton(
@@ -283,9 +304,9 @@ fun LoginStep3(
                 if (!isFormValid) return@PrimaryRoundedButton
                 keyboard?.hide()
                 focusManager.clearFocus(force = true) // 키보드 내림
-                onComplete(emailTrimmed, password) // (email: String, password: String) -> Unit
+                onComplete()
             },
-            enabled = isFormValid,
+            enabled = isFormValid && !isLoading,
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 14.dp),
@@ -299,5 +320,14 @@ fun LoginStep3(
 @Preview(showBackground = true)
 @Composable
 private fun LoginStep3Preview() {
-    LoginStep3(onBack = {}, onComplete = { a, b -> })
+    LoginStep3(
+        email = "test@archiveat.com",
+        password = "password123",
+        isLoading = false,
+        errorMessage = "이메일/비밀번호 형식을 확인해주세요.",
+        onEmailChange = {},
+        onPasswordChange = {},
+        onBack = {},
+        onComplete = {}
+    )
 }
