@@ -1,6 +1,7 @@
 package com.kuit.archiveatproject.presentation.login.screen
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,8 +15,10 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    if (uiState.isSignupSuccess) {
-        onFinished()
+    LaunchedEffect(uiState.isSignupSuccess) {
+        if (uiState.isSignupSuccess) {
+            onFinished()
+        }
     }
 
     when (uiState.step) {

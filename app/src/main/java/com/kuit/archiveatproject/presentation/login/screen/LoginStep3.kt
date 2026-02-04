@@ -286,7 +286,7 @@ fun LoginStep3(
                 modifier = Modifier.padding(horizontal = 13.dp),
             )
 
-            // 에러 메시지
+            // 에러 메시지: 테스트하고 나중에 지우거나... 처리하면 될 듯
             if (!errorMessage.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(

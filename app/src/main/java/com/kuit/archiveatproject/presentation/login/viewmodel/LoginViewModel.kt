@@ -104,8 +104,13 @@ class LoginViewModel @Inject constructor(
     fun onSignup() {
         val state = _uiState.value
         if (state.isLoading) return
-        if (state.email.isBlank() || state.password.isBlank() || state.nickname.isBlank()) {
+        val nickname = state.nickname.trim()
+        if (state.email.isBlank() || state.password.isBlank() || nickname.isBlank()) {
             _uiState.update { it.copy(errorMessage = "필수 정보를 입력해주세요.") }
+            return
+        }
+        if (nickname.length !in 2..15) {
+            _uiState.update { it.copy(errorMessage = "닉네임은 2~15자로 입력해주세요.") }
             return
         }
 
@@ -115,7 +120,7 @@ class LoginViewModel @Inject constructor(
                 authRepository.signup(
                     email = state.email.trim(),
                     password = state.password,
-                    nickname = state.nickname.trim()
+                    nickname = nickname
                 )
             }.onSuccess {
                 _uiState.update { it.copy(isLoading = false, isSignupSuccess = true) }
