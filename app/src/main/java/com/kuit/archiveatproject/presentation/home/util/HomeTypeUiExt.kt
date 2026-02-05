@@ -2,7 +2,7 @@ package com.kuit.archiveatproject.presentation.home.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.kuit.archiveatproject.domain.model.HomeTabType
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable

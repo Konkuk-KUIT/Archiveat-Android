@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
-import com.kuit.archiveatproject.domain.model.HomeCardType
-import com.kuit.archiveatproject.domain.model.HomeTabType
+import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
