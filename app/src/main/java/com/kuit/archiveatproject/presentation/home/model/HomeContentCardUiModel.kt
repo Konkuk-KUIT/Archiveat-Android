@@ -1,7 +1,7 @@
 package com.kuit.archiveatproject.presentation.home.model
 
-import com.kuit.archiveatproject.domain.model.HomeCardType
-import com.kuit.archiveatproject.domain.model.HomeTabType
+import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 
 data class HomeContentCardUiModel(
     val archiveId: Long,

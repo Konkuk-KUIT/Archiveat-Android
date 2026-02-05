@@ -20,8 +20,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.core.util.noRippleClickable
-import com.kuit.archiveatproject.domain.model.HomeTabType
-import com.kuit.archiveatproject.domain.model.HomeTabType.INSPIRATION
+import com.kuit.archiveatproject.domain.entity.HomeTabType
+import com.kuit.archiveatproject.domain.entity.HomeTabType.INSPIRATION
 import com.kuit.archiveatproject.presentation.home.util.color
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 

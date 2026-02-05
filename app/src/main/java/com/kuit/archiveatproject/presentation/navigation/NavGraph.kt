@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
 import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
-import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
 import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
 import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
@@ -25,7 +24,7 @@ fun NavGraph(
         startDestination = Route.Home.route
     ) {
         composable(route = Route.Home.route) {
-            HomeScreen(modifier = modifier)
+            HomeScreen()
         }
         composable(route = Route.Explore.route) {
             ExploreScreen(modifier = modifier)
