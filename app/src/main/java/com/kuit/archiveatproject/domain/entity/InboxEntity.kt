@@ -6,12 +6,11 @@ data class Inbox(
 
 data class InboxDateGroup(
     val date: String,
-    val count: Int,
     val items: List<InboxItem>,
 )
 
 data class InboxItem(
-    val newsletterId: Long,
+    val userNewsletterId: Long,
     val llmStatus: LlmStatus,
     val contentUrl: String?,
 

@@ -1,17 +1,21 @@
 package com.kuit.archiveatproject.di
 
+import com.kuit.archiveatproject.data.repositoryimpl.AuthRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.CollectionRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.ExploreRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.ExploreTopicNewslettersRepositoryImpl
+import com.kuit.archiveatproject.data.repositoryimpl.HomeRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.InboxClassificationRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.InboxRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.NewsletterRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.ReportRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.TokenRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.UserMetadataRepositoryImpl
+import com.kuit.archiveatproject.domain.repository.AuthRepository
 import com.kuit.archiveatproject.domain.repository.CollectionRepository
 import com.kuit.archiveatproject.domain.repository.ExploreRepository
 import com.kuit.archiveatproject.domain.repository.ExploreTopicNewslettersRepository
+import com.kuit.archiveatproject.domain.repository.HomeRepository
 import com.kuit.archiveatproject.domain.repository.InboxClassificationRepository
 import com.kuit.archiveatproject.domain.repository.InboxRepository
 import com.kuit.archiveatproject.domain.repository.NewsletterRepository
@@ -27,6 +31,18 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(
+        impl: AuthRepositoryImpl
+    ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindHomeRepository(
+        impl: HomeRepositoryImpl
+    ): HomeRepository
+
     @Binds
     @Singleton
     abstract fun bindExploreRepository(
@@ -65,12 +81,6 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindNewsletterRepository(
-        impl: NewsletterRepositoryImpl
-    ): NewsletterRepository
-
-    @Binds
-    @Singleton
     abstract fun bindCollectionRepository(
         impl: CollectionRepositoryImpl
     ): CollectionRepository
@@ -80,4 +90,10 @@ abstract class RepositoryModule {
     abstract fun bindTokenRepository(
         impl: TokenRepositoryImpl
     ): TokenRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNewsletterRepository(
+        impl: NewsletterRepositoryImpl
+    ): NewsletterRepository
 }

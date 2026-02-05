@@ -2,6 +2,7 @@ package com.kuit.archiveatproject.data.repositoryimpl
 
 import com.kuit.archiveatproject.data.mapper.toEntity
 import com.kuit.archiveatproject.data.service.ApiService
+import com.kuit.archiveatproject.data.util.requireData
 import com.kuit.archiveatproject.domain.entity.ExploreTopicNewsletters
 import com.kuit.archiveatproject.domain.repository.ExploreTopicNewslettersRepository
 import javax.inject.Inject
@@ -15,10 +16,12 @@ class ExploreTopicNewslettersRepositoryImpl @Inject constructor(
         page: Int,
         size: Int,
     ): ExploreTopicNewsletters {
-        return apiService.getTopicUserNewsletters(
+        val dto = apiService.getTopicUserNewsletters(
             topicId = topicId,
             page = page,
             size = size
-        ).toEntity()
+        ).requireData()
+
+        return dto.toEntity()
     }
 }

@@ -4,14 +4,12 @@ import com.kuit.archiveatproject.data.dto.response.explore.CategoryDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.InboxDateGroupDto
 import com.kuit.archiveatproject.data.dto.response.explore.InboxItemDto
-import com.kuit.archiveatproject.data.dto.response.explore.LlmStatusDto
 import com.kuit.archiveatproject.data.dto.response.explore.TopicDto
 import com.kuit.archiveatproject.domain.entity.Inbox
 import com.kuit.archiveatproject.domain.entity.InboxCategory
 import com.kuit.archiveatproject.domain.entity.InboxDateGroup
 import com.kuit.archiveatproject.domain.entity.InboxItem
 import com.kuit.archiveatproject.domain.entity.InboxTopic
-import com.kuit.archiveatproject.domain.entity.LlmStatus
 
 fun ExploreInboxResponseDto.toEntity(): Inbox {
     return Inbox(
@@ -22,14 +20,13 @@ fun ExploreInboxResponseDto.toEntity(): Inbox {
 private fun InboxDateGroupDto.toEntity(): InboxDateGroup {
     return InboxDateGroup(
         date = date,
-        count = count,
         items = items.map { it.toEntity() }
     )
 }
 
 private fun InboxItemDto.toEntity(): InboxItem {
     return InboxItem(
-        newsletterId = newsletterId,
+        userNewsletterId = userNewsletterId,
         llmStatus = llmStatus.toEntity(),
         contentUrl = contentUrl,
 
@@ -56,12 +53,4 @@ private fun TopicDto?.toEntityOrNull(): InboxTopic? {
     val dto = this ?: return null
     if (dto.id == null && dto.name == null) return null
     return InboxTopic(id = dto.id, name = dto.name)
-}
-
-
-private fun LlmStatusDto.toEntity(): LlmStatus = when (this) {
-    LlmStatusDto.PENDING -> LlmStatus.PENDING
-    LlmStatusDto.RUNNING -> LlmStatus.RUNNING
-    LlmStatusDto.DONE -> LlmStatus.DONE
-    LlmStatusDto.FAILED -> LlmStatus.FAILED
 }

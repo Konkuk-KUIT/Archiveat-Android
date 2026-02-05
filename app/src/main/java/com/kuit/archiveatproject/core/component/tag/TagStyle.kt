@@ -2,8 +2,8 @@ package com.kuit.archiveatproject.core.component.tag
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.kuit.archiveatproject.domain.model.HomeCardType
-import com.kuit.archiveatproject.domain.model.HomeTabType
+import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 sealed class TagVariant {

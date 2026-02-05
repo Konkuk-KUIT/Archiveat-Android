@@ -36,8 +36,8 @@ import coil3.request.crossfade
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
-import com.kuit.archiveatproject.domain.model.HomeCardType
-import com.kuit.archiveatproject.domain.model.HomeTabType
+import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.AISummaryComponent
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.AiSectionUiModel
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.MemoComponent
@@ -241,7 +241,7 @@ private fun NewsletterDetailsAIScreenPreview() {
                 imageUrl = "", // 프리뷰에서는 빈 값으로 placeholder 보이게
                 tags = listOf(
                     TagUiModel(
-                        text = HomeTabType.INSPIRATION.label,
+                        text = "영감수집",
                         variant = TagVariant.Tab(HomeTabType.INSPIRATION)
                     ),
                     TagUiModel(
