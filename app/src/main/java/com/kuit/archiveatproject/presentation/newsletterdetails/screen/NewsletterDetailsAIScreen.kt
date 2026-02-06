@@ -22,6 +22,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -41,6 +44,7 @@ import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.AISummaryComponent
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.AiSectionUiModel
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.MemoComponent
+import com.kuit.archiveatproject.presentation.newsletterdetails.viewmodel.NewsletterDetailsAiViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 // 임시 //
@@ -62,6 +66,37 @@ data class NewsletterDetailsAiUiModel(
 
 @Composable
 fun NewsletterDetailsAIScreen(
+    onBack: () -> Unit,
+    onClickWebView: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: NewsletterDetailsAiViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    val model = uiState.model
+    if (model != null) {
+        NewsletterDetailsAIContent(
+            model = model,
+            onBack = onBack,
+            onClickWebView = { onClickWebView(uiState.contentUrl) },
+            onClickDone = viewModel::markRead,
+            modifier = modifier,
+            fromAI = true
+        )
+    } else {
+        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            val message = uiState.errorMessage ?: "로딩 중..."
+            Text(
+                text = message,
+                style = ArchiveatProjectTheme.typography.Subhead_2_semibold,
+                color = ArchiveatProjectTheme.colors.gray600
+            )
+        }
+    }
+}
+
+@Composable
+fun NewsletterDetailsAIContent(
     model: NewsletterDetailsAiUiModel,
     onBack: () -> Unit,
     onClickWebView: () -> Unit,
@@ -234,7 +269,7 @@ fun TagsFlow(tags: List<TagUiModel>) {
 @Composable
 private fun NewsletterDetailsAIScreenPreview() {
     ArchiveatProjectTheme {
-        NewsletterDetailsAIScreen(
+        NewsletterDetailsAIContent(
             model = NewsletterDetailsAiUiModel(
                 topicText = "AI - 디자인",
                 subtitle = "콘텐츠의 핵심만 AI가 요약했어요",
