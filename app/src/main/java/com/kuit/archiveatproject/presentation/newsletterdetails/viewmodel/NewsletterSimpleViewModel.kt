@@ -12,6 +12,7 @@ import com.kuit.archiveatproject.presentation.newsletterdetails.screen.Newslette
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.TagUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -40,24 +41,24 @@ class NewsletterSimpleViewModel @Inject constructor(
     fun load(userNewsletterId: Long) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            runCatching { newsletterRepository.getNewsletterSimple(userNewsletterId) }
-                .onSuccess { simple ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            model = simple.toAiUiModel(),
-                            contentUrl = simple.contentUrl,
-                        )
-                    }
+            try {
+                val simple = newsletterRepository.getNewsletterSimple(userNewsletterId)
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        model = simple.toAiUiModel(),
+                        contentUrl = simple.contentUrl,
+                    )
                 }
-                .onFailure { e ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = e.message ?: "뉴스레터 조회에 실패했습니다."
-                        )
-                    }
+            } catch (e: Throwable) {
+                if (e is CancellationException) throw e
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.message ?: "뉴스레터 조회에 실패했습니다."
+                    )
                 }
+            }
         }
     }
 }
@@ -66,7 +67,7 @@ private fun NewsletterSimple.toAiUiModel(): NewsletterDetailsAiUiModel {
     val topicText = listOf(categoryName, topicName)
         .filter { it.isNotBlank() }
         .joinToString(" - ")
-        .ifBlank { "최근 저장한" }
+        .ifBlank { "" }
 
     val tags = buildList {
         if (label.isNotBlank()) {

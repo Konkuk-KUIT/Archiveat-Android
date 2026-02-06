@@ -1,5 +1,6 @@
 package com.kuit.archiveatproject.presentation.newsletterdetails.screen
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -23,6 +24,9 @@ fun WebViewScreen(
     modifier: Modifier = Modifier,
 ) {
     val decodedUrl = Uri.decode(url)
+    val safeUrl = decodedUrl.takeIf {
+        it.startsWith("http://") || it.startsWith("https://")
+    }.orEmpty()
     val isPreview = LocalInspectionMode.current
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -32,7 +36,7 @@ fun WebViewScreen(
             height = 45
         )
 
-        if (decodedUrl.isBlank()) {
+        if (safeUrl.isBlank()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -60,15 +64,22 @@ fun WebViewScreen(
                 factory = { context ->
                     WebView(context).apply {
                         webViewClient = WebViewClient()
+                        @SuppressLint("SetJavaScriptEnabled")
                         settings.javaScriptEnabled = true
-                        loadUrl(decodedUrl)
+                        loadUrl(safeUrl)
                     }
                 },
                 update = { webView ->
-                    if (webView.url != decodedUrl) {
-                        webView.loadUrl(decodedUrl)
+                    if (webView.url != safeUrl) {
+                        webView.loadUrl(safeUrl)
                     }
-                }
+                },
+                onRelease = { webView ->
+                    webView.stopLoading()
+                    webView.removeAllViews()
+                    webView.clearHistory()
+                    webView.destroy()
+                },
             )
         }
     }
