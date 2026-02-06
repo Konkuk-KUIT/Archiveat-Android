@@ -1,57 +1,53 @@
 package com.kuit.archiveatproject.data.mapper
 
-import com.kuit.archiveatproject.data.dto.response.HomeContentCardDto
 import com.kuit.archiveatproject.data.dto.response.HomeResponseDto
-import com.kuit.archiveatproject.data.dto.response.HomeTabDto
-import com.kuit.archiveatproject.domain.model.HomeCardType
-import com.kuit.archiveatproject.domain.model.HomeTabType
-import com.kuit.archiveatproject.presentation.home.model.GreetingUiModel
-import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
-import com.kuit.archiveatproject.presentation.home.model.HomeTabUiModel
+import com.kuit.archiveatproject.domain.entity.Home
+import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeContentCard
+import com.kuit.archiveatproject.domain.entity.HomeContentCollectionCard
+import com.kuit.archiveatproject.domain.entity.HomeTab
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 
+fun HomeResponseDto.toDomain(): Home {
+    // label("영감수집") -> type(INSPIRATION) 역매핑
+    val tabTypeByLabel: Map<String, HomeTabType> =
+        tabs.associate { it.label to HomeTabType.from(it.type) }
 
-/**
- * Home API Response → UI Model Mapper
- */
-
-fun HomeResponseDto.toGreetingUiModel(): GreetingUiModel {
-    return GreetingUiModel(
-        firstMessage = firstGreetingMessage,
-        secondMessage = secondGreetingMessage
+    return Home(
+        firstGreetingMessage = firstGreetingMessage,
+        secondGreetingMessage = secondGreetingMessage,
+        tabs = tabs.map {
+            HomeTab(
+                type = HomeTabType.from(it.type),
+                label = it.label,
+                subMessage = it.subMessage
+            )
+        },
+        contentCards = contentCards.map { dto ->
+            val tabType = tabTypeByLabel[dto.tabLabel] ?: HomeTabType.ALL
+            HomeContentCard(
+                newsletterId = dto.newsletterId,
+                tabType = tabType,
+                tabLabel = dto.tabLabel,
+                cardType = HomeCardType.fromLabel(dto.cardType),
+                title = dto.title,
+                smallCardSummary = dto.smallCardSummary,
+                mediumCardSummary = dto.mediumCardSummary,
+                thumbnailUrl = dto.thumbnailUrl
+            )
+        },
+        contentCollectionCards = contentCollectionCards.map { dto ->
+            val tabType = tabTypeByLabel[dto.tabLabel] ?: HomeTabType.ALL
+            HomeContentCollectionCard(
+                collectionId = dto.collectionId,
+                tabType = tabType,
+                tabLabel = dto.tabLabel,
+                cardType = HomeCardType.fromLabel(dto.cardType),
+                title = dto.title,
+                smallCardSummary = dto.smallCardSummary,
+                mediumCardSummary = dto.mediumCardSummary,
+                thumbnailUrls = dto.thumbnailUrls
+            )
+        }
     )
-}
-
-fun HomeTabDto.toUiModel(): HomeTabUiModel {
-    return HomeTabUiModel(
-        type = HomeTabType.from(type),
-        label = label,
-        subMessage = subMessage
-    )
-}
-
-fun HomeContentCardDto.toUiModel(): HomeContentCardUiModel {
-    // 이미지 여러 개라면
-    val urls = imageUrls
-        .filter { it.isNotBlank() }
-        .ifEmpty { listOfNotNull(thumbnailUrl).filter { it.isNotBlank() } }
-
-    return HomeContentCardUiModel(
-        archiveId = archiveId,
-        tabType = HomeTabType.from(tabLabelTypeOrFallback()),
-        tabLabel = tabLabel,
-        cardType = HomeCardType.fromLabel(cardType),
-        title = title,
-        imageUrls = urls,
-    )
-}
-
-private fun HomeContentCardDto.tabLabelTypeOrFallback(): String {
-    return when (tabLabel.replace(" ", "")) {
-        "전체" -> "ALL"
-        "영감수집" -> "INSPIRATION"
-        "집중탐구" -> "DEEP_DIVE"
-        "성장한입" -> "GROWTH"
-        "관점확장" -> "VIEW_EXPANSION"
-        else -> "ALL"
-    }
 }

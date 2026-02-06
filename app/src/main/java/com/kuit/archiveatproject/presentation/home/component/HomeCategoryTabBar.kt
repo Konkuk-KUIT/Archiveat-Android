@@ -13,13 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.archiveatproject.domain.model.HomeTabType
-import com.kuit.archiveatproject.presentation.home.model.HomeTabUiModel
+import com.kuit.archiveatproject.domain.entity.HomeTab
+import com.kuit.archiveatproject.domain.entity.HomeTabType
+import com.kuit.archiveatproject.presentation.home.util.color
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun HomeCategoryTabBar(
-    tabs: List<HomeTabUiModel>,
+    tabs: List<HomeTab>,
     selectedTab: HomeTabType,
     onTabSelected: (HomeTabType) -> Unit,
     modifier: Modifier = Modifier
@@ -67,13 +68,14 @@ fun HomeCategoryTabBar(
 fun HomeCategoryTabBarPreview() {
     HomeCategoryTabBar(
         tabs = listOf(
-            HomeTabUiModel(HomeTabType.ALL, "전체", "흩어진 모든 지식을 한눈에"),
-            HomeTabUiModel(HomeTabType.INSPIRATION, "영감수집", "잠깐의 틈을 채워줄 인사이트"),
-            HomeTabUiModel(HomeTabType.DEEP_DIVE, "집중탐구", "깊이 파고드는 시간"),
-            HomeTabUiModel(HomeTabType.GROWTH, "성장한입", "잠깐의 틈을 채워줄, 현재의 관심사와 맞닿은 인사이트"),
-            HomeTabUiModel(HomeTabType.VIEW_EXPANSION, "관점확장", "생각의 크기를 키워주는 깊이 있는 통찰"),
+            HomeTab(HomeTabType.ALL, "전체", "흩어진 모든 지식을 한눈에"),
+            HomeTab(HomeTabType.INSPIRATION, "영감수집", "잠깐의 틈을 채워줄 인사이트"),
+            HomeTab(HomeTabType.DEEP_DIVE, "집중탐구", "깊이 파고드는 시간"),
+            HomeTab(HomeTabType.GROWTH, "성장한입", "잠깐의 틈을 채워줄, 현재의 관심사와 맞닿은 인사이트"),
+            HomeTab(HomeTabType.VIEW_EXPANSION, "관점확장", "생각의 크기를 키워주는 깊이 있는 통찰"),
         ),
         selectedTab = HomeTabType.INSPIRATION,
         onTabSelected = {}
     )
 }
+

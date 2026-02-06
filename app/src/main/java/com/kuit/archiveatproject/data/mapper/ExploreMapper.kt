@@ -1,29 +1,30 @@
 package com.kuit.archiveatproject.data.mapper
 
-import com.kuit.archiveatproject.data.dto.response.ExploreCategoryDto
-import com.kuit.archiveatproject.data.dto.response.ExploreResponseDto
-import com.kuit.archiveatproject.data.dto.response.ExploreTopicDto
+import com.kuit.archiveatproject.data.dto.response.explore.ExploreCategoryDto
+import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
+import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicDto
 import com.kuit.archiveatproject.domain.model.Explore
 import com.kuit.archiveatproject.domain.model.ExploreCategory
 import com.kuit.archiveatproject.domain.model.ExploreTopic
 
-fun ExploreResponseDto.toDomain(): Explore =
+fun ExploreResponseDto.toEntity(): Explore =
     Explore(
-        categories = categories.map { it.toDomain() },
-        topics = topics.map { it.toDomain() }
+        inboxCount = inboxCount,
+        // 안드에서는 exploreLlmStatus로 사용
+        exploreLlmStatus = llmStatus.toEntity(),
+        categories = categories.map { it.toEntity() },
     )
 
-private fun ExploreCategoryDto.toDomain(): ExploreCategory =
+private fun ExploreCategoryDto.toEntity(): ExploreCategory =
     ExploreCategory(
         id = id,
-        name = name
+        name = name,
+        topics = topics.map { it.toEntity() },
     )
 
-private fun ExploreTopicDto.toDomain(): ExploreTopic =
+private fun ExploreTopicDto.toEntity(): ExploreTopic =
     ExploreTopic(
         id = id,
-        categoryId = categoryId,
         name = name,
-        readArticleCount = readArticleCount,
-        unreadArticleCount = unreadArticleCount
+        newsletterCount = newsletterCount,
     )

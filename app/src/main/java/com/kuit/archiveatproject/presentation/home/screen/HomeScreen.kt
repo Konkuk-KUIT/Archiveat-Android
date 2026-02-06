@@ -1,116 +1,139 @@
 package com.kuit.archiveatproject.presentation.home.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.core.component.TopLogoBar
-import com.kuit.archiveatproject.domain.model.HomeCardType
-import com.kuit.archiveatproject.domain.model.HomeTabType
+import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeTab
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.home.component.GreetingBar
 import com.kuit.archiveatproject.presentation.home.component.HomeCategoryTabBar
 import com.kuit.archiveatproject.presentation.home.component.HomeContentCardCarousel
+import com.kuit.archiveatproject.presentation.home.model.GreetingUiModel
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
-import com.kuit.archiveatproject.presentation.home.model.HomeTabUiModel
-
-//임시 변수(서버 구현 후 삭제 예정)
-private val mockTabs = listOf(
-    HomeTabUiModel(HomeTabType.ALL, "전체", "수집한 자료를 기반으로 발행된, 나만의 지식 뉴스레터"),
-    HomeTabUiModel(HomeTabType.INSPIRATION, "영감수집", "잠깐의 틈을 채워줄, 현재의 관심사와 맞닿은 인사이트"),
-    HomeTabUiModel(HomeTabType.DEEP_DIVE, "집중탐구", "관심 주제를 깊이 파고들어, 온전히 내 것으로 만드는 시간"),
-    HomeTabUiModel(HomeTabType.GROWTH, "성장한입", "잠깐의 틈을 채워줄, 현재의 관심사와 맞닿은 인사이트"),
-    HomeTabUiModel(HomeTabType.VIEW_EXPANSION, "관점확장", "생각의 크기를 키워주는 깊이 있는 통찰"),
-)
-
-private val mockHomeCards = run {
-    val urls1 = listOf("https://picsum.photos/id/10/800/600")
-    val urls2 = listOf(
-        "https://picsum.photos/id/11/800/600",
-        "https://picsum.photos/id/12/800/600"
-    )
-
-    listOf(
-        HomeContentCardUiModel(
-            archiveId = 1L,
-            tabType = HomeTabType.ALL,
-            tabLabel = "전체",
-            cardType = HomeCardType.AI_SUMMARY,
-            title = "1장 이미지 카드 예시",
-            imageUrls = urls1
-        ),
-        HomeContentCardUiModel(
-            archiveId = 2L,
-            tabType = HomeTabType.INSPIRATION,
-            tabLabel = "영감수집",
-            cardType = HomeCardType.COLLECTION,
-            title = "2장 이미지 카드 예시",
-            imageUrls = urls2
-        ),
-        HomeContentCardUiModel(
-            archiveId = 3L,
-            tabType = HomeTabType.DEEP_DIVE,
-            tabLabel = "집중탐구",
-            cardType = HomeCardType.COLLECTION,
-            title = "다시 1장 케이스",
-            imageUrls = urls1
-        )
-    )
-}
-
+import com.kuit.archiveatproject.presentation.home.viewmodel.HomeUiState
+import com.kuit.archiveatproject.presentation.home.viewmodel.HomeViewModel
+import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier
-){
-    var selectedTab by remember { mutableStateOf(HomeTabType.ALL) }
+    viewModel: HomeViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
+    HomeScreenContent(
+        uiState = uiState,
+        onTabSelected = viewModel::onTabSelected,
+        onCardClick = { /* navigate */ }
+    )
+}
+
+@Composable
+fun HomeScreenContent(
+    uiState: HomeUiState,
+    onTabSelected: (HomeTabType) -> Unit,
+    onCardClick: (HomeContentCardUiModel) -> Unit
+) {
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ArchiveatProjectTheme.colors.white)
     ) {
-        // 고정 영역
         TopLogoBar()
-
-        GreetingBar(
-            "archiveat",
-            "좋은 아침이에요!",
-            "오늘도 한 걸음 성장해볼까요?"
-        )
+        // TODO: user dto 추가되는 대로 nickname 하드 코딩 교체
+        uiState.greeting?.let {
+            GreetingBar(
+                nickname = "홍길동",
+                firstGreetingMessage = it.firstMessage,
+                secondGreetingMessage = it.secondMessage,
+            )
+        }
 
         HomeCategoryTabBar(
-            tabs = mockTabs,
-            selectedTab = selectedTab,
-            onTabSelected = { selectedTab = it }
+            tabs = uiState.tabs,
+            selectedTab = uiState.selectedTab,
+            onTabSelected = onTabSelected
         )
 
         Spacer(Modifier.height(27.dp))
 
         HomeContentCardCarousel(
-            cards = mockHomeCards,
-            modifier = Modifier.fillMaxWidth(),
-            onCenterCardClick = { card ->
-                // TODO: 상세 화면 이동
-                // navController.navigate("archive/${card.archiveId}")
-            }
+            cards = uiState.contentCards,
+            onCenterCardClick = onCardClick
         )
     }
 }
 
-@Preview(showBackground = false)
+@Preview(showBackground = true)
 @Composable
-private fun HomeScreenPreview(){
-    HomeScreen()
+private fun HomeScreenPreview() {
+    HomeScreenContent(
+        uiState = HomeUiState(
+            greeting = GreetingUiModel(
+                firstMessage = "좋은 아침이에요!",
+                secondMessage = "오늘도 한 걸음 성장해볼까요?"
+            ),
+            tabs = listOf(
+                HomeTab(
+                    type = HomeTabType.ALL,
+                    label = "전체",
+                    subMessage = "수집한 자료를 기반으로 발행된, 나만의 지식 뉴스레터"
+                ),
+                HomeTab(
+                    type = HomeTabType.INSPIRATION,
+                    label = "영감수집",
+                    subMessage = "잠깐의 틈을 채워줄, 현재의 관심사와 맞닿은 인사이트 "
+                ),
+                HomeTab(
+                    type = HomeTabType.DEEP_DIVE,
+                    label = "집중탐구",
+                    subMessage = "관심 주제를 깊이 파고들어, 온전히 내 것으로 만드는 시간 "
+                ),
+                HomeTab(
+                    type = HomeTabType.GROWTH,
+                    label = "성장한입",
+                    subMessage = "매일 조금씩 지식을 채우며 당신의 성장을 체감해 보세요 "
+                ),
+                HomeTab(
+                    type = HomeTabType.VIEW_EXPANSION,
+                    label = "관점확장",
+                    subMessage = "새로운 시각으로 세상을 바라볼 수 있는 깊이 있는 통찰 "
+                )
+            ),
+            selectedTab = HomeTabType.ALL,
+            contentCards = listOf(
+                HomeContentCardUiModel(
+                    archiveId = 1L,
+                    tabType = HomeTabType.ALL,
+                    tabLabel = "전체",
+                    cardType = HomeCardType.AI_SUMMARY,
+                    title = "2025 UI 디자인 트렌드: 글래스모피즘의 귀환",
+                    imageUrls = listOf("https://picsum.photos/id/10/800/600")
+                ),
+                HomeContentCardUiModel(
+                    archiveId = 2L,
+                    tabType = HomeTabType.ALL,
+                    tabLabel = "전체",
+                    cardType = HomeCardType.COLLECTION,
+                    title = "AI 에이전트, 검색을 넘어 행동으로",
+                    imageUrls = listOf(
+                        "https://picsum.photos/id/11/800/600",
+                        "https://picsum.photos/id/12/800/600"
+                    )
+                )
+            )
+        ),
+        onTabSelected = {},
+        onCardClick = {}
+    )
 }
