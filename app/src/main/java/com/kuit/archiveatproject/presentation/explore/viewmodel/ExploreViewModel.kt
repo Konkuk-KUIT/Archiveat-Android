@@ -2,6 +2,7 @@ package com.kuit.archiveatproject.presentation.explore.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.domain.model.Explore
 import com.kuit.archiveatproject.domain.repository.ExploreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,25 +25,38 @@ class ExploreViewModel @Inject constructor(
         fetchExplore()
     }
 
-    private fun Explore.toUiState(): ExploreUiState =
-        ExploreUiState(
-            isLoading = false,
+    private fun Explore.toUiState(): ExploreUiState {
+        val tabs = categories.map { category ->
+            ExploreCategoryTabItem(
+                id = category.id,
+                name = category.name,
+                iconResId = mapCategoryIcon(category.name)
+            )
+        }
+
+        return ExploreUiState(
             inboxCount = inboxCount,
             llmStatus = llmStatus,
-            categories = categories.map { category ->
-                ExploreCategoryUiItem(
-                    id = category.id,
-                    name = category.name,
-                    topics = category.topics.map { topic ->
-                        ExploreTopicUiItem(
-                            id = topic.id,
-                            name = topic.name,
-                            newsletterCount = topic.newsletterCount,
-                        )
-                    }
-                )
-            }
+            categoryTabs = tabs,
+            selectedCategoryId = tabs.firstOrNull()?.id ?: 0L,
         )
+    }
+
+    private fun mapCategoryIcon(name: String): Int =
+        when (name) {
+            "IT/과학" -> R.drawable.ic_category_it
+            "국제" -> R.drawable.ic_category_internation
+            "경제" -> R.drawable.ic_category_economy
+            "문화" -> R.drawable.ic_category_culture
+            "생활" -> R.drawable.ic_category_living
+            else -> R.drawable.ic_category_it
+        }
+
+    fun onCategorySelected(categoryId: Long) {
+        _uiState.update {
+            it.copy(selectedCategoryId = categoryId)
+        }
+    }
 
     fun fetchExplore() {
         viewModelScope.launch {
