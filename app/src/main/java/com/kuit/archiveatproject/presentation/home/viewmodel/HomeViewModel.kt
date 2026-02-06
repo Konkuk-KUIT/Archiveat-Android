@@ -1,5 +1,6 @@
 package com.kuit.archiveatproject.presentation.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.domain.entity.Home
@@ -68,6 +69,15 @@ class HomeViewModel @Inject constructor(
                     )
                 }
                 updateVisibleContent(HomeTabType.ALL)
+            }.onFailure { e ->
+                Log.e("HomeViewModel", "홈 조회 실패", e)
+
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "홈 정보를 불러오지 못했어요"
+                    )
+                }
             }
         }
     }

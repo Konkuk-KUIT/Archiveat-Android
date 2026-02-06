@@ -33,6 +33,8 @@ class ShareViewModel @Inject constructor(
     fun saveNewsletter() {
         val state = _uiState.value
 
+        val memoToSend = state.memo.trim()
+
         if (state.contentUrl.isBlank()) {
             _uiState.update {
                 it.copy(errorMessage = "유효한 링크를 찾을 수 없습니다.")
@@ -46,7 +48,7 @@ class ShareViewModel @Inject constructor(
             runCatching {
                 newsletterRepository.saveNewsletter(
                     contentUrl = state.contentUrl,
-                    memo = state.memo
+                    memo = memoToSend
                 )
             }.onSuccess {
                 _uiState.update {
