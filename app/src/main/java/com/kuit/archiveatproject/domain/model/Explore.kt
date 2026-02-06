@@ -4,7 +4,7 @@ import com.kuit.archiveatproject.domain.entity.LlmStatus
 
 data class Explore(
     val inboxCount: Int,
-    val exploreLlmStatus: LlmStatus,
+    val llmStatus: LlmStatus,
     val categories: List<ExploreCategory>,
 )
 
