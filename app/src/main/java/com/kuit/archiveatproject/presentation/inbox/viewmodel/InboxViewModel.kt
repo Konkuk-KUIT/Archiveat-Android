@@ -10,6 +10,7 @@ import com.kuit.archiveatproject.domain.repository.InboxRepository
 import com.kuit.archiveatproject.domain.repository.NewsletterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,25 +33,15 @@ class InboxViewModel @Inject constructor(
     private var pollingJob: Job? = null
 
     init {
-        loadInbox()
+        viewModelScope.launch {
+            val inbox = fetchInbox(showLoading = true)
+            if (inbox != null) updatePolling(inbox)
+        }
     }
 
     fun loadInbox() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            runCatching { inboxRepository.getInbox() }
-                .onSuccess { inbox ->
-                    _uiState.update { it.copy(isLoading = false, inbox = inbox) }
-                    updatePolling(inbox)
-                }
-                .onFailure { e ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = e.message ?: "인박스 조회에 실패했습니다."
-                        )
-                    }
-                }
+            fetchInbox(showLoading = true)
         }
     }
 
@@ -98,9 +89,7 @@ class InboxViewModel @Inject constructor(
     }
 
     private fun updatePolling(inbox: Inbox) {
-        val hasRunning = inbox.inbox.any { group ->
-            group.items.any { it.llmStatus == LlmStatus.RUNNING }
-        }
+        val hasRunning = hasRunning(inbox)
 
         if (!hasRunning) {
             pollingJob?.cancel()
@@ -118,16 +107,52 @@ class InboxViewModel @Inject constructor(
             Log.d(TAG, "polling start")
             while (true) {
                 delay(2500L) // nn초로 변경 가능
-                val stillRunning = _uiState.value.inbox.inbox.any { group ->
-                    group.items.any { it.llmStatus == LlmStatus.RUNNING }
-                }
+                val stillRunning = hasRunning(_uiState.value.inbox)
                 if (!stillRunning) {
                     Log.d(TAG, "polling stop: RUNNING cleared")
                     break
                 }
                 Log.d(TAG, "polling tick: refresh inbox")
-                loadInbox()
+                try {
+                    val refreshed = inboxRepository.getInbox()
+                    _uiState.update { it.copy(inbox = refreshed) }
+                    if (!hasRunning(refreshed)) {
+                        Log.d(TAG, "polling stop: RUNNING cleared")
+                        break
+                    }
+                } catch (e: Throwable) {
+                    if (e is CancellationException) throw e
+                    _uiState.update {
+                        it.copy(errorMessage = e.message ?: "인박스 조회에 실패했습니다.")
+                    }
+                }
             }
         }
     }
+
+    private suspend fun fetchInbox(showLoading: Boolean): Inbox? {
+        if (showLoading) {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        }
+
+        return try {
+            val inbox = inboxRepository.getInbox()
+            _uiState.update { it.copy(isLoading = false, inbox = inbox) }
+            inbox
+        } catch (e: Throwable) {
+            if (e is CancellationException) throw e
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = e.message ?: "인박스 조회에 실패했습니다."
+                )
+            }
+            null
+        }
+    }
+
+    private fun hasRunning(inbox: Inbox): Boolean =
+        inbox.inbox.any { group ->
+            group.items.any { it.llmStatus == LlmStatus.RUNNING }
+        }
 }

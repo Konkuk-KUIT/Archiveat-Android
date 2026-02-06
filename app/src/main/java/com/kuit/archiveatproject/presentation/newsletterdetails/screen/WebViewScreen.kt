@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +32,7 @@ fun WebViewScreen(
         it.startsWith("http://") || it.startsWith("https://")
     }.orEmpty()
     val isPreview = LocalInspectionMode.current
+    var lastRequestedUrl by remember { mutableStateOf<String?>(null) }
 
     Column(modifier = modifier.fillMaxSize()) {
         BackTopBar(
@@ -66,12 +71,16 @@ fun WebViewScreen(
                         webViewClient = WebViewClient()
                         @SuppressLint("SetJavaScriptEnabled")
                         settings.javaScriptEnabled = true
-                        loadUrl(safeUrl)
+                        if (lastRequestedUrl != safeUrl) {
+                            loadUrl(safeUrl)
+                            lastRequestedUrl = safeUrl
+                        }
                     }
                 },
                 update = { webView ->
-                    if (webView.url != safeUrl) {
+                    if (lastRequestedUrl != safeUrl) {
                         webView.loadUrl(safeUrl)
+                        lastRequestedUrl = safeUrl
                     }
                 },
                 onRelease = { webView ->
