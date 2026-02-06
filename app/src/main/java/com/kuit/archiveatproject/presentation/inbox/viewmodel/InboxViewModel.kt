@@ -41,7 +41,8 @@ class InboxViewModel @Inject constructor(
 
     fun loadInbox() {
         viewModelScope.launch {
-            fetchInbox(showLoading = true)
+            val inbox = fetchInbox(showLoading = true)
+            if (inbox != null) updatePolling(inbox)
         }
     }
 
@@ -65,16 +66,16 @@ class InboxViewModel @Inject constructor(
 
     fun deleteNewsletter(userNewsletterId: Long, onDeleted: (Long) -> Unit = {}) {
         viewModelScope.launch {
-            runCatching { newsletterRepository.deleteNewsletter(userNewsletterId) }
-                .onSuccess {
-                    deleteLocal(userNewsletterId)
-                    onDeleted(userNewsletterId)
+            try {
+                newsletterRepository.deleteNewsletter(userNewsletterId)
+                deleteLocal(userNewsletterId)
+                onDeleted(userNewsletterId)
+            } catch (e: Throwable) {
+                if (e is CancellationException) throw e
+                _uiState.update {
+                    it.copy(errorMessage = e.message ?: "삭제에 실패했습니다.")
                 }
-                .onFailure { e ->
-                    _uiState.update {
-                        it.copy(errorMessage = e.message ?: "삭제에 실패했습니다.")
-                    }
-                }
+            }
         }
     }
 
@@ -115,7 +116,7 @@ class InboxViewModel @Inject constructor(
                 Log.d(TAG, "polling tick: refresh inbox")
                 try {
                     val refreshed = inboxRepository.getInbox()
-                    _uiState.update { it.copy(inbox = refreshed) }
+                    _uiState.update { it.copy(inbox = refreshed, errorMessage = null) }
                     if (!hasRunning(refreshed)) {
                         Log.d(TAG, "polling stop: RUNNING cleared")
                         break
