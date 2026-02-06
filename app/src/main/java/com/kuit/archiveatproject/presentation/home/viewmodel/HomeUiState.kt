@@ -8,7 +8,7 @@ import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
 
 data class HomeUiState(
     val isLoading: Boolean = false,
-
+    val errorMessage: String? = null,
     val greeting: GreetingUiModel? = null,
 
     val tabs: List<HomeTab> = emptyList(),
