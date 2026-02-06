@@ -37,7 +37,6 @@ class InboxEditViewModel @Inject constructor(
     // NavArg가 정상적으로 들어왔다면 fetch 호출해서 서버 데이터 로드 / 아니면 에러 처리
     init {
         if (argUserNewsletterId != -1L) fetch(argUserNewsletterId)
-        else _uiState.update { it.copy(isLoading = false, errorMessage = "userNewsletterId가 없습니다") }
     }
 
     /** 수정 화면 조회 API 호출: GET /explore/inbox/{userNewsletterId} */
