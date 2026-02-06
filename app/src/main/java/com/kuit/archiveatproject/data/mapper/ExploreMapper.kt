@@ -11,7 +11,7 @@ fun ExploreResponseDto.toEntity(): Explore =
     Explore(
         inboxCount = inboxCount,
         // 안드에서는 exploreLlmStatus로 사용
-        exploreLlmStatus = llmStatus.toEntity(),
+        llmStatus = llmStatus.toEntity(),
         categories = categories.map { it.toEntity() },
     )
 
