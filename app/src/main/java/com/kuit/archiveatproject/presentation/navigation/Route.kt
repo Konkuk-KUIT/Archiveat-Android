@@ -11,6 +11,10 @@ sealed class Route (
         fun createRoute(userNewsletterId: Long): String =
             "newsletters/$userNewsletterId/simple"
     }
+    data object NewsletterCollection: Route(route = "collections/{collectionId}") {
+        fun createRoute(collectionId: Long): String =
+            "collections/$collectionId"
+    }
     data object WebView: Route(route = "webview?url={url}") {
         fun createRoute(url: String): String =
             "webview?url=${android.net.Uri.encode(url)}"
