@@ -7,6 +7,10 @@ import kotlinx.serialization.Serializable
 data class ExploreResponseDto(
     @SerialName("inboxCount")
     val inboxCount: Int = 0,
+
+    @SerialName("llmStatus")
+    val llmStatus: LlmStatusDto = LlmStatusDto.DONE,
+
     @SerialName("categories")
     val categories: List<ExploreCategoryDto> = emptyList(),
 )

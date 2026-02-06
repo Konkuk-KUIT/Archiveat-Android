@@ -10,6 +10,8 @@ import com.kuit.archiveatproject.domain.model.ExploreTopic
 fun ExploreResponseDto.toEntity(): Explore =
     Explore(
         inboxCount = inboxCount,
+        // 안드에서는 exploreLlmStatus로 사용
+        llmStatus = llmStatus.toEntity(),
         categories = categories.map { it.toEntity() },
     )
 

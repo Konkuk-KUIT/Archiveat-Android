@@ -40,8 +40,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.kuit.archiveatproject.domain.model.HomeCardType
-import com.kuit.archiveatproject.domain.model.HomeTabType
+import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import kotlinx.coroutines.CancellationException

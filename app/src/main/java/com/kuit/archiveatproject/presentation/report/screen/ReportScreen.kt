@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.presentation.report.component.ReportChartComponent
 import com.kuit.archiveatproject.presentation.report.component.WeeklyAiFeedbackSection
 import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
+import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
@@ -63,8 +64,8 @@ fun ReportScreen(
                 totalSavedCount = uiState.totalSavedCount,
                 totalReadCount = uiState.totalReadCount,
                 readPercentage = uiState.readPercentage,
-                lightPercentage = uiState.lightPercentage,
-                nowPercentage = uiState.nowPercentage,
+                lightPercentage = uiState.balance.lightPercentage,
+                nowPercentage = uiState.balance.nowPercentage,
                 interestGaps = uiState.interestGaps
             )
         }
@@ -81,8 +82,12 @@ private fun ReportScreenPreview() {
             totalSavedCount = 120,
             totalReadCount = 42,
             readPercentage = 35,
-            lightPercentage = 71,
-            nowPercentage = 47,
+            balance = ReportBalanceUiState(
+                lightPercentage = 30,
+                deepPercentage = 70,
+                nowPercentage = 50,
+                futurePercentage = 50
+            ),
             interestGaps = listOf(
                 InterestGapUiItem(
                     topicName = "건강",

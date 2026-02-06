@@ -2,9 +2,12 @@ package com.kuit.archiveatproject.presentation.onboarding.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuit.archiveatproject.R
+import com.kuit.archiveatproject.domain.entity.UserAvailability
 import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
+import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +23,9 @@ class OnboardingViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState
 
+    private fun Set<TimeSlot>.toggle(timeSlot: TimeSlot): Set<TimeSlot> =
+        if (contains(timeSlot)) this - timeSlot else this + timeSlot
+
     fun onEvent(event: OnboardingUiEvent) {
         when (event) {
 
@@ -30,16 +36,36 @@ class OnboardingViewModel @Inject constructor(
             is OnboardingUiEvent.OnEmploymentSelected -> {
                 _uiState.update {
                     it.copy(
-                        selectedEmployment = event.employment
+                        selectedEmploymentType = event.employment.type
                     )
                 }
             }
 
-            is OnboardingUiEvent.OnAvailabilityChanged -> {
-                _uiState.update {
-                    it.copy(
-                        availability = event.availability
-                    )
+            is OnboardingUiEvent.OnTimeSlotToggled -> {
+                _uiState.update { state ->
+                    when (event.mode) {
+                        ReadingMode.LIGHT -> {
+                            if (event.timeSlot in state.deepReadingTimes) {
+                                state
+                            } else {
+                                state.copy(
+                                    lightReadingTimes =
+                                        state.lightReadingTimes.toggle(event.timeSlot)
+                                )
+                            }
+                        }
+
+                        ReadingMode.DEEP -> {
+                            if (event.timeSlot in state.lightReadingTimes) {
+                                state
+                            } else {
+                                state.copy(
+                                    deepReadingTimes =
+                                        state.deepReadingTimes.toggle(event.timeSlot)
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -73,8 +99,10 @@ class OnboardingViewModel @Inject constructor(
             }.onSuccess { result ->
                 _uiState.update {
                     it.copy(
-                        employmentOptions = result.employmentTypes,
-                        availabilityOptions = result.availabilityOptions,
+                        employmentOptions = mapEmploymentTypes(result.employmentTypes),
+                        availabilityOptions = result.availabilityOptions.map {
+                            TimeSlot.valueOf(it)
+                        },
                         interestCategories = result.categories,
                         isLoading = false
                     )
@@ -97,7 +125,9 @@ class OnboardingViewModel @Inject constructor(
         val state = _uiState.value
 
         // 필수 값 검증
-        if (state.selectedEmployment == null || state.availability == null) {
+        if (state.selectedEmploymentType == null ||
+            (state.lightReadingTimes.isEmpty() && state.deepReadingTimes.isEmpty())
+        ) {
             _uiState.update {
                 it.copy(errorMessage = "필수 정보를 선택해주세요.")
             }
@@ -105,12 +135,12 @@ class OnboardingViewModel @Inject constructor(
         }
 
         val submitEntity = UserMetadataSubmit(
-            employmentType = state.selectedEmployment,
-            availability = state.availability,
-            interests = UserInterests(
-                now = state.selectedInterests,
-                future = emptyList()
-            )
+            employmentType = state.selectedEmploymentType,
+            availability = UserAvailability(
+                light = state.lightReadingTimes.toList(),
+                deep = state.deepReadingTimes.toList()
+            ),
+            interests = state.selectedInterests
         )
 
         viewModelScope.launch {
@@ -148,4 +178,106 @@ class OnboardingViewModel @Inject constructor(
             it.copy(step = OnboardingStep.INTERESTS)
         }
     }
+
+    private fun mapEmploymentTypes(
+        types: List<String>
+    ): List<JobUiModel> {
+        return types.map { type ->
+            when (type) {
+                "STUDENT" -> JobUiModel(
+                    type = type,
+                    label = "대학생",
+                    iconRes = R.drawable.ic_job_student
+                )
+
+                "EMPLOYEE" -> JobUiModel(
+                    type = type,
+                    label = "직장인",
+                    iconRes = R.drawable.ic_job_student
+                )
+
+                "FREELANCER" -> JobUiModel(
+                    type = type,
+                    label = "프리랜서",
+                    iconRes = R.drawable.ic_job_student
+                )
+
+                else -> JobUiModel(
+                    type = type,
+                    label = type,
+                    iconRes = R.drawable.ic_job_student
+                )
+            }
+        }
+    }
+
+    fun toggleInterest(
+        current: List<UserInterests>,
+        categoryId: Long,
+        topicId: Long
+    ): List<UserInterests> {
+
+        val group = current.find { it.categoryId == categoryId }
+
+        return if (group == null) {
+            current + UserInterests(
+                categoryId = categoryId,
+                topicIds = listOf(topicId)
+            )
+        } else {
+            val newTopics =
+                if (topicId in group.topicIds)
+                    group.topicIds - topicId
+                else
+                    group.topicIds + topicId
+
+            if (newTopics.isEmpty()) {
+                current - group
+            } else {
+                current.map {
+                    if (it.categoryId == categoryId)
+                        it.copy(topicIds = newTopics)
+                    else it
+                }
+            }
+        }
+    }
+
+    fun onInterestToggled(
+        categoryId: Long,
+        topicId: Long
+    ) {
+        _uiState.update { state ->
+            state.copy(
+                selectedInterests = toggleInterest(
+                    current = state.selectedInterests,
+                    categoryId = categoryId,
+                    topicId = topicId
+                )
+            )
+        }
+    }
 }
+
+val jobs = listOf(
+    JobUiModel(
+        type = "STUDENT",
+        label = "학생",
+        iconRes = R.drawable.ic_job_student
+    ),
+    JobUiModel(
+        type = "EMPLOYEE",
+        label = "직장인",
+        iconRes = R.drawable.ic_job_employee
+    ),
+    JobUiModel(
+        type = "FREELANCER",
+        label = "프리랜서",
+        iconRes = R.drawable.ic_job_freelancer
+    ),
+    JobUiModel(
+        type = "ETC",
+        label = "기타",
+        iconRes = R.drawable.ic_job_etc
+    ),
+)
