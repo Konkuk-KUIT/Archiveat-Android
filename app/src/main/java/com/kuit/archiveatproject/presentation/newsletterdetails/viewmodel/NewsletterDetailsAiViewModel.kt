@@ -66,7 +66,11 @@ class NewsletterDetailsAiViewModel @Inject constructor(
         val id = argUserNewsletterId
         if (id == -1L) return
         viewModelScope.launch {
-            runCatching { newsletterRepository.patchNewsletterRead(id) }
+            try {
+                newsletterRepository.patchNewsletterRead(id)
+            } catch (e: Throwable) {
+                if (e is CancellationException) throw e
+            }
         }
     }
 }
