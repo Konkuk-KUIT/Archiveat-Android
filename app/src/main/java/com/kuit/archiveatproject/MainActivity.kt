@@ -79,7 +79,8 @@ class MainActivity : ComponentActivity() {
                                 currentTab = currentTab,
                                 onItemSelected = { tab ->
                                     navController.navigate(tab.route) {
-                                        popUpTo(navController.graph.startDestinationId) {
+                                        // Bottom tabs should not build a back stack between tabs.
+                                        popUpTo(Route.Home.route) {
                                             saveState = true
                                         }
                                         launchSingleTop = true
