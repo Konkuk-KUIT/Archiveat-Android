@@ -11,14 +11,14 @@ import com.kuit.archiveatproject.presentation.login.viewmodel.LoginViewModel
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
-    onFinished: () -> Unit = {},
+    onLoginSuccess: () -> Unit = {},
+    onSignupSuccess: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState.isSignupSuccess, uiState.isLoginSuccess) {
-        if (uiState.isSignupSuccess || uiState.isLoginSuccess) {
-            onFinished()
-        }
+        if (uiState.isSignupSuccess) onSignupSuccess()
+        if (uiState.isLoginSuccess) onLoginSuccess()
     }
 
     when (uiState.step) {

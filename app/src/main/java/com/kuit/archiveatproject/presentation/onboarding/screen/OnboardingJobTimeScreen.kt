@@ -38,6 +38,7 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun OnboardingJobTimeScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),
+    onNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -57,6 +58,7 @@ fun OnboardingJobTimeScreen(
         },
         onNextClicked = {
             viewModel.onEvent(OnboardingUiEvent.OnNextStep)
+            onNext()
         }
     )
 
