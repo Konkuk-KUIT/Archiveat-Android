@@ -13,6 +13,8 @@ data class ExploreUiState(
     val categoryTabs: List<ExploreCategoryTabItem> = emptyList(),
     val selectedCategoryId: Long = 0L,
 
+    val categories: List<ExploreCategoryUiItem> = emptyList(),
+
     // 에러 처리 (옵션)
     val errorMessage: String? = null,
 )
@@ -27,6 +29,7 @@ data class ExploreTopicUiItem(
     val id: Long,
     val name: String,
     val newsletterCount: Int,
+    val iconResId: Int,
 )
 
 data class ExploreCategoryTabItem(
