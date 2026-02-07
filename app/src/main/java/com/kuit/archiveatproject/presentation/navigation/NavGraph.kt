@@ -12,6 +12,7 @@ import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
 import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
 import com.kuit.archiveatproject.presentation.inbox.screen.InboxScreen
+import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsCollectionScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsSimpleScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.WebViewScreen
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
@@ -53,6 +54,18 @@ fun NavGraph(
                 onBack = { navController.popBackStack() },
                 onClickWebView = { url ->
                     navController.navigate(Route.WebView.createRoute(url))
+                },
+                modifier = modifier
+            )
+        }
+        composable(
+            route = Route.NewsletterCollection.route,
+            arguments = listOf(navArgument("collectionId") { type = NavType.LongType })
+        ) {
+            NewsletterDetailsCollectionScreen(
+                onBack = { navController.popBackStack() },
+                onClickItem = { userNewsletterId ->
+                    navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
                 },
                 modifier = modifier
             )
