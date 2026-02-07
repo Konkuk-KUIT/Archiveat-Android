@@ -4,6 +4,10 @@ sealed class Route (
     val route: String
 ){
     data object Home: Route(route = "home")
+    data object Login: Route(route = "login")
+    data object OnboardingIntro: Route(route = "onboarding/intro")
+    data object OnboardingJobTime: Route(route = "onboarding/job-time")
+    data object OnboardingInterest: Route(route = "onboarding/interest")
     data object Share: Route(route = "share")
     data object Explore: Route(route = "explore")
     data object ExploreInbox: Route(route = "explore/inbox")

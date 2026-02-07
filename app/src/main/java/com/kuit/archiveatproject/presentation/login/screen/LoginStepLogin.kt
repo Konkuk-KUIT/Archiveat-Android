@@ -49,12 +49,12 @@ private val EMAIL_REGEX =
 private fun isValidEmail(raw: String, maxLen: Int): Boolean {
     val email = raw.trim()
     return email.isNotEmpty() &&
-            email.length <= maxLen &&
-            EMAIL_REGEX.matches(email)
+        email.length <= maxLen &&
+        EMAIL_REGEX.matches(email)
 }
 
 @Composable
-fun LoginStep3(
+fun LoginStepLogin(
     email: String,
     password: String,
     isLoading: Boolean,
@@ -62,18 +62,16 @@ fun LoginStep3(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onBack: () -> Unit,
-    onComplete: () -> Unit,
+    onLogin: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
     val passwordFocusRequester = remember { FocusRequester() }
 
-    // 길이 제한
-    val emailMaxLen = 254 // RFC 5321 표준
-
+    val emailMaxLen = 254
     val passwordMinLen = 8
-    val passwordMaxLen = 20 // 128
+    val passwordMaxLen = 20
 
     var isPasswordVisible by remember { mutableStateOf(false) }
 
@@ -102,10 +100,7 @@ fun LoginStep3(
                 .padding(horizontal = 20.dp)
                 .padding(top = 22.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(6.dp),
-            )
-            {
+            Column(modifier = Modifier.padding(6.dp)) {
                 Row (
                     verticalAlignment = Alignment.CenterVertically
                 ){
@@ -115,7 +110,7 @@ fun LoginStep3(
                         color = ArchiveatProjectTheme.colors.gray950
                     )
                     Text(
-                        text = "에서 사용할",
+                        text = "에 로그인",
                         style = ArchiveatProjectTheme.typography.Heading_2_semibold,
                         color = ArchiveatProjectTheme.colors.gray950
                     )
@@ -142,7 +137,7 @@ fun LoginStep3(
                 value = email,
                 onValueChange = { input ->
                     onEmailChange(
-                        input.take(emailMaxLen) // 254자 넘으면 자르기
+                        input.take(emailMaxLen)
                     )
                 },
                 modifier = Modifier
@@ -157,7 +152,7 @@ fun LoginStep3(
                 placeholder = {
                     Text(
                         text = "이메일을 입력해주세요",
-                        style = ArchiveatProjectTheme.typography.Body_2_semibold, // Subhead_2_semibold
+                        style = ArchiveatProjectTheme.typography.Body_2_semibold,
                         color = ArchiveatProjectTheme.colors.gray400
                     )
                 },
@@ -261,7 +256,7 @@ fun LoginStep3(
                     onDone = {
                         keyboard?.hide()
                         focusManager.clearFocus(force = true)
-                        if (isFormValid) onComplete()
+                        if (isFormValid) onLogin()
                     }
                 ),
                 colors = TextFieldDefaults.colors(
@@ -288,7 +283,6 @@ fun LoginStep3(
                 modifier = Modifier.padding(horizontal = 13.dp),
             )
 
-            // 에러 메시지: 테스트하고 나중에 지우거나... 처리하면 될 듯
             if (!errorMessage.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -301,12 +295,12 @@ fun LoginStep3(
         }
 
         PrimaryRoundedButton(
-            text = "다음",
+            text = "로그인",
             onClick = {
                 if (!isFormValid) return@PrimaryRoundedButton
                 keyboard?.hide()
-                focusManager.clearFocus(force = true) // 키보드 내림
-                onComplete()
+                focusManager.clearFocus(force = true)
+                onLogin()
             },
             enabled = isFormValid && !isLoading,
             modifier = Modifier
@@ -321,8 +315,8 @@ fun LoginStep3(
 
 @Preview(showBackground = true)
 @Composable
-private fun LoginStep3Preview() {
-    LoginStep3(
+private fun LoginStepLoginPreview() {
+    LoginStepLogin(
         email = "test@archiveat.com",
         password = "password123",
         isLoading = false,
@@ -330,6 +324,6 @@ private fun LoginStep3Preview() {
         onEmailChange = {},
         onPasswordChange = {},
         onBack = {},
-        onComplete = {}
+        onLogin = {}
     )
 }

@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,15 +32,26 @@ import com.kuit.archiveatproject.presentation.onboarding.component.interest.Inte
 import com.kuit.archiveatproject.presentation.onboarding.component.interest.InterestTextChip
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiEvent
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiState
+import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingNavigationEvent
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun OnboardingInterestScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),
+    onFinished: () -> Unit,
     modifier: Modifier = Modifier
 ){
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collectLatest { event ->
+            when (event) {
+                OnboardingNavigationEvent.SubmitSuccess -> onFinished()
+            }
+        }
+    }
 
     OnboardingInterestContent(
         uiState = uiState,
