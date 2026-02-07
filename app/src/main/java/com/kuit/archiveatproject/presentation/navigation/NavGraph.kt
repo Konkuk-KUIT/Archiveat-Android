@@ -107,6 +107,18 @@ fun NavGraph(
             )
         }
         composable(
+            route = Route.NewsletterCollection.route,
+            arguments = listOf(navArgument("collectionId") { type = NavType.LongType })
+        ) {
+            NewsletterDetailsCollectionScreen(
+                onBack = { navController.popBackStack() },
+                onClickItem = { userNewsletterId ->
+                    navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
+                },
+                modifier = modifier
+            )
+        }
+        composable(
             route = Route.WebView.route,
             arguments = listOf(navArgument("url") { type = NavType.StringType })
         ) { backStackEntry ->

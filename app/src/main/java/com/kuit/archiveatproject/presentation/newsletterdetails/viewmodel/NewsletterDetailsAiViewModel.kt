@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.domain.entity.HomeCardType
-import com.kuit.archiveatproject.domain.entity.NewsletterSimple
+import com.kuit.archiveatproject.domain.entity.NewsletterDetail
 import com.kuit.archiveatproject.domain.repository.NewsletterRepository
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.AiSectionUiModel
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsAiUiModel
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class NewsletterSimpleViewModel @Inject constructor(
+class NewsletterDetailsAiViewModel @Inject constructor(
     private val newsletterRepository: NewsletterRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -27,8 +27,8 @@ class NewsletterSimpleViewModel @Inject constructor(
     private val argUserNewsletterId: Long =
         savedStateHandle.get<Long>("userNewsletterId") ?: -1L
 
-    private val _uiState = MutableStateFlow(NewsletterSimpleUiState(isLoading = true))
-    val uiState: StateFlow<NewsletterSimpleUiState> = _uiState
+    private val _uiState = MutableStateFlow(NewsletterDetailsAiUiState(isLoading = true))
+    val uiState: StateFlow<NewsletterDetailsAiUiState> = _uiState
 
     init {
         if (argUserNewsletterId != -1L) {
@@ -42,12 +42,12 @@ class NewsletterSimpleViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
-                val simple = newsletterRepository.getNewsletterSimple(userNewsletterId)
+                val detail = newsletterRepository.getNewsletterDetail(userNewsletterId)
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        model = simple.toAiUiModel(),
-                        contentUrl = simple.contentUrl,
+                        model = detail.toAiUiModel(),
+                        contentUrl = detail.contentUrl,
                     )
                 }
             } catch (e: Throwable) {
@@ -75,7 +75,7 @@ class NewsletterSimpleViewModel @Inject constructor(
     }
 }
 
-private fun NewsletterSimple.toAiUiModel(): NewsletterDetailsAiUiModel {
+private fun NewsletterDetail.toAiUiModel(): NewsletterDetailsAiUiModel {
     val topicText = listOf(categoryName, topicName)
         .filter { it.isNotBlank() }
         .joinToString(" - ")
@@ -90,11 +90,12 @@ private fun NewsletterSimple.toAiUiModel(): NewsletterDetailsAiUiModel {
 
     return NewsletterDetailsAiUiModel(
         topicText = topicText,
+        subtitle = "콘텐츠의 핵심만 AI가 요약했어요",
         imageUrl = thumbnailUrl,
         tags = tags,
         contentTitle = title,
         userName = "나",
-        aiSections = simpleSummary.map { AiSectionUiModel(it.title, it.content) },
+        aiSections = summary.map { AiSectionUiModel(it.title, it.content) },
         memo = memo
     )
 }
