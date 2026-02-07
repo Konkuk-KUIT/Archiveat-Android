@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
@@ -36,13 +37,10 @@ fun NavGraph(
         navController = navController,
         startDestination = Route.OnboardingIntro.route // startDestination 온보딩 인트로
     ) {
-        composable(route = Route.Home.route) {
-            HomeScreen()
-        }
         composable(route = Route.Login.route) {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate(Route.Home.route) {
+                    navController.navigate(Route.Main.route) {
                         popUpTo(Route.Login.route) { inclusive = true }
                         launchSingleTop = true
                     }
@@ -87,73 +85,81 @@ fun NavGraph(
             OnboardingInterestScreen(
                 viewModel = onboardingViewModel,
                 onFinished = {
-                    navController.navigate(Route.Home.route) {
+                    navController.navigate(Route.Main.route) {
                         popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
             )
         }
-        composable(route = Route.Explore.route) {
-            ExploreScreen(modifier = modifier)
-        }
-        composable(route = Route.ExploreInbox.route) {
-            InboxScreen(
-                onBackToExploreFirstDepth = {
-                    navController.popBackStack(Route.Explore.route, inclusive = false)
-                },
-                onOpenOriginal = { userNewsletterId ->
-                    navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
-                },
-                modifier = modifier
-            )
-        }
-        composable(
-            route = Route.NewsletterSimple.route,
-            arguments = listOf(navArgument("userNewsletterId") { type = NavType.LongType })
+        navigation(
+            startDestination = Route.Home.route,
+            route = Route.Main.route
         ) {
-            NewsletterDetailsSimpleScreen(
-                onBack = { navController.popBackStack() },
-                onClickWebView = { url ->
-                    navController.navigate(Route.WebView.createRoute(url))
-                },
-                modifier = modifier
-            )
-        }
-        composable(
-            route = Route.NewsletterCollection.route,
-            arguments = listOf(navArgument("collectionId") { type = NavType.LongType })
-        ) {
-            NewsletterDetailsCollectionScreen(
-                onBack = { navController.popBackStack() },
-                onClickItem = { userNewsletterId ->
-                    navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
-                },
-                modifier = modifier
-            )
-        }
-        composable(
-            route = Route.WebView.route,
-            arguments = listOf(navArgument("url") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val url = backStackEntry.arguments?.getString("url").orEmpty()
-            WebViewScreen(
-                url = url,
-                onBack = { navController.popBackStack() },
-                modifier = modifier
-            )
-        }
-        composable(route = Route.Report.route) {
-            ReportScreen(
-                uiState = ReportUiState(),
-                modifier = modifier
-            )
-        }
-        composable(route = Route.Etc.route) {
-            EtcScreen(modifier = modifier)
-        }
-        composable(route = Route.Share.route) {
-            ShareScreen(modifier = modifier)
+            composable(route = Route.Home.route) {
+                HomeScreen()
+            }
+            composable(route = Route.Explore.route) {
+                ExploreScreen(modifier = modifier)
+            }
+            composable(route = Route.ExploreInbox.route) {
+                InboxScreen(
+                    onBackToExploreFirstDepth = {
+                        navController.popBackStack(Route.Explore.route, inclusive = false)
+                    },
+                    onOpenOriginal = { userNewsletterId ->
+                        navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
+                    },
+                    modifier = modifier
+                )
+            }
+            composable(
+                route = Route.NewsletterSimple.route,
+                arguments = listOf(navArgument("userNewsletterId") { type = NavType.LongType })
+            ) {
+                NewsletterDetailsSimpleScreen(
+                    onBack = { navController.popBackStack() },
+                    onClickWebView = { url ->
+                        navController.navigate(Route.WebView.createRoute(url))
+                    },
+                    modifier = modifier
+                )
+            }
+            composable(
+                route = Route.NewsletterCollection.route,
+                arguments = listOf(navArgument("collectionId") { type = NavType.LongType })
+            ) {
+                NewsletterDetailsCollectionScreen(
+                    onBack = { navController.popBackStack() },
+                    onClickItem = { userNewsletterId ->
+                        navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
+                    },
+                    modifier = modifier
+                )
+            }
+            composable(
+                route = Route.WebView.route,
+                arguments = listOf(navArgument("url") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val url = backStackEntry.arguments?.getString("url").orEmpty()
+                WebViewScreen(
+                    url = url,
+                    onBack = { navController.popBackStack() },
+                    modifier = modifier
+                )
+            }
+            composable(route = Route.Report.route) {
+                ReportScreen(
+                    uiState = ReportUiState(),
+                    modifier = modifier
+                )
+            }
+            composable(route = Route.Etc.route) {
+                EtcScreen(modifier = modifier)
+            }
+            composable(route = Route.Share.route) {
+                ShareScreen(modifier = modifier)
+            }
         }
     }
 }
