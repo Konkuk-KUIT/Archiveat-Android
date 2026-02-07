@@ -32,8 +32,10 @@ import com.kuit.archiveatproject.presentation.onboarding.component.interest.Inte
 import com.kuit.archiveatproject.presentation.onboarding.component.interest.InterestTextChip
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiEvent
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiState
+import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingNavigationEvent
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun OnboardingInterestScreen(
@@ -43,8 +45,12 @@ fun OnboardingInterestScreen(
 ){
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.isSubmitSuccess) {
-        if (uiState.isSubmitSuccess) onFinished()
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collectLatest { event ->
+            when (event) {
+                OnboardingNavigationEvent.SubmitSuccess -> onFinished()
+            }
+        }
     }
 
     OnboardingInterestContent(

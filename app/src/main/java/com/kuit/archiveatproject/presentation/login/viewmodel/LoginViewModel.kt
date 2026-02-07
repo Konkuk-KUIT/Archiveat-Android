@@ -172,4 +172,12 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    fun consumeSignupSuccess() {
+        _uiState.update { it.copy(isSignupSuccess = false) }
+    }
+
+    fun consumeLoginSuccess() {
+        _uiState.update { it.copy(isLoginSuccess = false) }
+    }
 }
