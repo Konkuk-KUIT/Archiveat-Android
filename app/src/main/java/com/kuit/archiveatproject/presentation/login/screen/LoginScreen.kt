@@ -15,8 +15,8 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.isSignupSuccess) {
-        if (uiState.isSignupSuccess) {
+    LaunchedEffect(uiState.isSignupSuccess, uiState.isLoginSuccess) {
+        if (uiState.isSignupSuccess || uiState.isLoginSuccess) {
             onFinished()
         }
     }
@@ -24,7 +24,21 @@ fun LoginScreen(
     when (uiState.step) {
         LoginStep.STEP1 -> {
             LoginStep1(
-                onStartWithEmail = viewModel::onStartWithEmail
+                onStartWithEmail = viewModel::onStartWithEmail,
+                onStartLogin = viewModel::onStartLogin
+            )
+        }
+
+        LoginStep.LOGIN -> {
+            LoginStepLogin(
+                email = uiState.email,
+                password = uiState.password,
+                isLoading = uiState.isLoading,
+                errorMessage = uiState.errorMessage,
+                onEmailChange = viewModel::onEmailChanged,
+                onPasswordChange = viewModel::onPasswordChanged,
+                onBack = viewModel::onBack,
+                onLogin = viewModel::onLogin
             )
         }
 
