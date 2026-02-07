@@ -15,6 +15,7 @@ import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
 import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
 import com.kuit.archiveatproject.presentation.inbox.screen.InboxScreen
 import com.kuit.archiveatproject.presentation.login.screen.LoginScreen
+import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsCollectionScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsSimpleScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.WebViewScreen
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingInterestScreen
