@@ -1,8 +1,10 @@
 package com.kuit.archiveatproject.presentation.share.screen
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -12,6 +14,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.R
@@ -67,14 +70,19 @@ fun ShareBottomSheet(
 
             Spacer(Modifier.height(18.dp))
 
-            Image(
-                painter = painterResource(id = R.drawable.send),
-                contentDescription = "save",
+            Button(
+                onClick = { onSave(memo) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
-                    .clickable { onSave(memo) }
-            )
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF6220B8),
+                    contentColor = Color.White
+                )
+            ) {
+                Text("보관하기")
+            }
         }
     }
 }
