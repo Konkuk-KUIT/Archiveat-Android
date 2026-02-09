@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,11 +46,12 @@ import kotlin.math.roundToInt
 @Composable
 fun ExploreScreen(
     modifier: Modifier = Modifier,
+    onInboxClick: () -> Unit,
+    onTopicClick: (Long, String) -> Unit,
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // 🔹 Search UI 전용 상태 (서버 없음)
     var searchUiState by remember {
         mutableStateOf(
             ExploreSearchUiState(
@@ -69,8 +71,8 @@ fun ExploreScreen(
         searchUiState = searchUiState,
 
         onCategorySelected = viewModel::onCategorySelected,
-        onInboxClick = { /* TODO */ },
-        onTopicClick = { /* TODO */ },
+        onInboxClick = onInboxClick,
+        onTopicClick = onTopicClick,
 
         onSearchFocus = {
             searchUiState = searchUiState.copy(isSearchMode = true)
@@ -98,7 +100,7 @@ fun ExploreContent(
     searchUiState: ExploreSearchUiState,
     onCategorySelected: (Long) -> Unit,
     onInboxClick: () -> Unit,
-    onTopicClick: (Long) -> Unit,
+    onTopicClick: (Long, String) -> Unit,
     onSearchFocus: () -> Unit,
     onQueryChange: (String) -> Unit,
     onKeywordClick: (String) -> Unit,
@@ -129,7 +131,9 @@ fun ExploreContent(
             item {
                 Text(
                     text = "탐색",
-                    modifier = Modifier.padding(20.dp),
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .padding(20.dp),
                     style = ArchiveatProjectTheme.typography.Heading_1_bold
                 )
             }
@@ -184,6 +188,7 @@ fun ExploreContent(
                         color = ArchiveatProjectTheme.colors.gray950,
                         modifier = Modifier.padding(horizontal = 20.dp)
                     )
+                    Spacer(Modifier.height(24.dp))
                 }
 
                 item {
@@ -332,7 +337,7 @@ private fun ExploreContentPreview() {
 
             onCategorySelected = {},
             onInboxClick = {},
-            onTopicClick = {},
+            onTopicClick = {} as (Long, String) -> Unit,
 
             onSearchFocus = {
                 searchUiState = searchUiState.copy(isSearchMode = true)

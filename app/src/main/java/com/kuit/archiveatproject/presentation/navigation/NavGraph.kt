@@ -13,6 +13,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
+import com.kuit.archiveatproject.presentation.explore.screen.ExploreTopicDetailScreen
 import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
 import com.kuit.archiveatproject.presentation.inbox.screen.InboxScreen
 import com.kuit.archiveatproject.presentation.login.screen.LoginScreen
@@ -100,7 +101,22 @@ fun NavGraph(
                 HomeScreen()
             }
             composable(route = Route.Explore.route) {
-                ExploreScreen(modifier = modifier)
+                ExploreScreen(
+                    modifier = modifier,
+                    onInboxClick = {
+                        navController.navigate(Route.ExploreInbox.route)
+                    },
+                    onTopicClick = { topicId, topicName ->
+                        // topicName은 SavedStateHandle로 전달
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("topicName", topicName)
+
+                        navController.navigate(
+                            Route.ExploreTopicDetail.createRoute(topicId)
+                        )
+                    }
+                )
             }
             composable(route = Route.ExploreInbox.route) {
                 InboxScreen(
@@ -110,6 +126,33 @@ fun NavGraph(
                     onOpenOriginal = { userNewsletterId ->
                         navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
                     },
+                    modifier = modifier
+                )
+            }
+            composable(
+                route = Route.ExploreTopicDetail.route,
+                arguments = listOf(
+                    navArgument("topicId") { type = NavType.LongType }
+                )
+            ) { backStackEntry ->
+                val topicId = backStackEntry.arguments!!.getLong("topicId")
+                val topicName =
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.get<String>("topicName")
+                        ?: ""
+
+                ExploreTopicDetailScreen(
+                    topicId = topicId,
+                    topicName = topicName,
+                    newsletters = emptyList(), // 서버 연동 전
+                    onBack = { navController.popBackStack() },
+                    onClickOutlink = { userNewsletterId ->
+                        navController.navigate(
+                            Route.NewsletterSimple.createRoute(userNewsletterId)
+                        )
+                    },
+                    onSearchSubmit = {},
                     modifier = modifier
                 )
             }
