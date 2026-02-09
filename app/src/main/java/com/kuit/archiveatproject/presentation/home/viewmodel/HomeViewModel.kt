@@ -8,6 +8,7 @@ import com.kuit.archiveatproject.domain.entity.HomeContentCard
 import com.kuit.archiveatproject.domain.entity.HomeContentCollectionCard
 import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.domain.repository.HomeRepository
+import com.kuit.archiveatproject.domain.repository.UserRepository
 import com.kuit.archiveatproject.presentation.home.model.GreetingUiModel
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
@@ -69,6 +71,11 @@ class HomeViewModel @Inject constructor(
                     )
                 }
                 updateVisibleContent(HomeTabType.ALL)
+
+                runCatching { userRepository.getNickname() }
+                    .onSuccess { nickname ->
+                        _uiState.update { it.copy(nickname = nickname) }
+                    }
             }.onFailure { e ->
                 Log.e("HomeViewModel", "홈 조회 실패", e)
 

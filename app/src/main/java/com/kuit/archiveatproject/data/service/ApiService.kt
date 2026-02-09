@@ -15,6 +15,7 @@ import com.kuit.archiveatproject.data.dto.response.report.ReportInterestGapRespo
 import com.kuit.archiveatproject.data.dto.response.report.ReportResponseDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportStatusDto
 import com.kuit.archiveatproject.data.dto.response.user.UserMetadataResponseDto
+import com.kuit.archiveatproject.data.dto.response.user.UserNicknameResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -74,6 +75,9 @@ interface ApiService {
     // user
     @GET("/user/metadata")
     suspend fun getUserMetadata(): BaseResponse<UserMetadataResponseDto>
+
+    @GET("/user/nickname")
+    suspend fun getUserNickname(): BaseResponse<UserNicknameResponseDto>
 
     @POST("/user/metadata")
     suspend fun submitUserMetadata(

@@ -18,6 +18,9 @@ fun GreetingBar(
     secondGreetingMessage: String,
     modifier: Modifier = Modifier
 ){
+    val displayNickname = nickname.trim().ifEmpty { "회원" }
+    val greetingPrefix = "${displayNickname}님 "
+
     Column (
         modifier = modifier
             .fillMaxWidth()
@@ -25,7 +28,7 @@ fun GreetingBar(
             .padding(start = 20.dp, top = 22.dp, bottom = 12.dp)
     ){
         Text(
-            text = nickname + "님 $firstGreetingMessage",
+            text = greetingPrefix + firstGreetingMessage,
             color = ArchiveatProjectTheme.colors.black,
             style = ArchiveatProjectTheme.typography.Heading_2_semibold
         )
@@ -42,5 +45,12 @@ fun GreetingBar(
 @Composable
 private fun GreetingBarPreview(){
     GreetingBar("사예원", "좋은 아침이에요!",
+        "오늘도 한 걸음 성장해볼까요?")
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun GreetingBarPreview2(){
+    GreetingBar("", "좋은 아침이에요!",
         "오늘도 한 걸음 성장해볼까요?")
 }
