@@ -25,6 +25,7 @@ data class OnboardingUiState(
 
     // UI 상태
     val isLoading: Boolean = false,
+    val isSubmitSuccess: Boolean = false,
     val errorMessage: String? = null,
 ) {
     // step2 노출 조건
@@ -74,10 +75,6 @@ sealed interface OnboardingUiEvent {
     // Navigation
     object OnNextStep : OnboardingUiEvent
     object OnSubmit : OnboardingUiEvent
-}
-
-sealed interface OnboardingNavigationEvent {
-    object SubmitSuccess : OnboardingNavigationEvent
 }
 
 enum class TimeSlot {

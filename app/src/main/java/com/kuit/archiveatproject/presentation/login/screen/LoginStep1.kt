@@ -35,7 +35,6 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun LoginStep1(
     onStartWithEmail: () -> Unit,
-    onStartLogin: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -130,32 +129,20 @@ fun LoginStep1(
             }
         }
 
-        Column(
+        PrimaryRoundedButton(
+            text = "이메일로 1초만에 시작하기",
+            onClick = onStartWithEmail,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            PrimaryRoundedButton(
-                text = "기존 계정으로 로그인하기",
-                onClick = onStartLogin,
-                heightDp = 50,
-                cornerRadiusDp = 50,
-                containerColor = ArchiveatProjectTheme.colors.gray800
-            )
-            Spacer(Modifier.height(10.dp))
-            PrimaryRoundedButton(
-                text = "이메일로 1초만에 시작하기",
-                onClick = onStartWithEmail,
-                heightDp = 50,
-                cornerRadiusDp = 50,
-            )
-        }
+            heightDp = 50,
+            cornerRadiusDp = 50,
+        )
     }
 }
 
 @Preview
 @Composable
 fun LoginStep1Prev() {
-    LoginStep1(onStartWithEmail = {}, onStartLogin = {})
+    LoginStep1(onStartWithEmail = {})
 }

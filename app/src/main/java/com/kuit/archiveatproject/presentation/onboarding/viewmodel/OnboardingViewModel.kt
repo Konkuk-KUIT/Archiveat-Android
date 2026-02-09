@@ -1,5 +1,6 @@
 package com.kuit.archiveatproject.presentation.onboarding.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.R
@@ -9,11 +10,8 @@ import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
 import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,11 +23,6 @@ class OnboardingViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState
-
-    private val _navigationEvent = MutableSharedFlow<OnboardingNavigationEvent>(
-        extraBufferCapacity = 1
-    )
-    val navigationEvent: SharedFlow<OnboardingNavigationEvent> = _navigationEvent.asSharedFlow()
 
     private fun Set<TimeSlot>.toggle(timeSlot: TimeSlot): Set<TimeSlot> =
         if (contains(timeSlot)) this - timeSlot else this + timeSlot
@@ -105,6 +98,7 @@ class OnboardingViewModel @Inject constructor(
             runCatching {
                 userMetadataRepository.getUserMetadata()
             }.onSuccess { result ->
+                Log.d("Onboarding", "employmentTypes=${result.employmentTypes}")
                 _uiState.update {
                     it.copy(
                         employmentOptions = mapEmploymentTypes(result.employmentTypes),
@@ -157,8 +151,12 @@ class OnboardingViewModel @Inject constructor(
             val result = userMetadataRepository.submitUserMetadata(submitEntity)
 
             result.onSuccess {
-                _uiState.update { it.copy(isLoading = false) }
-                _navigationEvent.tryEmit(OnboardingNavigationEvent.SubmitSuccess)
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        isSubmitSuccess = true
+                    )
+                }
             }.onFailure { e ->
                 _uiState.update {
                     it.copy(
@@ -197,19 +195,19 @@ class OnboardingViewModel @Inject constructor(
                 "EMPLOYEE" -> JobUiModel(
                     type = type,
                     label = "직장인",
-                    iconRes = R.drawable.ic_job_student
+                    iconRes = R.drawable.ic_job_employee
                 )
 
                 "FREELANCER" -> JobUiModel(
                     type = type,
                     label = "프리랜서",
-                    iconRes = R.drawable.ic_job_student
+                    iconRes = R.drawable.ic_job_freelancer
                 )
 
                 else -> JobUiModel(
                     type = type,
                     label = type,
-                    iconRes = R.drawable.ic_job_student
+                    iconRes = R.drawable.ic_job_etc
                 )
             }
         }
@@ -262,26 +260,3 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 }
-
-val jobs = listOf(
-    JobUiModel(
-        type = "STUDENT",
-        label = "학생",
-        iconRes = R.drawable.ic_job_student
-    ),
-    JobUiModel(
-        type = "EMPLOYEE",
-        label = "직장인",
-        iconRes = R.drawable.ic_job_employee
-    ),
-    JobUiModel(
-        type = "FREELANCER",
-        label = "프리랜서",
-        iconRes = R.drawable.ic_job_freelancer
-    ),
-    JobUiModel(
-        type = "ETC",
-        label = "기타",
-        iconRes = R.drawable.ic_job_etc
-    ),
-)
