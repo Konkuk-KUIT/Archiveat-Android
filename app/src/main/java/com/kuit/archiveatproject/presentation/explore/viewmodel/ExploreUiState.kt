@@ -38,7 +38,6 @@ data class ExploreCategoryTabItem(
     val iconResId: Int,
 )
 
-// 검색 uiState
 data class ExploreSearchUiState(
     val isSearchMode: Boolean = false,
     val query: String = "",

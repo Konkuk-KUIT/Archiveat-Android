@@ -3,11 +3,8 @@ package com.kuit.archiveatproject.presentation.explore.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -30,7 +27,6 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.archiveatproject.R
-import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.domain.entity.LlmStatus
 import com.kuit.archiveatproject.presentation.explore.component.ExploreCategoryTabBar
 import com.kuit.archiveatproject.presentation.explore.component.ExploreInboxComponent
@@ -235,7 +231,7 @@ private fun fakeExploreUiState(
             ExploreCategoryTabItem(3, "국제", R.drawable.ic_category_internation),
             ExploreCategoryTabItem(4, "문화", R.drawable.ic_category_culture),
             ExploreCategoryTabItem(5, "생활", R.drawable.ic_category_living),
-            ),
+        ),
 
         categories = listOf(
             // ===== IT/과학 =====
