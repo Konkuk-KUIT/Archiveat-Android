@@ -37,3 +37,10 @@ data class ExploreCategoryTabItem(
     val name: String,
     val iconResId: Int,
 )
+
+data class ExploreSearchUiState(
+    val isSearchMode: Boolean = false,
+    val query: String = "",
+    val recommendedKeywords: List<String> = emptyList(),
+    val recentSearches: List<String> = emptyList(),
+)
