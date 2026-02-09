@@ -13,8 +13,12 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,9 +31,12 @@ fun ExploreSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     onSearchClick: () -> Unit,
+    onFocus: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
+    val focusRequester = remember { FocusRequester() }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -49,7 +56,14 @@ fun ExploreSearchBar(
             textStyle = ArchiveatProjectTheme.typography.Caption_medium.copy(
                 color = ArchiveatProjectTheme.colors.gray950
             ),
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .focusRequester(focusRequester)
+                .onFocusChanged { state ->
+                    if (state.isFocused) {
+                        onFocus()
+                    }
+                },
             decorationBox = { innerTextField ->
                 if (query.isEmpty()) {
                     Text(
@@ -83,6 +97,7 @@ private fun ExploreSearchBarPreview() {
             query = "",
             onQueryChange = {},
             onSearchClick = {},
+            onFocus = {},
             modifier = Modifier.padding(20.dp)
         )
     }
