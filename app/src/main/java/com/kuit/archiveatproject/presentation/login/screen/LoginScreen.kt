@@ -11,43 +11,20 @@ import com.kuit.archiveatproject.presentation.login.viewmodel.LoginViewModel
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
-    onLoginSuccess: () -> Unit = {},
-    onSignupSuccess: () -> Unit = {},
+    onFinished: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState.isSignupSuccess) {
         if (uiState.isSignupSuccess) {
-            onSignupSuccess()
-            viewModel.consumeSignupSuccess()
-        }
-    }
-
-    LaunchedEffect(uiState.isLoginSuccess) {
-        if (uiState.isLoginSuccess) {
-            onLoginSuccess()
-            viewModel.consumeLoginSuccess()
+            onFinished()
         }
     }
 
     when (uiState.step) {
         LoginStep.STEP1 -> {
             LoginStep1(
-                onStartWithEmail = viewModel::onStartWithEmail,
-                onStartLogin = viewModel::onStartLogin
-            )
-        }
-
-        LoginStep.LOGIN -> {
-            LoginStepLogin(
-                email = uiState.email,
-                password = uiState.password,
-                isLoading = uiState.isLoading,
-                errorMessage = uiState.errorMessage,
-                onEmailChange = viewModel::onEmailChanged,
-                onPasswordChange = viewModel::onPasswordChanged,
-                onBack = viewModel::onBack,
-                onLogin = viewModel::onLogin
+                onStartWithEmail = viewModel::onStartWithEmail
             )
         }
 

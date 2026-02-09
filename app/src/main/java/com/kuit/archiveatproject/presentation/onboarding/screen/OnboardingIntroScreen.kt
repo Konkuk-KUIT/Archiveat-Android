@@ -42,7 +42,6 @@ val onboardingSlides = listOf(
 
 @Composable
 fun OnboardingScreen(
-    onStart: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var currentPage by remember { mutableStateOf(0) }
@@ -108,7 +107,7 @@ fun OnboardingScreen(
                 onClick = {
                     if (currentPage < lastPage) currentPage++
                     else {
-                        onStart()
+                        // 온보딩 종료
                     }
                 }
             )
@@ -123,7 +122,6 @@ fun OnboardingScreen(
 @Composable
 fun OnboardingScreenPreview() {
     OnboardingScreen(
-        onStart = {},
         modifier = Modifier.fillMaxSize()
     )
 }

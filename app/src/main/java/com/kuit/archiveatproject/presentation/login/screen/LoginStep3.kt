@@ -106,9 +106,7 @@ fun LoginStep3(
                 modifier = Modifier.padding(6.dp),
             )
             {
-                Row (
-                    verticalAlignment = Alignment.CenterVertically
-                ){
+                Row {
                     Text(
                         text = "archiveat! ",
                         style = ArchiveatProjectTheme.typography.Logo_regular,

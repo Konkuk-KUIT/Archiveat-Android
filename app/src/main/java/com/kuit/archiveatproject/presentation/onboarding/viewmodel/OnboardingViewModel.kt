@@ -9,11 +9,8 @@ import com.kuit.archiveatproject.domain.entity.UserMetadataSubmit
 import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
 import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,11 +22,6 @@ class OnboardingViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState
-
-    private val _navigationEvent = MutableSharedFlow<OnboardingNavigationEvent>(
-        extraBufferCapacity = 1
-    )
-    val navigationEvent: SharedFlow<OnboardingNavigationEvent> = _navigationEvent.asSharedFlow()
 
     private fun Set<TimeSlot>.toggle(timeSlot: TimeSlot): Set<TimeSlot> =
         if (contains(timeSlot)) this - timeSlot else this + timeSlot
@@ -157,8 +149,12 @@ class OnboardingViewModel @Inject constructor(
             val result = userMetadataRepository.submitUserMetadata(submitEntity)
 
             result.onSuccess {
-                _uiState.update { it.copy(isLoading = false) }
-                _navigationEvent.tryEmit(OnboardingNavigationEvent.SubmitSuccess)
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        isSubmitSuccess = true
+                    )
+                }
             }.onFailure { e ->
                 _uiState.update {
                     it.copy(
