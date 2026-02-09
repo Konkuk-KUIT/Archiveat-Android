@@ -50,10 +50,9 @@ fun HomeScreenContent(
             .background(ArchiveatProjectTheme.colors.white)
     ) {
         TopLogoBar()
-        // TODO: user dto 추가되는 대로 nickname 하드 코딩 교체
         uiState.greeting?.let {
             GreetingBar(
-                nickname = "홍길동",
+                nickname = uiState.nickname,
                 firstGreetingMessage = it.firstMessage,
                 secondGreetingMessage = it.secondMessage,
             )
@@ -79,6 +78,7 @@ fun HomeScreenContent(
 private fun HomeScreenPreview() {
     HomeScreenContent(
         uiState = HomeUiState(
+            nickname = "홍길동",
             greeting = GreetingUiModel(
                 firstMessage = "좋은 아침이에요!",
                 secondMessage = "오늘도 한 걸음 성장해볼까요?"
