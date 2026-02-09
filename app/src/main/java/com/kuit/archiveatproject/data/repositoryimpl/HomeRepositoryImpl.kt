@@ -3,7 +3,7 @@ package com.kuit.archiveatproject.data.repositoryimpl
 import com.kuit.archiveatproject.data.mapper.toDomain
 import com.kuit.archiveatproject.data.service.ApiService
 import com.kuit.archiveatproject.data.util.requireData
-import com.kuit.archiveatproject.domain.model.Home
+import com.kuit.archiveatproject.domain.entity.Home
 import com.kuit.archiveatproject.domain.repository.HomeRepository
 import javax.inject.Inject
 

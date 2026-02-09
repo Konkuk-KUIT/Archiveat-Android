@@ -4,7 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.presentation.share.screen.ShareBottomSheet
+import com.kuit.archiveatproject.presentation.share.viewmodel.ShareViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 class ShareReceiverActivity : ComponentActivity() {
@@ -18,14 +23,27 @@ class ShareReceiverActivity : ComponentActivity() {
 
         setContent {
             ArchiveatProjectTheme {
+                val viewModel: ShareViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsState()
+
+                LaunchedEffect(Unit) {
+                    viewModel.setContentUrlFromSharedText(sharedText)
+                }
+
                 ShareBottomSheet(
-                    sharedText = sharedText,
+                    contentUrl = uiState.contentUrl,
                     onClose = { finish() },
                     onSave = { memo ->
-                        // TODO 저장 처리
-                        finish()
+                        viewModel.updateMemo(memo)
+                        viewModel.saveNewsletter()
                     }
                 )
+
+                if (uiState.isSuccess) {
+                    LaunchedEffect(Unit) {
+                        finish()
+                    }
+                }
             }
         }
     }

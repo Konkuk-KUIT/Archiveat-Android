@@ -1,4 +1,4 @@
-package com.kuit.archiveatproject.domain.model
+package com.kuit.archiveatproject.domain.entity
 
 data class Home(
     val firstGreetingMessage: String,

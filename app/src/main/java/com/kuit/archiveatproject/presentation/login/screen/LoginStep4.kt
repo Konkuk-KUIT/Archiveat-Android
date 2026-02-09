@@ -18,10 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,16 +33,18 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun LoginStep4(
+    nickname: String,
+    isLoading: Boolean,
+    errorMessage: String?,
+    onNicknameChange: (String) -> Unit,
     onBack: () -> Unit,
-    onComplete: (nickname: String) -> Unit,
+    onComplete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
 
     val minLen = 2
     val maxLen = 15
-
-    var nickname by remember { mutableStateOf("") }
 
     val nicknameText = nickname
     // 길이 조건
@@ -108,13 +106,16 @@ fun LoginStep4(
             TextField(
                 value = nickname,
                 onValueChange = { input ->
-                    nickname = input
-                        .filter(::isNicknameCharAllowed) // 허용되지 않는 문자는 자동 제거
-                        .take(maxLen) // 15자 넘으면 자르기
+                    onNicknameChange(
+                        input
+                            .filter(::isNicknameCharAllowed) // 허용되지 않는 문자는 자동 제거
+                            .take(maxLen) // 15자 넘으면 자르기
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
+                enabled = !isLoading,
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 textStyle = ArchiveatProjectTheme.typography.Subhead_2_semibold.copy(
@@ -147,7 +148,7 @@ fun LoginStep4(
                     onDone = {
                         keyboard?.hide()
                         focusManager.clearFocus(force = true)
-                        if (isValid) onComplete(nicknameText) // 엔터 누르면 isValid일 떄 onComplete(...
+                        if (isValid) onComplete()
                     }
                 ),
                 colors = TextFieldDefaults.colors(
@@ -169,6 +170,17 @@ fun LoginStep4(
                 color = ArchiveatProjectTheme.colors.gray400,
                 modifier = Modifier.padding(horizontal = 13.dp),
             )
+
+            // 에러 메시지: 테스트하고 나중에 지우거나... 처리하면 될 듯
+            if (!errorMessage.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = errorMessage,
+                    style = ArchiveatProjectTheme.typography.Caption_medium,
+                    color = ArchiveatProjectTheme.colors.sub_2,
+                    modifier = Modifier.padding(horizontal = 13.dp),
+                )
+            }
         }
 
         PrimaryRoundedButton(
@@ -177,9 +189,9 @@ fun LoginStep4(
                 if (!isValid) return@PrimaryRoundedButton
                 keyboard?.hide()
                 focusManager.clearFocus(force = true) // 키보드 내림
-                onComplete(nicknameText) // (nickname: String) -> Unit (부모에게 닉네임 전달)
+                onComplete()
             },
-            enabled = isValid,
+            enabled = isValid && !isLoading,
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 14.dp),
@@ -208,5 +220,12 @@ private fun isKorean(ch: Char): Boolean {
 @Preview(showBackground = true)
 @Composable
 private fun LoginStep4Preview() {
-    LoginStep4(onBack = {}, onComplete = {})
+    LoginStep4(
+        nickname = "archiveat",
+        isLoading = false,
+        errorMessage = "필수 정보를 입력해주세요.",
+        onNicknameChange = {},
+        onBack = {},
+        onComplete = {}
+    )
 }

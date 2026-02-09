@@ -13,7 +13,6 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun InboxDateHeader(
     label: String,
-    count: Int,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -26,11 +25,6 @@ fun InboxDateHeader(
             text = label,
             style = ArchiveatProjectTheme.typography.Caption_semibold,
             color = ArchiveatProjectTheme.colors.gray600
-        )
-        Text( // description에 있지만 디자인에는 없음. 임의로 넣어둠.
-            text = count.toString(),
-            style = ArchiveatProjectTheme.typography.Caption_semibold,
-            color = ArchiveatProjectTheme.colors.gray500
         )
     }
 }

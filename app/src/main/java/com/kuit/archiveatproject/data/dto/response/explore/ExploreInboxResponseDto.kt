@@ -13,16 +13,14 @@ data class ExploreInboxResponseDto(
 data class InboxDateGroupDto(
     @SerialName("date")
     val date: String, // "2026-01-18"
-    @SerialName("count")
-    val count: Int, // 2
     @SerialName("items")
     val items: List<InboxItemDto> = emptyList(),
 )
 
 @Serializable
 data class InboxItemDto(
-    @SerialName("newsletterId")
-    val newsletterId: Long, // 345
+    @SerialName("userNewsletterId")
+    val userNewsletterId: Long, // 345
     @SerialName("llmStatus")
     val llmStatus: LlmStatusDto,
     @SerialName("contentUrl")
@@ -54,6 +52,7 @@ data class TopicDto(
 )
 
 // ExploreInboxResponseDto 에서도 같이 사용
+// NewsletterSaveResponseDto 에서도 같이 사용
 @Serializable
 enum class LlmStatusDto {
     @SerialName("PENDING") PENDING,

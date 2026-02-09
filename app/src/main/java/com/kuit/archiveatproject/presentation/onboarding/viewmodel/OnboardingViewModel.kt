@@ -1,5 +1,6 @@
 package com.kuit.archiveatproject.presentation.onboarding.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.R
@@ -97,6 +98,7 @@ class OnboardingViewModel @Inject constructor(
             runCatching {
                 userMetadataRepository.getUserMetadata()
             }.onSuccess { result ->
+                Log.d("Onboarding", "employmentTypes=${result.employmentTypes}")
                 _uiState.update {
                     it.copy(
                         employmentOptions = mapEmploymentTypes(result.employmentTypes),
@@ -193,19 +195,19 @@ class OnboardingViewModel @Inject constructor(
                 "EMPLOYEE" -> JobUiModel(
                     type = type,
                     label = "직장인",
-                    iconRes = R.drawable.ic_job_student
+                    iconRes = R.drawable.ic_job_employee
                 )
 
                 "FREELANCER" -> JobUiModel(
                     type = type,
                     label = "프리랜서",
-                    iconRes = R.drawable.ic_job_student
+                    iconRes = R.drawable.ic_job_freelancer
                 )
 
                 else -> JobUiModel(
                     type = type,
                     label = type,
-                    iconRes = R.drawable.ic_job_student
+                    iconRes = R.drawable.ic_job_etc
                 )
             }
         }
@@ -258,26 +260,3 @@ class OnboardingViewModel @Inject constructor(
         }
     }
 }
-
-val jobs = listOf(
-    JobUiModel(
-        type = "STUDENT",
-        label = "학생",
-        iconRes = R.drawable.ic_job_student
-    ),
-    JobUiModel(
-        type = "EMPLOYEE",
-        label = "직장인",
-        iconRes = R.drawable.ic_job_employee
-    ),
-    JobUiModel(
-        type = "FREELANCER",
-        label = "프리랜서",
-        iconRes = R.drawable.ic_job_freelancer
-    ),
-    JobUiModel(
-        type = "ETC",
-        label = "기타",
-        iconRes = R.drawable.ic_job_etc
-    ),
-)

@@ -5,6 +5,7 @@ import com.kuit.archiveatproject.BuildConfig
 import com.kuit.archiveatproject.data.network.AuthInterceptor
 import com.kuit.archiveatproject.data.service.ApiService
 import com.kuit.archiveatproject.data.service.AuthApiService
+import com.kuit.archiveatproject.data.service.NewsletterApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -79,5 +80,10 @@ object NetworkModule {
     fun provideAuthApiService(
         retrofit: Retrofit
     ): AuthApiService = retrofit.create(AuthApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNewsletterApiService(retrofit: Retrofit): NewsletterApiService =
+        retrofit.create(NewsletterApiService::class.java)
 
 }

@@ -45,17 +45,15 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 fun InboxItemComponent(
     item: InboxItem,
     onDelete: (Long) -> Unit,           // newsletterId
-    onOpenOriginal: (String) -> Unit,   // contentUrl
+    onOpenOriginal: (Long) -> Unit,     // userNewsletterId
     onClickEdit: (InboxItem) -> Unit,   // 수정 바텀 시트 호출
     modifier: Modifier = Modifier,
 ) {
     val shape = RoundedCornerShape(16.dp)
 
     val isDone = item.llmStatus == LlmStatus.DONE
-    val contentUrl = item.contentUrl.orEmpty()
-
     // DONE일 때 카드 클릭 -> 원본 이동 (Action 버튼_3)
-    val cardClickable = isDone && contentUrl.isNotBlank()
+    val cardClickable = isDone
 
     Box(
         modifier = modifier
@@ -68,7 +66,7 @@ fun InboxItemComponent(
                     Modifier.clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
-                    ) { onOpenOriginal(contentUrl) }
+                    ) { onOpenOriginal(item.userNewsletterId) }
                 } else Modifier
             )
             .padding(16.dp)
@@ -148,14 +146,14 @@ fun InboxItemComponent(
                 Spacer(Modifier.weight(1f))
 
                 DeleteChip(
-                    onClick = { onDelete(item.newsletterId) }
+                    onClick = { onDelete(item.userNewsletterId) }
                 )
             }
 
             // 중단: 제목 (로딩 = URL / 완료 = 일단 URL, 나중에 필드 따라 title 필드로 교체)
             if (!isDone) {
                 Text(
-                    text = contentUrl,
+                    text = item.contentUrl.orEmpty(),
                     style = ArchiveatProjectTheme.typography.Etc_regular,
                     color = ArchiveatProjectTheme.colors.gray500,
                     maxLines = 2,
@@ -308,7 +306,7 @@ private fun InboxItemComponentLoadingPreview() {
     ArchiveatProjectTheme {
         InboxItemComponent(
             item = InboxItem(
-                newsletterId = 101,
+                userNewsletterId = 101,
                 llmStatus = LlmStatus.RUNNING,
                 contentUrl = "https://n.news.naver.com/article/028/0002787393?cds=news_media_pc",
                 domainName = null,
@@ -330,7 +328,7 @@ private fun InboxItemComponentDonePreview() {
     ArchiveatProjectTheme {
         InboxItemComponent(
             item = InboxItem(
-                newsletterId = 102,
+                userNewsletterId = 102,
                 llmStatus = LlmStatus.DONE,
                 contentUrl = "\"돈도 기업도 한국을 떠난다\" 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)",
                 domainName = "Youtube",

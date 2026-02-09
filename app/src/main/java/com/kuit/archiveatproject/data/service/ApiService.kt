@@ -5,13 +5,12 @@ import com.kuit.archiveatproject.data.dto.request.UserMetadataSubmitRequestDto
 import com.kuit.archiveatproject.data.dto.response.BaseResponse
 import com.kuit.archiveatproject.data.dto.response.CollectionDetailsResponseDto
 import com.kuit.archiveatproject.data.dto.response.HomeResponseDto
+import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxEditResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreInboxResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewslettersResponseDto
 import com.kuit.archiveatproject.data.dto.response.explore.InboxClassificationResponseDto
-import com.kuit.archiveatproject.data.dto.response.newsletter.NewsletterSimpleResponseDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportBalanceDto
-import com.kuit.archiveatproject.data.dto.response.report.ReportInterestGapDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportInterestGapResponseDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportResponseDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportStatusDto
@@ -35,7 +34,7 @@ interface ApiService {
     @GET("/explore/inbox")
     suspend fun getExploreInbox(): BaseResponse<ExploreInboxResponseDto>
 
-    @GET("/explore/topic/{topicId}/user-newsletters")
+    @GET("/explore/topic/{topicId}/user-newsletters") // 토픽 별 뉴스레터 목록 조회
     suspend fun getTopicUserNewsletters(
         @Path("topicId") topicId: Long,
         @Query("page") page: Int = 0,
@@ -47,6 +46,17 @@ interface ApiService {
         @Path("userNewsletterId") userNewsletterId: Long,
         @Body body: InboxClassificationRequestDto,
     ): BaseResponse<InboxClassificationResponseDto>
+
+    @GET("/explore/inbox/{userNewsletterId}")
+    suspend fun getExploreInboxEdit(
+        @Path("userNewsletterId") userNewsletterId: Long
+    ): BaseResponse<ExploreInboxEditResponseDto>
+
+    /**
+     * data: null
+     */
+    @PATCH("/explore/inbox/confirmation")
+    suspend fun confirmExploreInboxAll(): BaseResponse<Unit>
 
     // report
     @GET("/report")
@@ -69,17 +79,6 @@ interface ApiService {
     suspend fun submitUserMetadata(
         @Body body: UserMetadataSubmitRequestDto,
     ): BaseResponse<Unit>
-
-    // newsletter
-    @PATCH("/newsletters/{userNewsletterId}")
-    suspend fun patchNewsletterRead(
-        @Path("userNewsletterId") userNewsletterId: Long,
-    ): BaseResponse<Unit>
-
-    @PATCH("/newsletters/{userNewsletterId}/simple")
-    suspend fun patchNewsletterSimple(
-        @Path("userNewsletterId") userNewsletterId: Long,
-    ): BaseResponse<NewsletterSimpleResponseDto>
 
     // collection
     @GET("/collections/{collectionId}")

@@ -1,12 +1,12 @@
 package com.kuit.archiveatproject.data.mapper
 
 import com.kuit.archiveatproject.data.dto.response.HomeResponseDto
-import com.kuit.archiveatproject.domain.model.Home
-import com.kuit.archiveatproject.domain.model.HomeCardType
-import com.kuit.archiveatproject.domain.model.HomeContentCard
-import com.kuit.archiveatproject.domain.model.HomeContentCollectionCard
-import com.kuit.archiveatproject.domain.model.HomeTab
-import com.kuit.archiveatproject.domain.model.HomeTabType
+import com.kuit.archiveatproject.domain.entity.Home
+import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeContentCard
+import com.kuit.archiveatproject.domain.entity.HomeContentCollectionCard
+import com.kuit.archiveatproject.domain.entity.HomeTab
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 
 fun HomeResponseDto.toDomain(): Home {
     // label("영감수집") -> type(INSPIRATION) 역매핑

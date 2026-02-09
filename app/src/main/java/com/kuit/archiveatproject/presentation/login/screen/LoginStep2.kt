@@ -19,11 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import com.kuit.archiveatproject.presentation.login.uistate.LoginAgreementItem
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,40 +31,19 @@ import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
-@Immutable
-data class AgreementItem(
-    val id: String,
-    val title: String,
-    val required: Boolean,
-    val checked: Boolean,
-)
-
 @Composable
 fun LoginStep2(
+    agreementItems: List<LoginAgreementItem>,
+    isLoading: Boolean,
     onBack: () -> Unit,
-    onNext: (checkedMap: Map<String, Boolean>) -> Unit,
+    onToggleAll: () -> Unit,
+    onToggleItem: (id: String) -> Unit,
+    onNext: () -> Unit,
     onClickDetail: (id: String) -> Unit = {}, // 나중에 약관 자세히 보기
     modifier: Modifier = Modifier,
 ) {
-    var items by remember {
-        mutableStateOf(
-            listOf(
-                AgreementItem("age14", "만 14세 이상입니다.", required = true, checked = false),
-                AgreementItem("terms", "서비스 이용약관 동의", required = true, checked = false),
-                AgreementItem("privacy", "개인정보 수집 및 이용 동의", required = true, checked = false),
-                AgreementItem("marketingUse", "마케팅 활용 동의", required = false, checked = false),
-                AgreementItem(
-                    "marketingReceive",
-                    "마케팅 정보 수신 동의",
-                    required = false,
-                    checked = false
-                ),
-            )
-        )
-    }
-
-    val allChecked = items.all { it.checked }
-    val requiredChecked = items.filter { it.required }.all { it.checked }
+    val allChecked = agreementItems.all { it.checked }
+    val requiredChecked = agreementItems.filter { it.required }.all { it.checked }
 
     Column(
         modifier = modifier
@@ -97,10 +72,7 @@ fun LoginStep2(
             // 전체 동의
             AgreementAllRow(
                 checked = allChecked,
-                onToggle = {
-                    val next = !allChecked
-                    items = items.map { it.copy(checked = next) }
-                }
+                onToggle = onToggleAll
             )
 
             HorizontalDivider(
@@ -110,27 +82,25 @@ fun LoginStep2(
             Spacer(modifier = Modifier.height(15.dp))
 
             // 개별 항목
-            items.forEachIndexed { index, item ->
+            agreementItems.forEachIndexed { index, item ->
                 AgreementRow(
                     required = item.required,
                     title = item.title,
                     checked = item.checked,
                     onToggle = {
-                        items = items.map {
-                            if (it.id == item.id) it.copy(checked = !it.checked) else it
-                        }
+                        onToggleItem(item.id)
                     },
                     onDetail = { onClickDetail(item.id) }
                 )
-                if (index != items.lastIndex) Spacer(modifier = Modifier.height(15.dp))
+                if (index != agreementItems.lastIndex) Spacer(modifier = Modifier.height(15.dp))
             }
         }
 
         PrimaryRoundedButton(
             text = "다음",
             // 나중에 서버와 연결 후 AgreementItem 및 onClick 달라질수도
-            onClick = { onNext(items.associate { it.id to it.checked }) },
-            enabled = requiredChecked,
+            onClick = onNext,
+            enabled = requiredChecked && !isLoading,
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 14.dp),
@@ -250,7 +220,17 @@ private fun AgreementCheck(
 @Composable
 private fun LoginStep2Preview() {
     LoginStep2(
+        agreementItems = listOf(
+            LoginAgreementItem("age14", "만 14세 이상입니다.", required = true, checked = true),
+            LoginAgreementItem("terms", "서비스 이용약관 동의", required = true, checked = true),
+            LoginAgreementItem("privacy", "개인정보 수집 및 이용 동의", required = true, checked = false),
+            LoginAgreementItem("marketingUse", "마케팅 활용 동의", required = false, checked = false),
+            LoginAgreementItem("marketingReceive", "마케팅 정보 수신 동의", required = false, checked = false),
+        ),
+        isLoading = false,
         onBack = {},
+        onToggleAll = {},
+        onToggleItem = {},
         onNext = {},
     )
 }

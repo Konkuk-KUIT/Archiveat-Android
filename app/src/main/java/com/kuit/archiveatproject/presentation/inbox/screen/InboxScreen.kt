@@ -1,6 +1,7 @@
 package com.kuit.archiveatproject.presentation.inbox.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,9 +12,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.domain.entity.Inbox
 import com.kuit.archiveatproject.domain.entity.InboxCategory
@@ -23,15 +27,46 @@ import com.kuit.archiveatproject.domain.entity.InboxTopic
 import com.kuit.archiveatproject.domain.entity.LlmStatus
 import com.kuit.archiveatproject.presentation.inbox.component.InboxDateHeader
 import com.kuit.archiveatproject.presentation.inbox.component.InboxItemComponent
+import com.kuit.archiveatproject.presentation.inbox.edit.InboxEditBottomSheet
 import com.kuit.archiveatproject.presentation.inbox.util.InboxFormatters
+import com.kuit.archiveatproject.presentation.inbox.viewmodel.InboxViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun InboxScreen(
+    onBackToExploreFirstDepth: () -> Unit,  // 탐색 탭(1st depth)로 이동
+    onOpenOriginal: (Long) -> Unit,         // userNewsletterId
+    modifier: Modifier = Modifier,
+    onDelete: (Long) -> Unit = {},          // newsletterId
+    viewModel: InboxViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    Box(modifier = modifier.fillMaxSize()) {
+        InboxScreenContent(
+            inbox = uiState.inbox,
+            onBackToExploreFirstDepth = onBackToExploreFirstDepth,
+            onDelete = { id -> viewModel.deleteNewsletter(id, onDelete) },
+            onOpenOriginal = onOpenOriginal,
+            onClickEdit = viewModel::openEditSheet
+        )
+
+        if (uiState.isEditSheetVisible) {
+            InboxEditBottomSheet(
+                userNewsletterId = uiState.selectedUserNewsletterId,
+                onDismiss = viewModel::dismissEditSheet,
+                onSaved = viewModel::onEditSaved
+            )
+        }
+    }
+}
+
+@Composable
+fun InboxScreenContent(
     inbox: Inbox,
     onBackToExploreFirstDepth: () -> Unit,  // 탐색 탭(1st depth)로 이동
     onDelete: (Long) -> Unit,               // newsletterId
-    onOpenOriginal: (String) -> Unit,       // contentUrl
+    onOpenOriginal: (Long) -> Unit,         // userNewsletterId
     onClickEdit: (InboxItem) -> Unit,       // 수정 바텀 시트 호출
     modifier: Modifier = Modifier,
 ) {
@@ -66,13 +101,12 @@ fun InboxScreen(
                     item(key = "header-${group.date}") {
                         InboxDateHeader(
                             label = InboxFormatters.dateHeaderLabel(group.date),
-                            count = group.count
                         )
                     }
 
                     itemsIndexed(
                         items = group.items,
-                        key = { _, item -> item.newsletterId }
+                        key = { _, item -> item.userNewsletterId }
                     ) { index, item ->
                         InboxItemComponent(
                             item = item,
@@ -98,11 +132,10 @@ private fun sampleInbox(): Inbox {
         inbox = listOf(
             InboxDateGroup(
                 date = "2026-01-18",
-                count = 2,
                 items = listOf(
                     // 로딩(웹사이트 + 오후 02:30)
                     InboxItem(
-                        newsletterId = 101,
+                        userNewsletterId = 101,
                         llmStatus = LlmStatus.RUNNING,
                         contentUrl = "https://n.news.naver.com/article/028/0002787393?cds=news_media_pc",
                         domainName = null,
@@ -113,7 +146,7 @@ private fun sampleInbox(): Inbox {
                     ),
                     // 완료
                     InboxItem(
-                        newsletterId = 102,
+                        userNewsletterId = 102,
                         llmStatus = LlmStatus.DONE,
                         contentUrl = "\"돈도 기업도 한국을 떠난다\" 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)",
                         domainName = "Youtube",
@@ -126,10 +159,9 @@ private fun sampleInbox(): Inbox {
             ),
             InboxDateGroup(
                 date = "2026-01-27",
-                count = 1,
                 items = listOf(
                     InboxItem(
-                        newsletterId = 104,
+                        userNewsletterId = 104,
                         llmStatus = LlmStatus.PENDING,
                         contentUrl = "https://example.com/waiting",
                         domainName = null,
@@ -142,10 +174,9 @@ private fun sampleInbox(): Inbox {
             ),
             InboxDateGroup(
                 date = "2026-01-10",
-                count = 1,
                 items = listOf(
                     InboxItem(
-                        newsletterId = 105,
+                        userNewsletterId = 105,
                         llmStatus = LlmStatus.FAILED,
                         contentUrl = "https://example.com/waiting",
                         domainName = null,
@@ -158,10 +189,9 @@ private fun sampleInbox(): Inbox {
             ),
             InboxDateGroup(
                 date = "2026-01-26",
-                count = 1,
                 items = listOf(
                     InboxItem(
-                        newsletterId = 106,
+                        userNewsletterId = 106,
                         llmStatus = LlmStatus.DONE,
                         contentUrl = "https://example.com/waiting",
                         domainName = null,
@@ -180,7 +210,7 @@ private fun sampleInbox(): Inbox {
 @Composable
 private fun InboxScreenPreview() {
     ArchiveatProjectTheme {
-        InboxScreen(
+        InboxScreenContent(
             inbox = sampleInbox(),
             onBackToExploreFirstDepth = {},
             onDelete = {},
