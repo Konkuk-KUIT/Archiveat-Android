@@ -21,3 +21,6 @@ local.properties
 
 # ===== Windows =====
 Thumbs.db
+
+# IDE backup files
+.idea_backup/
