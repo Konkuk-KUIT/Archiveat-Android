@@ -12,6 +12,13 @@ sealed class Route (
     data object Share: Route(route = "share")
     data object Explore: Route(route = "explore")
     data object ExploreInbox: Route(route = "explore/inbox")
+
+    data object ExploreTopicDetail : Route(
+        route = "explore/topic/{topicId}"
+    ) {
+        fun createRoute(topicId: Long): String =
+            "explore/topic/$topicId"
+    }
     data object NewsletterSimple: Route(route = "newsletters/{userNewsletterId}/simple") {
         fun createRoute(userNewsletterId: Long): String =
             "newsletters/$userNewsletterId/simple"

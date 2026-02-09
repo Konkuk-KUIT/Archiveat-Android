@@ -27,7 +27,7 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun ExploreTopicList(
     topics: List<ExploreTopicUiItem>,
-    onTopicClick: (topicId: Long) -> Unit,
+    onTopicClick: (topicId: Long, topicName: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -37,7 +37,12 @@ fun ExploreTopicList(
         topics.forEach { topic ->
             ExploreTopicItem(
                 topic = topic,
-                onClick = { onTopicClick(topic.id) }
+                onClick = {
+                    onTopicClick(
+                        topic.id,
+                        topic.name
+                    )
+                }
             )
         }
     }
@@ -108,7 +113,7 @@ private fun ExploreTopicListPreview() {
                 ExploreTopicUiItem(4, "데이터/보안", 5, R.drawable.ic_topic_security),
                 ExploreTopicUiItem(5, "테크", 6, R.drawable.ic_topic_tech),
             ),
-            onTopicClick = {},
+            onTopicClick = {} as (Long, String) -> Unit,
             modifier = Modifier.padding(20.dp)
         )
     }

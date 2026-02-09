@@ -31,6 +31,7 @@ import java.time.Instant
 
 @Composable
 fun ExploreTopicDetailScreen(
+    topicId: Long,
     topicName: String,
     newsletters: List<ExploreTopicNewsletterDto>,
     onBack: () -> Unit,
@@ -122,6 +123,7 @@ private fun List<ExploreTopicNewsletterDto>.sortedForExplore(): List<ExploreTopi
 private fun Preview_ExploreTopicDetailScreen_Default() {
     ArchiveatProjectTheme {
         ExploreTopicDetailScreen(
+            topicId = 1L,
             topicName = "테크",
             newsletters = listOf(
                 ExploreTopicNewsletterDto(
