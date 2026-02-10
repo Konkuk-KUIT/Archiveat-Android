@@ -256,6 +256,8 @@ fun InboxEditOverlayContent(
                     containerColor = ArchiveatProjectTheme.colors.deepPurple,
                 )
 
+                Spacer(Modifier.height(5.dp))
+
                 // 에러 메시지
                 state.errorMessage?.let { msg ->
                     Spacer(Modifier.height(10.dp))
