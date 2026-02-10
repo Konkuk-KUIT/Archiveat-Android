@@ -76,12 +76,12 @@ private fun ExploreCategoryTabItem(
             painter = painterResource(id = item.iconResId),
             contentDescription = item.name,
             tint = if (isSelected) primaryColor else inactiveColor,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(28.dp)
         )
 
         Text(
             text = item.name,
-            style = MaterialTheme.typography.labelMedium,
+            style = ArchiveatProjectTheme.typography.Body_1_semibold,
             color = if (isSelected) primaryColor else inactiveColor,
         )
 

@@ -3,9 +3,13 @@ package com.kuit.archiveatproject.presentation.explore.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -20,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -52,6 +57,7 @@ fun ExploreScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // TODO: 서버에서 데이터 내려주면 하드 코딩 부분 교체
     var searchUiState by remember {
         mutableStateOf(
             ExploreSearchUiState(
@@ -111,6 +117,9 @@ fun ExploreContent(
         .firstOrNull { it.id == uiState.selectedCategoryId }
 
     var searchBarBottomY by remember { mutableStateOf(0f) }
+    var headerHeight by remember { mutableStateOf(0.dp) }
+
+    val density = LocalDensity.current
     val focusManager = LocalFocusManager.current
 
     Box(
@@ -124,56 +133,68 @@ fun ExploreContent(
                 }
             }
     ) {
-
-        // ===== 메인 콘텐츠 =====
-        LazyColumn {
-
-            item {
-                Text(
-                    text = "탐색",
-                    modifier = Modifier
-                        .statusBarsPadding()
-                        .padding(20.dp),
-                    style = ArchiveatProjectTheme.typography.Heading_1_bold
-                )
-            }
-
-            item {
-                ExploreCategoryTabBar(
-                    categories = uiState.categoryTabs,
-                    selectedCategoryId = uiState.selectedCategoryId,
-                    onCategorySelected = onCategorySelected
-                )
-            }
-
-            item {
-                Spacer(Modifier.height(24.dp))
-
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .onGloballyPositioned { coords ->
-                            searchBarBottomY =
-                                coords.positionInRoot().y + coords.size.height
-                        }
-                ) {
-                    ExploreSearchBar(
-                        query = searchUiState.query,
-                        onQueryChange = onQueryChange,
-                        onSearchClick = onSearchFocus,
-                        onFocus = onSearchFocus
-                    )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ArchiveatProjectTheme.colors.white)
+                .statusBarsPadding()
+                .onGloballyPositioned { coords ->
+                    with(density) {
+                        headerHeight = coords.size.height.toDp()
+                    }
                 }
+                .zIndex(1f) // 🔑 LazyColumn 위
+        ) {
+            Text(
+                text = "탐색",
+                modifier = Modifier.padding(20.dp),
+                style = ArchiveatProjectTheme.typography.Heading_1_bold
+            )
+
+            ExploreCategoryTabBar(
+                categories = uiState.categoryTabs,
+                selectedCategoryId = uiState.selectedCategoryId,
+                onCategorySelected = onCategorySelected
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .onGloballyPositioned { coords ->
+                        searchBarBottomY =
+                            coords.positionInRoot().y + coords.size.height
+                    }
+            ) {
+                ExploreSearchBar(
+                    query = searchUiState.query,
+                    onQueryChange = onQueryChange,
+                    onSearchClick = onSearchFocus,
+                    onFocus = onSearchFocus
+                )
             }
 
+            Spacer(Modifier.height(16.dp))
+
+            ExploreInboxComponent(
+                title = "방금 담은 지식",
+                showLlmProcessingMessage =
+                    uiState.llmStatus == LlmStatus.RUNNING ||
+                            uiState.llmStatus == LlmStatus.PENDING,
+                onClick = onInboxClick,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+            Spacer(Modifier.height(12.dp))
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+        ) {
             item {
-                Spacer(Modifier.height(16.dp))
-                ExploreInboxComponent(
-                    title = "방금 담은 지식",
-                    showLlmProcessingMessage = uiState.llmStatus == LlmStatus.RUNNING || uiState.llmStatus == LlmStatus.PENDING,
-                    onClick = onInboxClick,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
+                Spacer(modifier = Modifier.height(312.dp))
             }
 
             selectedCategory?.let { category ->
@@ -188,6 +209,7 @@ fun ExploreContent(
                         color = ArchiveatProjectTheme.colors.gray950,
                         modifier = Modifier.padding(horizontal = 20.dp)
                     )
+
                     Spacer(Modifier.height(24.dp))
                 }
 
@@ -199,9 +221,11 @@ fun ExploreContent(
                     )
                 }
             }
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
+            }
         }
 
-        // ===== 검색 패널 Overlay =====
         if (searchUiState.isSearchMode && searchBarBottomY > 0f) {
             ExploreSearchSuggestionPanel(
                 recommendedKeywords = searchUiState.recommendedKeywords,
@@ -217,7 +241,7 @@ fun ExploreContent(
                             y = searchBarBottomY.roundToInt()
                         )
                     }
-                    .zIndex(1f)
+                    .zIndex(2f) // 🔑 모든 것 위
             )
         }
     }
