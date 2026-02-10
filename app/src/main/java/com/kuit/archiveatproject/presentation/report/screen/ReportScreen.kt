@@ -35,7 +35,7 @@ fun ReportScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = ArchiveatProjectTheme.colors.white)
-                .padding(start = 20.dp, top = 55.dp, bottom = 12.dp)
+                .padding(start = 20.dp, top = 12.dp, bottom = 12.dp)
         ){
             Text(
                 text = "리포트",

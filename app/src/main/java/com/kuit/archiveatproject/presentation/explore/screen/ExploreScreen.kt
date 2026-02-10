@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +33,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.domain.entity.LlmStatus
@@ -56,6 +61,20 @@ fun ExploreScreen(
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.fetchExplore()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     // TODO: 서버에서 데이터 내려주면 하드 코딩 부분 교체
     var searchUiState by remember {
@@ -137,20 +156,19 @@ fun ExploreContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(ArchiveatProjectTheme.colors.white)
-                .statusBarsPadding()
                 .onGloballyPositioned { coords ->
                     with(density) {
                         headerHeight = coords.size.height.toDp()
                     }
                 }
-                .zIndex(1f) // 🔑 LazyColumn 위
+                .zIndex(1f)
         ) {
             Text(
                 text = "탐색",
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
                 style = ArchiveatProjectTheme.typography.Heading_1_bold
             )
-
+            Spacer(Modifier.height(12.dp))
             ExploreCategoryTabBar(
                 categories = uiState.categoryTabs,
                 selectedCategoryId = uiState.selectedCategoryId,
@@ -191,10 +209,9 @@ fun ExploreContent(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .navigationBarsPadding()
         ) {
             item {
-                Spacer(modifier = Modifier.height(312.dp))
+                Spacer(modifier = Modifier.height(270.dp))
             }
 
             selectedCategory?.let { category ->
@@ -219,10 +236,8 @@ fun ExploreContent(
                         onTopicClick = onTopicClick,
                         modifier = Modifier.padding(horizontal = 20.dp)
                     )
+                    Spacer(Modifier.height(12.dp))
                 }
-            }
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
             }
         }
 

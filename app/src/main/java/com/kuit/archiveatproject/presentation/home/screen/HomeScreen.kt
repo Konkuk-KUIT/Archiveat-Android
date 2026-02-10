@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,7 +53,9 @@ fun HomeScreenContent(
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
     ) {
-        TopLogoBar()
+        TopLogoBar(
+            modifier = Modifier.padding(top = 11.dp)
+        )
         uiState.greeting?.let {
             GreetingBar(
                 nickname = uiState.nickname,

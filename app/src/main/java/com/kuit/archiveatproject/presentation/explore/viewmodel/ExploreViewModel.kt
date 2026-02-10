@@ -25,8 +25,49 @@ class ExploreViewModel @Inject constructor(
         fetchExplore()
     }
 
-    private fun Explore.toUiState(): ExploreUiState {
+    fun fetchExplore() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true, errorMessage = null)
+            }
+
+            runCatching {
+                exploreRepository.getExplore()
+            }.onSuccess { explore ->
+                _uiState.update { prev ->
+                    explore.toUiState(prev)
+                }
+            }.onFailure { throwable ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = throwable.message
+                            ?: "탐색 정보를 불러오지 못했습니다."
+                    )
+                }
+            }
+        }
+    }
+
+    fun onCategorySelected(categoryId: Long) {
+        _uiState.update {
+            it.copy(selectedCategoryId = categoryId)
+        }
+    }
+
+    private fun Explore.toUiState(
+        prev: ExploreUiState?
+    ): ExploreUiState {
+
+        val firstCategoryId = categories.firstOrNull()?.id ?: 0L
+
+        val selectedCategoryId =
+            prev?.selectedCategoryId
+                ?.takeIf { id -> categories.any { it.id == id } }
+                ?: firstCategoryId
+
         return ExploreUiState(
+            isLoading = false,
             inboxCount = inboxCount,
             llmStatus = llmStatus,
 
@@ -38,11 +79,11 @@ class ExploreViewModel @Inject constructor(
                 )
             },
 
-            categories = categories.map {
+            categories = categories.map { category ->
                 ExploreCategoryUiItem(
-                    id = it.id,
-                    name = it.name,
-                    topics = it.topics.map { topic ->
+                    id = category.id,
+                    name = category.name,
+                    topics = category.topics.map { topic ->
                         ExploreTopicUiItem(
                             id = topic.id,
                             name = topic.name,
@@ -53,9 +94,10 @@ class ExploreViewModel @Inject constructor(
                 )
             },
 
-            selectedCategoryId = categories.firstOrNull()?.id ?: 0L
+            selectedCategoryId = selectedCategoryId
         )
     }
+
 
     private fun mapCategoryIcon(name: String): Int =
         when (name) {
@@ -98,29 +140,4 @@ class ExploreViewModel @Inject constructor(
             "기타" -> R.drawable.ic_topic_etc
             else -> R.drawable.ic_topic_etc
         }
-
-    fun onCategorySelected(categoryId: Long) {
-        _uiState.update {
-            it.copy(selectedCategoryId = categoryId)
-        }
-    }
-
-    fun fetchExplore() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
-            runCatching {
-                exploreRepository.getExplore()
-            }.onSuccess { explore ->
-                _uiState.value = explore.toUiState()
-            }.onFailure { throwable ->
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = throwable.message ?: "탐색 정보를 불러오지 못했습니다."
-                    )
-                }
-            }
-        }
-    }
 }
