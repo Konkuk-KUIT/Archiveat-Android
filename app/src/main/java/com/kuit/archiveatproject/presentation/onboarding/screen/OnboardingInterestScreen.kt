@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -84,13 +86,8 @@ private fun OnboardingInterestContent(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding()
     ) {
-        Spacer(Modifier.height(44.dp))
-
-        // ===== Header =====
-        BackTopBar(onBack = {})
-
-        Spacer(Modifier.height(16.dp))
 
         // ===== Scroll Area =====
         LazyColumn(
@@ -99,6 +96,7 @@ private fun OnboardingInterestContent(
                 .padding(horizontal = 26.dp)
         ) {
             item {
+                Spacer(Modifier.height(22.dp))
                 Text(
                     text = "요즘 가장 집중하고 있는\n관심 주제를 골라주세요!",
                     style = ArchiveatProjectTheme.typography.Heading_2_semibold,
@@ -176,7 +174,9 @@ private fun OnboardingInterestContent(
                 "archiveat! 시작하기",
             enabled = isSubmitEnabled,
             onClick = onSubmitClicked,
-            modifier = Modifier.padding(horizontal = 20.dp)
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .navigationBarsPadding()
         )
 
         Spacer(Modifier.height(34.dp))
