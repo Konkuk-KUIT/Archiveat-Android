@@ -107,7 +107,7 @@ class InboxViewModel @Inject constructor(
         pollingJob = viewModelScope.launch {
             Log.d(TAG, "polling start")
             while (true) {
-                delay(2500L) // nn초로 변경 가능
+                delay(5000L) // nn초로 변경 가능
                 val stillRunning = hasRunning(_uiState.value.inbox)
                 if (!stillRunning) {
                     Log.d(TAG, "polling stop: RUNNING cleared")
