@@ -15,9 +15,9 @@ class ReportRepositoryImpl @Inject constructor(
 ) : ReportRepository {
 
     override suspend fun getReport(): Report {
-        return apiService.getReport()
-            .requireData()
-            .toDomain()
+        val response = apiService.getReport()
+        val dto = response.requireData()
+        return dto.copy(serverTimestamp = response.timestamp).toDomain()
     }
 
     override suspend fun getReportStatus(): ReportStatus {
