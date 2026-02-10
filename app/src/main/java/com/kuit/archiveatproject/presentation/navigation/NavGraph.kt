@@ -25,7 +25,6 @@ import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingIntere
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingJobTimeScreen
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingScreen as OnboardingIntroScreen
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
-import com.kuit.archiveatproject.presentation.report.model.ReportUiState
 import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
 import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
 
@@ -196,7 +195,6 @@ fun NavGraph(
             }
             composable(route = Route.Report.route) {
                 ReportScreen(
-                    uiState = ReportUiState(),
                     modifier = screenModifier
                 )
             }

@@ -20,8 +20,12 @@ data class ReportUiState(
     val recentReadNewsletters: List<RecentReadNewsletterUiItem> = emptyList(),
 
     // 주간 AI 종합 피드백
-    val weeklyFeedbackDateRange: String = "",
-    val weeklyFeedbackBody: String = ""
+    val weeklyFeedbackWeekLabel: String = "",
+    val weeklyFeedbackBody: String = "",
+
+    // 에러 상태
+    val isError: Boolean = false,
+    val errorMessage: String? = null
 )
 
 data class InterestGapUiItem(
