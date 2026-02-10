@@ -101,7 +101,7 @@ fun NavGraph(
             route = Route.Main.route
         ) {
             composable(route = Route.Home.route) {
-                HomeScreen()
+                HomeScreen(modifier = screenModifier)
             }
             composable(route = Route.Explore.route) {
                 ExploreScreen(

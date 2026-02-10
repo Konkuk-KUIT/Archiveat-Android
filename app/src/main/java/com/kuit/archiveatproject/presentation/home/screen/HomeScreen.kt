@@ -27,14 +27,16 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     HomeScreenContent(
         uiState = uiState,
         onTabSelected = viewModel::onTabSelected,
-        onCardClick = { /* navigate */ }
+        onCardClick = { /* navigate */ },
+        modifier = modifier
     )
 }
 
@@ -42,10 +44,11 @@ fun HomeScreen(
 fun HomeScreenContent(
     uiState: HomeUiState,
     onTabSelected: (HomeTabType) -> Unit,
-    onCardClick: (HomeContentCardUiModel) -> Unit
+    onCardClick: (HomeContentCardUiModel) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
     ) {
