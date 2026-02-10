@@ -2,17 +2,25 @@ package com.kuit.archiveatproject.presentation.newsletterdetails.screen
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.content.Intent
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.util.Log
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,17 +41,24 @@ fun WebViewScreen(
     }.orEmpty()
     val isPreview = LocalInspectionMode.current
     var lastRequestedUrl by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
 
-    Column(modifier = modifier.fillMaxSize()) {
-        BackTopBar(
-            title = "",
-            onBack = onBack,
-            height = 45
-        )
-
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets.safeDrawing,
+        topBar = {
+            BackTopBar(
+                title = "",
+                onBack = onBack,
+                height = 45
+            )
+        }
+    ) { innerPadding: PaddingValues ->
         if (safeUrl.isBlank()) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -54,7 +69,9 @@ fun WebViewScreen(
             }
         } else if (isPreview) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -65,12 +82,68 @@ fun WebViewScreen(
             }
         } else {
             AndroidView(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
                 factory = { context ->
                     WebView(context).apply {
-                        webViewClient = WebViewClient()
+                        webViewClient = object : WebViewClient() {
+                            override fun onPageStarted(
+                                view: WebView,
+                                url: String?,
+                                favicon: android.graphics.Bitmap?
+                            ) {
+                                Log.d("WebViewScreen", "onPageStarted url=$url")
+                            }
+
+                            override fun onPageFinished(view: WebView, url: String?) {
+                                Log.d("WebViewScreen", "onPageFinished url=$url")
+                            }
+
+                            override fun shouldOverrideUrlLoading(
+                                view: WebView,
+                                request: WebResourceRequest
+                            ): Boolean {
+                                val target = request.url
+                                Log.d("WebViewScreen", "shouldOverrideUrlLoading url=$target")
+                                val scheme = target.scheme.orEmpty()
+                                if (scheme == "http" || scheme == "https") {
+                                    if (target.host == "link.naver.com" && target.path?.contains("bridge") == true) {
+                                        val bridged = target.getQueryParameter("url")
+                                        if (!bridged.isNullOrBlank() &&
+                                            (bridged.startsWith("http://") || bridged.startsWith("https://"))
+                                        ) {
+                                            view.loadUrl(bridged)
+                                            return true
+                                        }
+                                    }
+                                    return false
+                                }
+
+                                val fallbackUrl = target.getQueryParameter("url")
+                                if (!fallbackUrl.isNullOrBlank() &&
+                                    (fallbackUrl.startsWith("http://") || fallbackUrl.startsWith("https://"))
+                                ) {
+                                    view.loadUrl(fallbackUrl)
+                                    return true
+                                }
+
+                                return try {
+                                    val intent = Intent(Intent.ACTION_VIEW, target)
+                                    context.startActivity(intent)
+                                    true
+                                } catch (_: Exception) {
+                                    true
+                                }
+                            }
+                        }
                         @SuppressLint("SetJavaScriptEnabled")
                         settings.javaScriptEnabled = true
+                        settings.domStorageEnabled = true
+                        settings.useWideViewPort = false
+                        settings.loadWithOverviewMode = false
+                        settings.userAgentString =
+                            "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0 Mobile Safari/537.36"
                         if (lastRequestedUrl != safeUrl) {
                             loadUrl(safeUrl)
                             lastRequestedUrl = safeUrl

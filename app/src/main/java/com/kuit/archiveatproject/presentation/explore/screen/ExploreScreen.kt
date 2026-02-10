@@ -3,15 +3,21 @@ package com.kuit.archiveatproject.presentation.explore.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,12 +26,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.domain.entity.LlmStatus
@@ -51,7 +61,22 @@ fun ExploreScreen(
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.fetchExplore()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    // TODO: 서버에서 데이터 내려주면 하드 코딩 부분 교체
     var searchUiState by remember {
         mutableStateOf(
             ExploreSearchUiState(
@@ -111,6 +136,9 @@ fun ExploreContent(
         .firstOrNull { it.id == uiState.selectedCategoryId }
 
     var searchBarBottomY by remember { mutableStateOf(0f) }
+    var headerHeight by remember { mutableStateOf(0.dp) }
+
+    val density = LocalDensity.current
     val focusManager = LocalFocusManager.current
 
     Box(
@@ -124,56 +152,66 @@ fun ExploreContent(
                 }
             }
     ) {
-
-        // ===== 메인 콘텐츠 =====
-        LazyColumn {
-
-            item {
-                Text(
-                    text = "탐색",
-                    modifier = Modifier
-                        .statusBarsPadding()
-                        .padding(20.dp),
-                    style = ArchiveatProjectTheme.typography.Heading_1_bold
-                )
-            }
-
-            item {
-                ExploreCategoryTabBar(
-                    categories = uiState.categoryTabs,
-                    selectedCategoryId = uiState.selectedCategoryId,
-                    onCategorySelected = onCategorySelected
-                )
-            }
-
-            item {
-                Spacer(Modifier.height(24.dp))
-
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .onGloballyPositioned { coords ->
-                            searchBarBottomY =
-                                coords.positionInRoot().y + coords.size.height
-                        }
-                ) {
-                    ExploreSearchBar(
-                        query = searchUiState.query,
-                        onQueryChange = onQueryChange,
-                        onSearchClick = onSearchFocus,
-                        onFocus = onSearchFocus
-                    )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ArchiveatProjectTheme.colors.white)
+                .onGloballyPositioned { coords ->
+                    with(density) {
+                        headerHeight = coords.size.height.toDp()
+                    }
                 }
+                .zIndex(1f)
+        ) {
+            Text(
+                text = "탐색",
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                style = ArchiveatProjectTheme.typography.Heading_1_bold
+            )
+            Spacer(Modifier.height(12.dp))
+            ExploreCategoryTabBar(
+                categories = uiState.categoryTabs,
+                selectedCategoryId = uiState.selectedCategoryId,
+                onCategorySelected = onCategorySelected
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .onGloballyPositioned { coords ->
+                        searchBarBottomY =
+                            coords.positionInRoot().y + coords.size.height
+                    }
+            ) {
+                ExploreSearchBar(
+                    query = searchUiState.query,
+                    onQueryChange = onQueryChange,
+                    onSearchClick = onSearchFocus,
+                    onFocus = onSearchFocus
+                )
             }
 
+            Spacer(Modifier.height(16.dp))
+
+            ExploreInboxComponent(
+                title = "방금 담은 지식",
+                showLlmProcessingMessage =
+                    uiState.llmStatus == LlmStatus.RUNNING ||
+                            uiState.llmStatus == LlmStatus.PENDING,
+                onClick = onInboxClick,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+            Spacer(Modifier.height(12.dp))
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             item {
-                Spacer(Modifier.height(16.dp))
-                ExploreInboxComponent(
-                    title = "방금 담은 지식",
-                    showLlmProcessingMessage = uiState.llmStatus == LlmStatus.RUNNING,
-                    onClick = onInboxClick,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                )
+                Spacer(modifier = Modifier.height(270.dp))
             }
 
             selectedCategory?.let { category ->
@@ -188,6 +226,7 @@ fun ExploreContent(
                         color = ArchiveatProjectTheme.colors.gray950,
                         modifier = Modifier.padding(horizontal = 20.dp)
                     )
+
                     Spacer(Modifier.height(24.dp))
                 }
 
@@ -197,11 +236,11 @@ fun ExploreContent(
                         onTopicClick = onTopicClick,
                         modifier = Modifier.padding(horizontal = 20.dp)
                     )
+                    Spacer(Modifier.height(12.dp))
                 }
             }
         }
 
-        // ===== 검색 패널 Overlay =====
         if (searchUiState.isSearchMode && searchBarBottomY > 0f) {
             ExploreSearchSuggestionPanel(
                 recommendedKeywords = searchUiState.recommendedKeywords,
@@ -217,7 +256,7 @@ fun ExploreContent(
                             y = searchBarBottomY.roundToInt()
                         )
                     }
-                    .zIndex(1f)
+                    .zIndex(2f) // 🔑 모든 것 위
             )
         }
     }

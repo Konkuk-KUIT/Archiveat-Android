@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
+import com.kuit.archiveatproject.core.util.noRippleCircleClickable
 import com.kuit.archiveatproject.domain.entity.HomeCardType
 import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
@@ -268,8 +269,11 @@ fun HomeContentCard(
         modifier = modifier
             .clip(shape)
             .background(containerColor)
-            .then(if (isClickable) Modifier.clickable { onClick(card) }
-            else Modifier)
+            .then(
+                if (isClickable)
+                    Modifier.noRippleCircleClickable { onClick(card) } // 👈 변경
+                else Modifier
+            )
             .fillMaxWidth()
     ) {
         HomeContentThumbnail(

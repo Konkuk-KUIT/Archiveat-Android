@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.R
+import com.kuit.archiveatproject.core.util.noRippleCircleClickable
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
@@ -39,14 +40,14 @@ fun BackTopBar(
             .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onBack,
-            modifier = Modifier.size(20.dp)) {
-            Icon(
-                painter = painterResource( id = R.drawable.ic_arrow_back),
-                contentDescription = "back",
-                tint = ArchiveatProjectTheme.colors.gray800
-            )
-        }
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow_back),
+            contentDescription = "back",
+            tint = ArchiveatProjectTheme.colors.gray800,
+            modifier = Modifier
+                .size(20.dp)
+                .noRippleCircleClickable { onBack() }
+        )
         Box(
             modifier = Modifier
                 .weight(1f)

@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.R
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
@@ -59,7 +60,7 @@ fun JobSelectionItem(
                 color = backgroundColor,
                 shape = RoundedCornerShape(10.dp)
             )
-            .clickable(onClick = onClick),
+            .noRippleClickable(onClick),
         contentAlignment = Alignment.Center
     ) {
         Column(

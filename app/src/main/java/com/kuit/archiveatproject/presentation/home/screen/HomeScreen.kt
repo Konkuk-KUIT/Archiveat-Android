@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,14 +28,16 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     HomeScreenContent(
         uiState = uiState,
         onTabSelected = viewModel::onTabSelected,
-        onCardClick = { /* navigate */ }
+        onCardClick = { /* navigate */ },
+        modifier = modifier
     )
 }
 
@@ -42,14 +45,17 @@ fun HomeScreen(
 fun HomeScreenContent(
     uiState: HomeUiState,
     onTabSelected: (HomeTabType) -> Unit,
-    onCardClick: (HomeContentCardUiModel) -> Unit
+    onCardClick: (HomeContentCardUiModel) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
     ) {
-        TopLogoBar()
+        TopLogoBar(
+            modifier = Modifier.padding(top = 11.dp)
+        )
         uiState.greeting?.let {
             GreetingBar(
                 nickname = uiState.nickname,

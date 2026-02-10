@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -80,10 +82,11 @@ private fun OnboardingJobTimeContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(Color.White)
+            .statusBarsPadding() ,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Spacer(Modifier.height(74.dp))
+        Spacer(Modifier.height(30.dp))
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
@@ -141,7 +144,9 @@ private fun OnboardingJobTimeContent(
             text = "다음",
             enabled = uiState.isNextEnabled,
             onClick = onNextClicked,
-            modifier = Modifier.padding(horizontal = 20.dp)
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .navigationBarsPadding()
         )
 
         Spacer(Modifier.height(34.dp))

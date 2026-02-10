@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.domain.entity.HomeCardType
 import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
@@ -184,7 +185,7 @@ fun HomeContentCardCarousel(
         val shadowStrength = centerStrength
 
         // 탭 동작: 옆 카드 탭하면 그 카드로 이동 / 중앙 탭이면 상세
-        val onTap = Modifier.clickable {
+        val onTap = Modifier.noRippleClickable {
             if (page != pagerState.currentPage) {
                 scrollRequests.trySend(page to MutatePriority.UserInput)
             } else {
