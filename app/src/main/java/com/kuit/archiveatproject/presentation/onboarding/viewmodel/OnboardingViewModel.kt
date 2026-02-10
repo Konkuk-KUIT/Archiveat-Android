@@ -197,19 +197,19 @@ class OnboardingViewModel @Inject constructor(
                 "EMPLOYEE" -> JobUiModel(
                     type = type,
                     label = "직장인",
-                    iconRes = R.drawable.ic_job_student
+                    iconRes = R.drawable.ic_job_employee
                 )
 
                 "FREELANCER" -> JobUiModel(
                     type = type,
                     label = "프리랜서",
-                    iconRes = R.drawable.ic_job_student
+                    iconRes = R.drawable.ic_job_freelancer
                 )
 
                 else -> JobUiModel(
                     type = type,
                     label = type,
-                    iconRes = R.drawable.ic_job_student
+                    iconRes = R.drawable.ic_job_etc
                 )
             }
         }
