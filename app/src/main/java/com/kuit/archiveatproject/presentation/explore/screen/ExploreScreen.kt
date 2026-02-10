@@ -170,7 +170,7 @@ fun ExploreContent(
                 Spacer(Modifier.height(16.dp))
                 ExploreInboxComponent(
                     title = "방금 담은 지식",
-                    showLlmProcessingMessage = uiState.llmStatus == LlmStatus.RUNNING,
+                    showLlmProcessingMessage = uiState.llmStatus == LlmStatus.RUNNING || uiState.llmStatus == LlmStatus.PENDING,
                     onClick = onInboxClick,
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
