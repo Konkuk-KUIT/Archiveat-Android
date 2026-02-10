@@ -46,7 +46,6 @@ fun InboxScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding()
     ) {
         InboxScreenContent(
             inbox = uiState.inbox,

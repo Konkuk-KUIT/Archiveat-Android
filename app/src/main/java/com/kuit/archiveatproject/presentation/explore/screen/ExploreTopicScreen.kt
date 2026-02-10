@@ -46,7 +46,6 @@ fun ExploreTopicDetailScreen(
         modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
-            .statusBarsPadding() // TODO: 상단 안전 영역 상의
     ) {
         BackTopBar(
             title = topicName,

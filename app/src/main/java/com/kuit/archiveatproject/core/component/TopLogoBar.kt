@@ -21,7 +21,7 @@ fun TopLogoBar(
         modifier = modifier
             .fillMaxWidth()
             .background(ArchiveatProjectTheme.colors.white)
-            .padding(start = 20.dp, top = 55.dp, bottom = 11.dp)
+            .padding(start = 20.dp, bottom = 11.dp)
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_logo),

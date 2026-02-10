@@ -27,7 +27,6 @@ inline fun Modifier.noRippleCircleClickable(
     crossinline onClick: () -> Unit
 ): Modifier = composed {
     this
-        .clip(CircleShape) // 원 밖 터치/표시를 원 안으로 제한
         .clickable(
             enabled = enabled,
             indication = null, // 리플 제거
