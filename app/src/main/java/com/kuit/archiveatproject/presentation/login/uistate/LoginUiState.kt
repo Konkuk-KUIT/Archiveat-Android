@@ -9,6 +9,7 @@ data class LoginAgreementItem(
 
 enum class LoginStep {
     STEP1,
+    LOGIN,
     STEP2,
     STEP3,
     STEP4,
@@ -22,6 +23,7 @@ data class LoginUiState(
     val nickname: String = "",
     val isLoading: Boolean = false,
     val isSignupSuccess: Boolean = false,
+    val isLoginSuccess: Boolean = false,
     val errorMessage: String? = null,
 ) {
     val allAgreementsChecked: Boolean

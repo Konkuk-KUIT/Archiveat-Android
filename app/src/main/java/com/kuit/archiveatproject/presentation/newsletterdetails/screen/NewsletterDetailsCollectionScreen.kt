@@ -9,37 +9,68 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.CollectionComponent
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.CollectionComponentUiModel
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.CollectionTopBar
+import com.kuit.archiveatproject.presentation.newsletterdetails.viewmodel.NewsletterDetailsCollectionViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun NewsletterDetailsCollectionScreen(
+    onBack: () -> Unit,
+    onClickItem: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: NewsletterDetailsCollectionViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    if (uiState.items.isNotEmpty()) {
+        NewsletterDetailsCollectionContent(
+            userName = uiState.userName,
+            categoryLabel = uiState.categoryLabel,
+            monthLabel = uiState.monthLabel,
+            items = uiState.items,
+            onBack = onBack,
+            onClickItem = onClickItem,
+            onToggleChecked = { id -> viewModel.toggleChecked(id) },
+            modifier = modifier
+        )
+    } else {
+        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            val message = uiState.errorMessage ?: "로딩 중..."
+            Text(
+                text = message,
+                style = ArchiveatProjectTheme.typography.Subhead_2_semibold,
+                color = ArchiveatProjectTheme.colors.gray600
+            )
+        }
+    }
+}
+
+@Composable
+fun NewsletterDetailsCollectionContent(
     userName: String,
-    categoryLabel: String,  // 경제
-    monthLabel: String,     // 8월
+    categoryLabel: String,
+    monthLabel: String,
     items: List<CollectionComponentUiModel>,
     onBack: () -> Unit,
     onClickItem: (Long) -> Unit,
-    onToggleChecked: (Long, Boolean) -> Unit = { _, _ -> }, // 서버/VM 연동 대비: id, newChecked
     modifier: Modifier = Modifier,
+    onToggleChecked: (Long) -> Unit = {},
 ) {
-    // 임시: 나중에 VM 붙이면 삭제
-    val stateItems = remember(items) {
-        mutableStateListOf<CollectionComponentUiModel>().apply { addAll(items) }
-    }
-
-    val collectedCount = stateItems.size
+    val collectedCount = items.size
     val progressTotal = collectedCount.coerceAtLeast(1)
-    val progressCurrent = stateItems.count { it.isChecked }
+    val progressCurrent = items.count { it.isChecked }
 
     Column(
         modifier = modifier
@@ -75,20 +106,13 @@ fun NewsletterDetailsCollectionScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(
-                    items = stateItems,
+                    items = items,
                     key = { item: CollectionComponentUiModel -> item.id }
                 ) { model: CollectionComponentUiModel ->
                     CollectionComponent(
                         model = model,
                         onClick = { onClickItem(model.id) },
-                        onToggleChecked = { id ->
-                            val idx = stateItems.indexOfFirst { it.id == id }
-                            if (idx != -1) {
-                                val newChecked = !stateItems[idx].isChecked
-                                stateItems[idx] = stateItems[idx].copy(isChecked = newChecked)
-                                onToggleChecked(id, newChecked)
-                            }
-                        }
+                        onToggleChecked = { id -> onToggleChecked(id) }
                     )
                 }
             }
@@ -100,7 +124,7 @@ fun NewsletterDetailsCollectionScreen(
 @Composable
 private fun NewsletterDetailsCollectionScreenPreview() {
     ArchiveatProjectTheme {
-        NewsletterDetailsCollectionScreen(
+        NewsletterDetailsCollectionContent(
             userName = "OO",
             categoryLabel = "경제",
             monthLabel = "8월",
@@ -163,7 +187,7 @@ private fun NewsletterDetailsCollectionScreenPreview() {
             ),
             onBack = {},
             onClickItem = {},
-            onToggleChecked = { _, _ -> }
+            onToggleChecked = {}
         )
     }
 }

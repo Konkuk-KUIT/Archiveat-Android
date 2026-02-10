@@ -32,10 +32,15 @@ class LoginViewModel @Inject constructor(
         _uiState.update { it.copy(step = LoginStep.STEP2, errorMessage = null) }
     }
 
+    fun onStartLogin() {
+        _uiState.update { it.copy(step = LoginStep.LOGIN, errorMessage = null) }
+    }
+
     fun onBack() {
         _uiState.update { state ->
             val prevStep = when (state.step) {
                 LoginStep.STEP1 -> LoginStep.STEP1
+                LoginStep.LOGIN -> LoginStep.STEP1
                 LoginStep.STEP2 -> LoginStep.STEP1
                 LoginStep.STEP3 -> LoginStep.STEP2
                 LoginStep.STEP4 -> LoginStep.STEP3
@@ -133,5 +138,46 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun onLogin() {
+        val state = _uiState.value
+        if (state.isLoading) return
+
+        val email = state.email.trim()
+        val isEmailValid = isValidEmail(email, 254)
+        val isPasswordValid = state.password.length in 8..20
+
+        if (!isEmailValid || !isPasswordValid) {
+            _uiState.update { it.copy(errorMessage = "이메일/비밀번호 형식을 확인해주세요.") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            runCatching {
+                authRepository.login(
+                    email = email,
+                    password = state.password
+                )
+            }.onSuccess {
+                _uiState.update { it.copy(isLoading = false, isLoginSuccess = true) }
+            }.onFailure { e ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.message ?: "로그인에 실패했습니다."
+                    )
+                }
+            }
+        }
+    }
+
+    fun consumeSignupSuccess() {
+        _uiState.update { it.copy(isSignupSuccess = false) }
+    }
+
+    fun consumeLoginSuccess() {
+        _uiState.update { it.copy(isLoginSuccess = false) }
     }
 }

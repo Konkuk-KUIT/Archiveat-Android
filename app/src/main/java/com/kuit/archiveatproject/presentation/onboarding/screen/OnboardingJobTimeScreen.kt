@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,9 +39,14 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun OnboardingJobTimeScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),
+    onNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(OnboardingUiEvent.OnEnter)
+    }
 
     OnboardingJobTimeContent(
         uiState = uiState,
@@ -57,6 +63,7 @@ fun OnboardingJobTimeScreen(
         },
         onNextClicked = {
             viewModel.onEvent(OnboardingUiEvent.OnNextStep)
+            onNext()
         }
     )
 

@@ -10,6 +10,7 @@ import com.kuit.archiveatproject.data.repositoryimpl.InboxRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.NewsletterRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.ReportRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.TokenRepositoryImpl
+import com.kuit.archiveatproject.data.repositoryimpl.UserRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.UserMetadataRepositoryImpl
 import com.kuit.archiveatproject.domain.repository.AuthRepository
 import com.kuit.archiveatproject.domain.repository.CollectionRepository
@@ -21,6 +22,7 @@ import com.kuit.archiveatproject.domain.repository.InboxRepository
 import com.kuit.archiveatproject.domain.repository.NewsletterRepository
 import com.kuit.archiveatproject.domain.repository.ReportRepository
 import com.kuit.archiveatproject.domain.repository.TokenRepository
+import com.kuit.archiveatproject.domain.repository.UserRepository
 import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
 import dagger.Binds
 import dagger.Module
@@ -90,6 +92,12 @@ abstract class RepositoryModule {
     abstract fun bindTokenRepository(
         impl: TokenRepositoryImpl
     ): TokenRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        impl: UserRepositoryImpl
+    ): UserRepository
 
     @Binds
     @Singleton

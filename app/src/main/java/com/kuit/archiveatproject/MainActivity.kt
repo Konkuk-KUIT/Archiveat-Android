@@ -10,15 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kuit.archiveatproject.presentation.navigation.BottomNavBar
@@ -27,7 +24,10 @@ import com.kuit.archiveatproject.presentation.navigation.NavTab
 import com.kuit.archiveatproject.presentation.navigation.Route
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             ArchiveatProjectTheme {
                 val navController = rememberNavController()
-                var selectedRoute by remember { mutableStateOf(Route.Home.route) }
                 val currentDestination =
                     navController.currentBackStackEntryAsState().value?.destination
 
@@ -44,15 +43,8 @@ class MainActivity : ComponentActivity() {
                     NavTab.entries.find { tab ->
                         currentDestination?.route == tab.route
                     }
-                val bottomNavRoutes = listOf(
-                    Route.Home.route,
-                    Route.Report.route,
-                    Route.Explore.route,
-                    Route.Etc.route
-                )
-
                 val showBottomBar =
-                    currentDestination?.route in bottomNavRoutes
+                    currentDestination?.hierarchy?.any { it.route == Route.Main.route } == true
 
 
                 Scaffold(//0xFFF1F3F6
@@ -77,9 +69,19 @@ class MainActivity : ComponentActivity() {
                                 tabs = NavTab.entries,
                                 currentTab = currentTab,
                                 onItemSelected = { tab ->
+                                    val mainGraphStartId = (navController.graph
+                                        .findNode(Route.Main.route) as? NavGraph)
+                                        ?.findStartDestination()
+                                        ?.id
                                     navController.navigate(tab.route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
+                                        if (mainGraphStartId != null) {
+                                            popUpTo(mainGraphStartId) {
+                                                saveState = true
+                                            }
+                                        } else {
+                                            popUpTo(Route.Home.route) {
+                                                saveState = true
+                                            }
                                         }
                                         launchSingleTop = true
                                         restoreState = true

@@ -30,22 +30,33 @@ fun ShareBottomSheet(
     onSave: (memo: String) -> Unit,
 ) {
     var memo by remember { mutableStateOf("") }
+    var showSheet by remember { mutableStateOf(true) }
 
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
 
-    ModalBottomSheet(
-        onDismissRequest = onClose,
-        sheetState = sheetState,
-        dragHandle = null
-    ) {
-        ShareBottomSheetContent(
-            memo = memo,
-            onMemoChange = { memo = it },
-            onClose = onClose,
-            onSave = { onSave(memo) }
-        )
+    if (showSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showSheet = false
+                onClose()
+            },
+            sheetState = sheetState,
+            dragHandle = null
+        ) {
+            ShareBottomSheetContent(
+                memo = memo,
+                onMemoChange = { memo = it },
+                onClose = {
+                    showSheet = false
+                    onClose()
+                },
+                onSave = {
+                    onSave(memo)
+                }
+            )
+        }
     }
 }
 
