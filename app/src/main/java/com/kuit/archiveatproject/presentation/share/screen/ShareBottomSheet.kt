@@ -70,7 +70,7 @@ fun ShareBottomSheet(
 
             Spacer(Modifier.height(18.dp))
 
-            // IMG - UI 변경
+            // IMG - UI 변경 2
             Button(
                 onClick = { onSave(memo) },
                 modifier = Modifier
