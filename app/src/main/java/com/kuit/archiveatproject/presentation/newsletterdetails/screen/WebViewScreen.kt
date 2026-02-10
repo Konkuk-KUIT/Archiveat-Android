@@ -140,7 +140,6 @@ fun WebViewScreen(
                         @SuppressLint("SetJavaScriptEnabled")
                         settings.javaScriptEnabled = true
                         settings.domStorageEnabled = true
-                        settings.textZoom = 100
                         settings.useWideViewPort = false
                         settings.loadWithOverviewMode = false
                         settings.userAgentString =
