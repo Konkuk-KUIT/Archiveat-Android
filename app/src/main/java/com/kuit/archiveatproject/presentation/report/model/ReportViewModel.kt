@@ -2,6 +2,7 @@ package com.kuit.archiveatproject.presentation.report.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.util.Log
 import com.kuit.archiveatproject.domain.entity.Report
 import com.kuit.archiveatproject.domain.repository.ReportRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +30,13 @@ class ReportViewModel @Inject constructor(
                 .onSuccess { report ->
                     _uiState.value = report.toUiState()
                 }
+                .onFailure { throwable ->
+                    Log.e("ReportViewModel", "fetchReport failed", throwable)
+                    _uiState.value = ReportUiState(
+                        isError = true,
+                        errorMessage = throwable.message
+                    )
+                }
         }
     }
 
@@ -52,10 +60,10 @@ class ReportViewModel @Inject constructor(
                     topicName = gap.topicName,
                     savedCount = gap.savedCount,
                     readCount = gap.readCount,
-                    gap = gap.savedCount - gap.readCount
+                    gap = (gap.savedCount - gap.readCount).coerceAtLeast(0)
                 )
             },
-            weeklyFeedbackDateRange = weekLabel,
+            weeklyFeedbackWeekLabel = weekLabel,
             weeklyFeedbackBody = aiComment
         )
 }

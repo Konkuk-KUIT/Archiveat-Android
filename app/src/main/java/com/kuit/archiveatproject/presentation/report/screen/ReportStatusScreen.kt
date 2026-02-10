@@ -218,7 +218,7 @@ private fun ReportStatusContentPreview() {
                         lastViewedAt = "2026-01-17"
                     )
                 ),
-                weeklyFeedbackDateRange = "",
+                weeklyFeedbackWeekLabel = "",
                 weeklyFeedbackBody = ""
             ),
             modifier = Modifier.fillMaxSize()

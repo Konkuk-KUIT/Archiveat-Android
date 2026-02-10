@@ -43,6 +43,22 @@ fun ReportScreenContent(
     uiState: ReportUiState,
     modifier: Modifier = Modifier
 ){
+    if (uiState.isError) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(ArchiveatProjectTheme.colors.white)
+                .padding(20.dp)
+        ) {
+            Text(
+                text = uiState.errorMessage ?: "리포트를 불러오지 못했어요.",
+                style = ArchiveatProjectTheme.typography.Body_1_semibold,
+                color = ArchiveatProjectTheme.colors.gray800
+            )
+        }
+        return
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -63,7 +79,7 @@ fun ReportScreenContent(
 
         Spacer(Modifier.height(16.dp))
         WeeklyAiFeedbackSection(
-            dateRange = uiState.weeklyFeedbackDateRange,
+            dateRange = uiState.weeklyFeedbackWeekLabel,
             body = uiState.weeklyFeedbackBody,
             modifier = Modifier.padding(horizontal = 20.dp)
         )
@@ -119,7 +135,7 @@ private fun ReportScreenPreview() {
                     gap = 5
                 )
             ),
-            weeklyFeedbackDateRange = "1월 19일-1월 25일",
+            weeklyFeedbackWeekLabel = "1월 19일-1월 25일",
             weeklyFeedbackBody = "지난 주 AI 분야에 80%의 시간을 사용하셨네요.\n저장 분야를 보니 건강에도 관심이 많으신데,\n관련 콘텐츠를 확인해볼까요?"
         )
     )
