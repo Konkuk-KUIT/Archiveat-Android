@@ -99,7 +99,37 @@ class LoginViewModel @Inject constructor(
             _uiState.update { it.copy(errorMessage = "이메일/비밀번호 형식을 확인해주세요.") }
             return
         }
-        _uiState.update { it.copy(step = LoginStep.STEP4, errorMessage = null) }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            runCatching {
+                authRepository.checkEmail(email)
+            }.onSuccess { isAvailable ->
+                if (isAvailable) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            step = LoginStep.STEP4,
+                            errorMessage = null
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "이미 가입된 이메일입니다."
+                        )
+                    }
+                }
+            }.onFailure { e ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.message ?: "이메일 중복 확인에 실패했습니다."
+                    )
+                }
+            }
+        }
     }
 
     fun onNicknameChanged(nickname: String) {
