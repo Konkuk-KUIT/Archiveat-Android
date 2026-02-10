@@ -1,6 +1,7 @@
 package com.kuit.archiveatproject.presentation.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -34,6 +35,8 @@ fun NavGraph(
     padding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
+    val screenModifier = modifier.padding(padding)
+
     NavHost(
         navController = navController,
         startDestination = Route.OnboardingIntro.route // startDestination 온보딩 인트로
@@ -98,11 +101,11 @@ fun NavGraph(
             route = Route.Main.route
         ) {
             composable(route = Route.Home.route) {
-                HomeScreen()
+                HomeScreen(modifier = screenModifier)
             }
             composable(route = Route.Explore.route) {
                 ExploreScreen(
-                    modifier = modifier,
+                    modifier = screenModifier,
                     onInboxClick = {
                         navController.navigate(Route.ExploreInbox.route)
                     },
@@ -126,7 +129,7 @@ fun NavGraph(
                     onOpenOriginal = { userNewsletterId ->
                         navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
                     },
-                    modifier = modifier
+                    modifier = screenModifier
                 )
             }
             composable(
@@ -153,7 +156,7 @@ fun NavGraph(
                         )
                     },
                     onSearchSubmit = {},
-                    modifier = modifier
+                    modifier = screenModifier
                 )
             }
             composable(
@@ -165,7 +168,7 @@ fun NavGraph(
                     onClickWebView = { url ->
                         navController.navigate(Route.WebView.createRoute(url))
                     },
-                    modifier = modifier
+                    modifier = screenModifier
                 )
             }
             composable(
@@ -177,7 +180,7 @@ fun NavGraph(
                     onClickItem = { userNewsletterId ->
                         navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
                     },
-                    modifier = modifier
+                    modifier = screenModifier
                 )
             }
             composable(
@@ -188,20 +191,20 @@ fun NavGraph(
                 WebViewScreen(
                     url = url,
                     onBack = { navController.popBackStack() },
-                    modifier = modifier
+                    modifier = screenModifier
                 )
             }
             composable(route = Route.Report.route) {
                 ReportScreen(
                     uiState = ReportUiState(),
-                    modifier = modifier
+                    modifier = screenModifier
                 )
             }
             composable(route = Route.Etc.route) {
-                EtcScreen(modifier = modifier)
+                EtcScreen(modifier = screenModifier)
             }
             composable(route = Route.Share.route) {
-                ShareScreen(modifier = modifier)
+                ShareScreen(modifier = screenModifier)
             }
         }
     }
