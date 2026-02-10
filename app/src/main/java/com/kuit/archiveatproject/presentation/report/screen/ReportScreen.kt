@@ -11,18 +11,35 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.presentation.report.component.ReportChartComponent
 import com.kuit.archiveatproject.presentation.report.component.WeeklyAiFeedbackSection
 import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
 import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
+import com.kuit.archiveatproject.presentation.report.model.ReportViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun ReportScreen(
+    viewModel: ReportViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    ReportScreenContent(
+        uiState = uiState,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ReportScreenContent(
     uiState: ReportUiState,
     modifier: Modifier = Modifier
 ){
@@ -76,7 +93,7 @@ fun ReportScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ReportScreenPreview() {
-    ReportScreen(
+    ReportScreenContent(
         uiState = ReportUiState(
             referenceDate = "2025년 11월 6일",
             totalSavedCount = 120,
