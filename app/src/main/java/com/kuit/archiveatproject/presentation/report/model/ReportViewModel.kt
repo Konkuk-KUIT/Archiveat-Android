@@ -42,7 +42,7 @@ class ReportViewModel @Inject constructor(
 
     private fun Report.toUiState(): ReportUiState =
         ReportUiState(
-            referenceDate = weekLabel,
+            referenceDate = serverTimestamp,
             totalSavedCount = status.totalSavedCount,
             totalReadCount = status.totalReadCount,
             readPercentage = status.percentage,
