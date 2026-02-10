@@ -88,7 +88,11 @@ fun WebViewScreen(
                 factory = { context ->
                     WebView(context).apply {
                         webViewClient = object : WebViewClient() {
-                            override fun onPageStarted(view: WebView, url: String?, favicon: android.graphics.Bitmap?) {
+                            override fun onPageStarted(
+                                view: WebView,
+                                url: String?,
+                                favicon: android.graphics.Bitmap?
+                            ) {
                                 Log.d("WebViewScreen", "onPageStarted url=$url")
                             }
 
@@ -106,7 +110,9 @@ fun WebViewScreen(
                                 if (scheme == "http" || scheme == "https") {
                                     if (target.host == "link.naver.com" && target.path?.contains("bridge") == true) {
                                         val bridged = target.getQueryParameter("url")
-                                        if (!bridged.isNullOrBlank()) {
+                                        if (!bridged.isNullOrBlank() &&
+                                            (bridged.startsWith("http://") || bridged.startsWith("https://"))
+                                        ) {
                                             view.loadUrl(bridged)
                                             return true
                                         }
