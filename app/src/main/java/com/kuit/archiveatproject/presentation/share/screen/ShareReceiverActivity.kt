@@ -11,7 +11,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.presentation.share.screen.ShareBottomSheet
 import com.kuit.archiveatproject.presentation.share.viewmodel.ShareViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ShareReceiverActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +28,7 @@ class ShareReceiverActivity : ComponentActivity() {
                 val viewModel: ShareViewModel = hiltViewModel()
                 val uiState by viewModel.uiState.collectAsState()
 
-                LaunchedEffect(Unit) {
+                LaunchedEffect(sharedText) {
                     viewModel.setContentUrlFromSharedText(sharedText)
                 }
 
@@ -39,8 +41,8 @@ class ShareReceiverActivity : ComponentActivity() {
                     }
                 )
 
-                if (uiState.isSuccess) {
-                    LaunchedEffect(Unit) {
+                LaunchedEffect(uiState.isSuccess) {
+                    if (uiState.isSuccess) {
                         finish()
                     }
                 }

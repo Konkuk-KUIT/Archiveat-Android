@@ -54,7 +54,7 @@ data class HomeContentCardDto(
     val mediumCardSummary: String,
 
     @SerialName("thumbnailUrl")
-    val thumbnailUrl: String
+    val thumbnailUrl: String?
 )
 
 @Serializable

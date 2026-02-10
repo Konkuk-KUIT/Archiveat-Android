@@ -22,7 +22,7 @@ data class HomeContentCard(
     val title: String,
     val smallCardSummary: String,
     val mediumCardSummary: String,
-    val thumbnailUrl: String
+    val thumbnailUrl: String?
 )
 
 data class HomeContentCollectionCard(
