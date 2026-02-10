@@ -12,7 +12,7 @@ data class NewsletterSimpleResponseDto(
     @SerialName("title")
     val title: String,
     @SerialName("thumbnailUrl")
-    val thumbnailUrl: String,
+    val thumbnailUrl: String? = null,
     @SerialName("label")
     val label: String,
     @SerialName("memo")
