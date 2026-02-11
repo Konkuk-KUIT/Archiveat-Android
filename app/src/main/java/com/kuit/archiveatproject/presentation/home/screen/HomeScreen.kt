@@ -139,6 +139,8 @@ private fun HomeScreenPreview() {
                     tabLabel = "전체",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "2025 UI 디자인 트렌드: 글래스모피즘의 귀환",
+                    smallCardSummary = "저장한 'Design' 아티클 요약",
+                    mediumCardSummary = "UI 디자인 트렌드를 한눈에 정리한 핵심 요약.",
                     imageUrls = listOf("https://picsum.photos/id/10/800/600")
                 ),
                 HomeContentCardUiModel(
@@ -147,6 +149,8 @@ private fun HomeScreenPreview() {
                     tabLabel = "전체",
                     cardType = HomeCardType.COLLECTION,
                     title = "AI 에이전트, 검색을 넘어 행동으로",
+                    smallCardSummary = "저장한 'AI' 아티클 요약",
+                    mediumCardSummary = "AI 에이전트가 실제 업무 흐름에서 하는 일과 변화 포인트.",
                     imageUrls = listOf(
                         "https://picsum.photos/id/11/800/600",
                         "https://picsum.photos/id/12/800/600"

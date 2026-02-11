@@ -36,6 +36,8 @@ class HomeViewModel @Inject constructor(
             tabLabel = tabLabel,
             cardType = cardType,
             title = title,
+            smallCardSummary = smallCardSummary,
+            mediumCardSummary = mediumCardSummary,
             imageUrls = listOfNotNull(thumbnailUrl)
         )
 
@@ -46,6 +48,8 @@ class HomeViewModel @Inject constructor(
             tabLabel = tabLabel,
             cardType = cardType,
             title = title,
+            smallCardSummary = smallCardSummary,
+            mediumCardSummary = mediumCardSummary,
             imageUrls = thumbnailUrls
         )
 
