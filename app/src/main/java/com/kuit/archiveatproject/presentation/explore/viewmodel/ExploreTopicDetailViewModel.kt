@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.domain.repository.ExploreTopicNewslettersRepository
-import com.kuit.archiveatproject.presentation.explore.viewmodel.ExploreTopicDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +26,21 @@ class ExploreTopicDetailViewModel @Inject constructor(
 
     init {
         fetchNewsletters()
+    }
+
+    fun onQueryChange(newQuery: String) {
+        _uiState.update {
+            it.copy(
+                query = newQuery,
+                isSearchMode = true
+            )
+        }
+    }
+
+    fun clearSearchMode() {
+        _uiState.update {
+            it.copy(isSearchMode = false)
+        }
     }
 
     fun fetchNewsletters(page: Int = 0) {
