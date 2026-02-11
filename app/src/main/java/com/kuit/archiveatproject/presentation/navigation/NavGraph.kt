@@ -1,8 +1,11 @@
 package com.kuit.archiveatproject.presentation.navigation
 
+import ExploreTopicDetailViewModel
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -144,10 +147,14 @@ fun NavGraph(
                         ?.get<String>("topicName")
                         ?: ""
 
+                // ViewModel 연결
+                val viewModel: ExploreTopicDetailViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsState()
+
                 ExploreTopicDetailScreen(
                     topicId = topicId,
                     topicName = topicName,
-                    newsletters = emptyList(), // 서버 연동 전
+                    newsletters = uiState.newsletters,
                     onBack = { navController.popBackStack() },
                     onClickOutlink = { userNewsletterId ->
                         navController.navigate(
@@ -155,7 +162,8 @@ fun NavGraph(
                         )
                     },
                     onSearchSubmit = {},
-                    modifier = screenModifier
+                    modifier = screenModifier,
+                    viewModel = viewModel
                 )
             }
             composable(

@@ -1,5 +1,6 @@
 package com.kuit.archiveatproject.presentation.explore.screen
 
+import ExploreTopicDetailViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,15 +18,20 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNewsletterDto
+import com.kuit.archiveatproject.domain.entity.ExploreTopicNewsletterItem
 import com.kuit.archiveatproject.presentation.explore.component.ExploreTopicContentCard
 import com.kuit.archiveatproject.presentation.explore.component.ExploreTopicFilterChip
+import com.kuit.archiveatproject.presentation.explore.screen.sortedForExplore
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import java.time.Instant
 
@@ -33,12 +39,15 @@ import java.time.Instant
 fun ExploreTopicDetailScreen(
     topicId: Long,
     topicName: String,
-    newsletters: List<ExploreTopicNewsletterDto>,
+    newsletters: List<ExploreTopicNewsletterItem>,
     onBack: () -> Unit,
     onClickOutlink: (userNewsletterId: Long) -> Unit,
     onSearchSubmit: (query: String) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: ExploreTopicDetailViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     // 1) 안읽음 -> 2) 읽음, 각각 최신 저장순(createdAt desc)
     val sorted = remember(newsletters) { newsletters.sortedForExplore() }
 
@@ -104,13 +113,14 @@ fun ExploreTopicDetailScreen(
 }
 
 /** 정렬: 안읽음 -> 읽음, 각 그룹 내부는 createdAt desc(null은 가장 오래된 취급) */
-private fun List<ExploreTopicNewsletterDto>.sortedForExplore(): List<ExploreTopicNewsletterDto> {
-    fun ExploreTopicNewsletterDto.createdAtInstantOrMin(): Instant {
+private fun List<ExploreTopicNewsletterItem>.sortedForExplore(): List<ExploreTopicNewsletterItem> {
+    fun ExploreTopicNewsletterItem.createdAtInstantOrMin(): Instant {
         val raw = createdAt ?: return Instant.MIN
         return runCatching { Instant.parse(raw) }.getOrDefault(Instant.MIN)
     }
 
-    val (read, unread) = this.partition { it.isRead } // read=true가 먼저 나오므로 주의
+    val (read, unread) = this.partition { it.isRead }
+
     val unreadSorted = unread.sortedByDescending { it.createdAtInstantOrMin() }
     val readSorted = read.sortedByDescending { it.createdAtInstantOrMin() }
 
@@ -125,30 +135,30 @@ private fun Preview_ExploreTopicDetailScreen_Default() {
             topicId = 1L,
             topicName = "테크",
             newsletters = listOf(
-                ExploreTopicNewsletterDto(
+                ExploreTopicNewsletterItem(
                     userNewsletterId = 101L,
                     title = "디지털 시대를 설계하다 · 컴퓨터가 바꾸는 일상의 풍경",
                     thumbnailUrl = "https://picsum.photos/400/300?1",
                     isRead = false,
                     createdAt = Instant.now().toString()
                 ),
-                ExploreTopicNewsletterDto(
+                ExploreTopicNewsletterItem(
                     userNewsletterId = 102L,
                     title = "알고리즘을 이해하다 · 추천 시스템 뒤에 숨은 계산법",
                     thumbnailUrl = "https://picsum.photos/400/300?2",
                     isRead = false,
                     createdAt = Instant.now().minusSeconds(3600).toString()
                 ),
-                ExploreTopicNewsletterDto(
+                ExploreTopicNewsletterItem(
                     userNewsletterId = 103L,
                     title = "데이터의 바다를 항해하다 · 빅데이터 분석으로 본 트렌드",
                     thumbnailUrl = null,
                     isRead = true,
                     createdAt = Instant.now().minusSeconds(7200).toString()
                 ),
-                ExploreTopicNewsletterDto(
+                ExploreTopicNewsletterItem(
                     userNewsletterId = 104L,
-                    title = "인공지능과 함께 일하다 · 생산성을 높이는 스마트 워크. 인공지능과 함께 일하다 · 생산성을 높이는 스마트 워크",
+                    title = "인공지능과 함께 일하다 · 생산성을 높이는 스마트 워크",
                     thumbnailUrl = "https://picsum.photos/400/300?4",
                     isRead = true,
                     createdAt = Instant.now().minusSeconds(9000).toString()
