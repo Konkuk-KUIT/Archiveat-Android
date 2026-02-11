@@ -214,8 +214,6 @@ fun HomeContentCardCarousel(
             ) {
                 HomeContentCard(
                     card = card,
-                    subtitle = card.smallCardSummary,
-                    contentSnippet = card.mediumCardSummary,
                     modifier = Modifier.fillMaxSize(),
                     isClickable = false, // 바깥 onTap이 담당 -> 내부 클릭은 사용 안 할 듯
                     containerColor = containerColor,
