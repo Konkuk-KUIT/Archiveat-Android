@@ -1,3 +1,5 @@
+package com.kuit.archiveatproject.presentation.explore.viewmodel
+
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
