@@ -242,7 +242,8 @@ private fun LoadingBottomRow(
             painter = painterResource(id = R.drawable.ic_pen),
             contentDescription = "수정 버튼",
             modifier = Modifier
-                .size(16.dp)
+                .size(16.dp),
+            alpha = 0.4f
         )
     }
 }
