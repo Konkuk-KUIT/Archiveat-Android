@@ -56,6 +56,7 @@ class HomeViewModel @Inject constructor(
             }.onSuccess { result ->
                 home = result
                 _uiState.update {
+                    val currentTab = it.selectedTab
                     it.copy(
                         isLoading = false,
                         greeting = GreetingUiModel(
@@ -63,10 +64,10 @@ class HomeViewModel @Inject constructor(
                             result.secondGreetingMessage
                         ),
                         tabs = result.tabs,
-                        selectedTab = HomeTabType.ALL
+                        selectedTab = currentTab
                     )
                 }
-                updateVisibleContent(HomeTabType.ALL)
+                updateVisibleContent(_uiState.value.selectedTab)
 
                 runCatching { userRepository.getNickname() }
                     .onSuccess { nickname ->
