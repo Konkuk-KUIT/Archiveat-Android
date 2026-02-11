@@ -4,20 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +48,6 @@ import com.kuit.archiveatproject.presentation.explore.viewmodel.ExploreTopicUiIt
 import com.kuit.archiveatproject.presentation.explore.viewmodel.ExploreUiState
 import com.kuit.archiveatproject.presentation.explore.viewmodel.ExploreViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
-import kotlin.math.roundToInt
 
 @Composable
 fun ExploreScreen(
@@ -135,9 +131,11 @@ fun ExploreContent(
     val selectedCategory = uiState.categories
         .firstOrNull { it.id == uiState.selectedCategoryId }
 
-    var searchBarBottomY by remember { mutableStateOf(0f) }
-
     val focusManager = LocalFocusManager.current
+    val listState = rememberLazyListState()
+
+    var searchBarBottomY by remember { mutableStateOf(0) }
+    val headerHeightPx = with(LocalDensity.current) { 136.dp.toPx().toInt() }
 
     Box(
         modifier = modifier
@@ -175,35 +173,34 @@ fun ExploreContent(
 
         // ===== 스크롤 영역 =====
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 112.dp) // 헤더 높이만큼
+                .padding(top = 136.dp)
         ) {
-            item {
-                Spacer(Modifier.height(16.dp))
-            }
 
+            item { Spacer(Modifier.height(16.dp)) }
+
+            // SearchBar 위치 측정
             item {
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
                         .onGloballyPositioned { coords ->
                             searchBarBottomY =
-                                coords.positionInRoot().y + coords.size.height
+                                coords.positionInParent().y.toInt() + coords.size.height
                         }
                 ) {
                     ExploreSearchBar(
                         query = searchUiState.query,
                         onQueryChange = onQueryChange,
                         onSearchClick = onSearchFocus,
-                        onFocus = onSearchFocus
+                        onFocus = onSearchFocus,
                     )
                 }
             }
 
-            item {
-                Spacer(Modifier.height(16.dp))
-            }
+            item { Spacer(Modifier.height(16.dp)) }
 
             item {
                 ExploreInboxComponent(
@@ -243,8 +240,8 @@ fun ExploreContent(
             }
         }
 
-        // ===== 검색 추천 패널 =====
-        if (searchUiState.isSearchMode && searchBarBottomY > 0f) {
+        // =====  Overlay Search Panel =====
+        if (searchUiState.isSearchMode && searchBarBottomY > 0) {
             ExploreSearchSuggestionPanel(
                 recommendedKeywords = searchUiState.recommendedKeywords,
                 recentSearches = searchUiState.recentSearches,
@@ -256,10 +253,12 @@ fun ExploreContent(
                     .offset {
                         IntOffset(
                             x = 0,
-                            y = searchBarBottomY.roundToInt()
+                            y = headerHeightPx +
+                                    searchBarBottomY -
+                                    listState.firstVisibleItemScrollOffset
                         )
                     }
-                    .zIndex(2f)
+                    .zIndex(3f)
             )
         }
     }
@@ -352,6 +351,7 @@ private fun fakeExploreUiState(
 
         )
     )
+
 private fun fakeSearchUiState() = ExploreSearchUiState(
     isSearchMode = true,
     query = "",
