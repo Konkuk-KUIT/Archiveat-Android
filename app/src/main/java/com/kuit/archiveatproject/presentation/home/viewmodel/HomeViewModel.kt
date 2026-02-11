@@ -29,10 +29,6 @@ class HomeViewModel @Inject constructor(
 
     private var home: Home? = null
 
-    init {
-        loadHome()
-    }
-
     private fun HomeContentCard.toUiModel(): HomeContentCardUiModel =
         HomeContentCardUiModel(
             archiveId = newsletterId,
@@ -87,6 +83,10 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun refreshHome() {
+        loadHome()
     }
 
     fun onTabSelected(tabType: HomeTabType) {
