@@ -249,9 +249,6 @@ private fun TileImage(
 @Composable
 fun HomeContentCard(
     card: HomeContentCardUiModel,
-    // TODO: 서버 문의 - subtitle, contentSnippet
-    subtitle: String,       // "저장한 'Topic' 아티클 요약" / ... <- 서버로부터 Topic 받기
-    contentSnippet: String, // 아래 요약문 <- 삭제 요청 중(?)
     modifier: Modifier = Modifier,
     isClickable: Boolean = true,
     containerColor: Color = ArchiveatProjectTheme.colors.white,
@@ -304,7 +301,7 @@ fun HomeContentCard(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = subtitle,
+                text = card.smallCardSummary,
                 style = ArchiveatProjectTheme.typography.Caption_semibold,
                 color = ArchiveatProjectTheme.colors.gray900,
                 minLines = 1,
@@ -326,7 +323,7 @@ fun HomeContentCard(
             Spacer(Modifier.height(10.dp))
 
             Text(
-                text = contentSnippet.orEmpty(),
+                text = card.mediumCardSummary,
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 overflow = TextOverflow.Ellipsis,
@@ -384,10 +381,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "0장 케이스 (플레이스홀더)",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "이미지가 0장일 때 플레이스홀더가 나오는지 확인",
                     imageUrls = emptyList()
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "이미지가 0장일 때 플레이스홀더가 나오는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -403,10 +400,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "1장 케이스",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "1장일 때 단일 썸네일이 꽉 차는지 확인",
                     imageUrls = urls1
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "1장일 때 단일 썸네일이 꽉 차는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -422,10 +419,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "2장 케이스 (세로 2분할)",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "2장일 때 세로로 2분할 되는지 확인",
                     imageUrls = urls2
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "2장일 때 세로로 2분할 되는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -441,10 +438,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "3장 케이스 (세로 3분할)",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "3장일 때 세로로 3분할 되는지 확인",
                     imageUrls = urls3
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "3장일 때 세로로 3분할 되는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -460,10 +457,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "4장 케이스 (2x2 격자)",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "4장일 때 2x2로 나뉘는지 확인",
                     imageUrls = urls4
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "4장일 때 2x2로 나뉘는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -479,10 +476,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "6장 케이스 (4장만 + 오버레이)",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "5장 이상일 때 4장만 쓰고 +n 표시되는지 확인",
                     imageUrls = urls6
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "5장 이상일 때 4장만 쓰고 +n 표시되는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -498,10 +495,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "fillMaxWidth() 케이스",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "카드가 가로로 늘어났을 때도 이미지 분할이 자연스러운지 확인",
                     imageUrls = urls4
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "카드가 가로로 늘어났을 때도 이미지 분할이 자연스러운지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .fillMaxWidth(),
@@ -510,4 +507,3 @@ private fun HomeContentCardPrevContent() {
         }
     }
 }
-
