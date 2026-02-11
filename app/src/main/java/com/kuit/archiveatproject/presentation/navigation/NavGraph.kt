@@ -1,6 +1,5 @@
 package com.kuit.archiveatproject.presentation.navigation
 
-import ExploreTopicDetailViewModel
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -18,6 +17,7 @@ import androidx.navigation.navArgument
 import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreTopicDetailScreen
+import com.kuit.archiveatproject.presentation.explore.viewmodel.ExploreTopicDetailViewModel
 import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
 import com.kuit.archiveatproject.presentation.inbox.screen.InboxScreen
 import com.kuit.archiveatproject.presentation.login.screen.LoginScreen
