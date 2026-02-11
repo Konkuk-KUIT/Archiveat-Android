@@ -31,6 +31,7 @@ fun ReportResponseDto.toDomain(): Report {
 
     return Report(
         weekLabel = weekLabel,
+        serverTimestamp = serverTimestamp,
         aiComment = aiComment,
         status = status,
         balance = balance,

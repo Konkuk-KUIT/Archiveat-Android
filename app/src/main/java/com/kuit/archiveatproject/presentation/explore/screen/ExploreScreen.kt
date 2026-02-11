@@ -136,9 +136,7 @@ fun ExploreContent(
         .firstOrNull { it.id == uiState.selectedCategoryId }
 
     var searchBarBottomY by remember { mutableStateOf(0f) }
-    var headerHeight by remember { mutableStateOf(0.dp) }
 
-    val density = LocalDensity.current
     val focusManager = LocalFocusManager.current
 
     Box(
@@ -152,15 +150,12 @@ fun ExploreContent(
                 }
             }
     ) {
+
+        // ===== 고정 헤더 =====
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(ArchiveatProjectTheme.colors.white)
-                .onGloballyPositioned { coords ->
-                    with(density) {
-                        headerHeight = coords.size.height.toDp()
-                    }
-                }
                 .zIndex(1f)
         ) {
             Text(
@@ -168,50 +163,57 @@ fun ExploreContent(
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
                 style = ArchiveatProjectTheme.typography.Heading_1_bold
             )
+
             Spacer(Modifier.height(12.dp))
+
             ExploreCategoryTabBar(
                 categories = uiState.categoryTabs,
                 selectedCategoryId = uiState.selectedCategoryId,
                 onCategorySelected = onCategorySelected
             )
-
-            Spacer(Modifier.height(16.dp))
-
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .onGloballyPositioned { coords ->
-                        searchBarBottomY =
-                            coords.positionInRoot().y + coords.size.height
-                    }
-            ) {
-                ExploreSearchBar(
-                    query = searchUiState.query,
-                    onQueryChange = onQueryChange,
-                    onSearchClick = onSearchFocus,
-                    onFocus = onSearchFocus
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            ExploreInboxComponent(
-                title = "방금 담은 지식",
-                showLlmProcessingMessage =
-                    uiState.llmStatus == LlmStatus.RUNNING ||
-                            uiState.llmStatus == LlmStatus.PENDING,
-                onClick = onInboxClick,
-                modifier = Modifier.padding(horizontal = 20.dp)
-            )
-            Spacer(Modifier.height(12.dp))
         }
 
+        // ===== 스크롤 영역 =====
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(top = 112.dp) // 헤더 높이만큼
         ) {
             item {
-                Spacer(modifier = Modifier.height(270.dp))
+                Spacer(Modifier.height(16.dp))
+            }
+
+            item {
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .onGloballyPositioned { coords ->
+                            searchBarBottomY =
+                                coords.positionInRoot().y + coords.size.height
+                        }
+                ) {
+                    ExploreSearchBar(
+                        query = searchUiState.query,
+                        onQueryChange = onQueryChange,
+                        onSearchClick = onSearchFocus,
+                        onFocus = onSearchFocus
+                    )
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(16.dp))
+            }
+
+            item {
+                ExploreInboxComponent(
+                    title = "방금 담은 지식",
+                    showLlmProcessingMessage =
+                        uiState.llmStatus == LlmStatus.RUNNING ||
+                                uiState.llmStatus == LlmStatus.PENDING,
+                    onClick = onInboxClick,
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                )
             }
 
             selectedCategory?.let { category ->
@@ -241,6 +243,7 @@ fun ExploreContent(
             }
         }
 
+        // ===== 검색 추천 패널 =====
         if (searchUiState.isSearchMode && searchBarBottomY > 0f) {
             ExploreSearchSuggestionPanel(
                 recommendedKeywords = searchUiState.recommendedKeywords,
@@ -256,7 +259,7 @@ fun ExploreContent(
                             y = searchBarBottomY.roundToInt()
                         )
                     }
-                    .zIndex(2f) // 🔑 모든 것 위
+                    .zIndex(2f)
             )
         }
     }
