@@ -1,5 +1,7 @@
 package com.kuit.archiveatproject.presentation.inbox.component
 
+import android.R.attr.onClick
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.core.component.tag.ImageSource
 import com.kuit.archiveatproject.core.component.tag.ImageTag
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.domain.entity.InboxCategory
 import com.kuit.archiveatproject.domain.entity.InboxItem
 import com.kuit.archiveatproject.domain.entity.InboxTopic
@@ -195,20 +199,13 @@ private fun DeleteChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    Image(
+        painter = painterResource(id = R.drawable.ic_delete),
+        contentDescription = "삭제 버튼",
         modifier = modifier
-            .clip(RoundedCornerShape(15.dp))
-            .background(ArchiveatProjectTheme.colors.gray50)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 10.dp, vertical = 6.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "삭제",
-            style = ArchiveatProjectTheme.typography.Etc_regular,
-            color = ArchiveatProjectTheme.colors.gray950
-        )
-    }
+            .size(24.dp)
+            .noRippleClickable(onClick = onClick)
+    )
 }
 
 @Composable
@@ -241,11 +238,11 @@ private fun LoadingBottomRow(
 
         Spacer(Modifier.weight(1f))
 
-        Box( // 수정
+        Image(
+            painter = painterResource(id = R.drawable.ic_pen),
+            contentDescription = "수정 버튼",
             modifier = Modifier
-                .size(width = 26.dp, height = 20.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(Color(0xFFD9D9D9))
+                .size(16.dp)
         )
     }
 }
@@ -281,20 +278,13 @@ private fun DoneBottomRow(
 
         Spacer(Modifier.weight(1f))
 
-        Box( // 수정
+        Image(
+            painter = painterResource(id = R.drawable.ic_pen),
+            contentDescription = "수정 버튼",
             modifier = Modifier
-                .clip(RoundedCornerShape(4.dp))
-                .background(ArchiveatProjectTheme.colors.gray900)
-                .clickable(onClick = onEdit)
-                .padding(horizontal = 6.dp, vertical = 3.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "수정",
-                style = ArchiveatProjectTheme.typography.Etc_regular,
-                color = ArchiveatProjectTheme.colors.gray50
-            )
-        }
+                .size(16.dp)
+                .noRippleClickable(onClick = onEdit)
+        )
     }
 }
 
