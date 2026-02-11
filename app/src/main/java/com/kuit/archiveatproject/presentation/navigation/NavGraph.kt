@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -140,30 +141,26 @@ fun NavGraph(
                     navArgument("topicId") { type = NavType.LongType }
                 )
             ) { backStackEntry ->
+
                 val topicId = backStackEntry.arguments!!.getLong("topicId")
+
                 val topicName =
                     navController.previousBackStackEntry
                         ?.savedStateHandle
                         ?.get<String>("topicName")
                         ?: ""
 
-                // ViewModel 연결
-                val viewModel: ExploreTopicDetailViewModel = hiltViewModel()
-                val uiState by viewModel.uiState.collectAsState()
-
                 ExploreTopicDetailScreen(
+                    modifier = screenModifier,
                     topicId = topicId,
                     topicName = topicName,
-                    newsletters = uiState.newsletters,
                     onBack = { navController.popBackStack() },
                     onClickOutlink = { userNewsletterId ->
                         navController.navigate(
                             Route.NewsletterSimple.createRoute(userNewsletterId)
                         )
                     },
-                    onSearchSubmit = {},
-                    modifier = screenModifier,
-                    viewModel = viewModel
+                    onSearchSubmit = {}
                 )
             }
             composable(
