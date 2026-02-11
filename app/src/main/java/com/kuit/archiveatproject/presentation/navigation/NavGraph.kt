@@ -43,7 +43,7 @@ fun NavGraph(
         composable(route = Route.Login.route) {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate(Route.Home.route) {
+                    navController.navigate(Route.Main.route) {
                         popUpTo(Route.Login.route) { inclusive = true }
                         launchSingleTop = true
                     }
@@ -88,7 +88,7 @@ fun NavGraph(
             OnboardingInterestScreen(
                 viewModel = onboardingViewModel,
                 onFinished = {
-                    navController.navigate(Route.Home.route) {
+                    navController.navigate(Route.Main.route) {
                         popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
                         launchSingleTop = true
                     }

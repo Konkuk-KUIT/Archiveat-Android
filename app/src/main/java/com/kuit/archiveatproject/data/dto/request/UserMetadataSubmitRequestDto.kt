@@ -17,14 +17,14 @@ data class UserMetadataSubmitRequestDto(
 
 @Serializable
 data class UserAvailabilityDto(
-    @SerialName("prefMorning")
-    val prefMorning: List<String>,
-    @SerialName("prefLunch")
-    val prefLunch: List<String>,
-    @SerialName("prefEvening")
-    val prefEvening: List<String>,
-    @SerialName("prefBedtime")
-    val prefBedtime: List<String>,
+    @SerialName("pref_morning")
+    val prefMorning: String,
+    @SerialName("pref_lunch")
+    val prefLunch: String,
+    @SerialName("pref_evening")
+    val prefEvening: String,
+    @SerialName("pref_bedtime")
+    val prefBedtime: String,
 )
 
 @Serializable
