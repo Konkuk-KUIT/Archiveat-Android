@@ -9,6 +9,8 @@ data class HomeContentCardUiModel(
     val tabLabel: String,
     val cardType: HomeCardType,
     val title: String,
+    val smallCardSummary: String,
+    val mediumCardSummary: String,
     val imageUrls: List<String>,
 ) {
     // 기존 코드 호환용

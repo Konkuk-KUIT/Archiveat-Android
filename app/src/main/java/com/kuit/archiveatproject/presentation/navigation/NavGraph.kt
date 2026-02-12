@@ -3,9 +3,12 @@ package com.kuit.archiveatproject.presentation.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,6 +18,7 @@ import androidx.navigation.navArgument
 import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreTopicDetailScreen
+import com.kuit.archiveatproject.presentation.explore.viewmodel.ExploreTopicDetailViewModel
 import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
 import com.kuit.archiveatproject.presentation.inbox.screen.InboxScreen
 import com.kuit.archiveatproject.presentation.login.screen.LoginScreen
@@ -137,7 +141,9 @@ fun NavGraph(
                     navArgument("topicId") { type = NavType.LongType }
                 )
             ) { backStackEntry ->
+
                 val topicId = backStackEntry.arguments!!.getLong("topicId")
+
                 val topicName =
                     navController.previousBackStackEntry
                         ?.savedStateHandle
@@ -145,17 +151,16 @@ fun NavGraph(
                         ?: ""
 
                 ExploreTopicDetailScreen(
+                    modifier = screenModifier,
                     topicId = topicId,
                     topicName = topicName,
-                    newsletters = emptyList(), // 서버 연동 전
                     onBack = { navController.popBackStack() },
                     onClickOutlink = { userNewsletterId ->
                         navController.navigate(
                             Route.NewsletterSimple.createRoute(userNewsletterId)
                         )
                     },
-                    onSearchSubmit = {},
-                    modifier = screenModifier
+                    onSearchSubmit = {}
                 )
             }
             composable(

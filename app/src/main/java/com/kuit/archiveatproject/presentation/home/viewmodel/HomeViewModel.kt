@@ -29,10 +29,6 @@ class HomeViewModel @Inject constructor(
 
     private var home: Home? = null
 
-    init {
-        loadHome()
-    }
-
     private fun HomeContentCard.toUiModel(): HomeContentCardUiModel =
         HomeContentCardUiModel(
             archiveId = newsletterId,
@@ -40,6 +36,8 @@ class HomeViewModel @Inject constructor(
             tabLabel = tabLabel,
             cardType = cardType,
             title = title,
+            smallCardSummary = smallCardSummary,
+            mediumCardSummary = mediumCardSummary,
             imageUrls = listOfNotNull(thumbnailUrl)
         )
 
@@ -50,6 +48,8 @@ class HomeViewModel @Inject constructor(
             tabLabel = tabLabel,
             cardType = cardType,
             title = title,
+            smallCardSummary = smallCardSummary,
+            mediumCardSummary = mediumCardSummary,
             imageUrls = thumbnailUrls
         )
 
@@ -60,6 +60,7 @@ class HomeViewModel @Inject constructor(
             }.onSuccess { result ->
                 home = result
                 _uiState.update {
+                    val currentTab = it.selectedTab
                     it.copy(
                         isLoading = false,
                         greeting = GreetingUiModel(
@@ -67,10 +68,10 @@ class HomeViewModel @Inject constructor(
                             result.secondGreetingMessage
                         ),
                         tabs = result.tabs,
-                        selectedTab = HomeTabType.ALL
+                        selectedTab = currentTab
                     )
                 }
-                updateVisibleContent(HomeTabType.ALL)
+                updateVisibleContent(_uiState.value.selectedTab)
 
                 runCatching { userRepository.getNickname() }
                     .onSuccess { nickname ->
@@ -87,6 +88,10 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun refreshHome() {
+        loadHome()
     }
 
     fun onTabSelected(tabType: HomeTabType) {
