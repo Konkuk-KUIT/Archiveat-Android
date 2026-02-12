@@ -51,27 +51,41 @@ class OnboardingViewModel @Inject constructor(
 
             is OnboardingUiEvent.OnTimeSlotToggled -> {
                 _uiState.update { state ->
+
                     when (event.mode) {
+
                         ReadingMode.LIGHT -> {
-                            if (event.timeSlot in state.deepReadingTimes) {
-                                state
-                            } else {
-                                state.copy(
-                                    lightReadingTimes =
-                                        state.lightReadingTimes.toggle(event.timeSlot)
-                                )
+
+                            // 이미 deep에 있으면 무시
+                            if (event.timeSlot in state.deepReadingTimes) return@update state
+
+                            val isSelected = event.timeSlot in state.lightReadingTimes
+                            val current = state.lightReadingTimes
+
+                            // 이미 2개 선택된 상태에서 새로 선택하려 하면 막기
+                            if (!isSelected && current.size >= 2) {
+                                return@update state
                             }
+
+                            state.copy(
+                                lightReadingTimes = current.toggle(event.timeSlot)
+                            )
                         }
 
                         ReadingMode.DEEP -> {
-                            if (event.timeSlot in state.lightReadingTimes) {
-                                state
-                            } else {
-                                state.copy(
-                                    deepReadingTimes =
-                                        state.deepReadingTimes.toggle(event.timeSlot)
-                                )
+
+                            if (event.timeSlot in state.lightReadingTimes) return@update state
+
+                            val isSelected = event.timeSlot in state.deepReadingTimes
+                            val current = state.deepReadingTimes
+
+                            if (!isSelected && current.size >= 2) {
+                                return@update state
                             }
+
+                            state.copy(
+                                deepReadingTimes = current.toggle(event.timeSlot)
+                            )
                         }
                     }
                 }
@@ -129,24 +143,74 @@ class OnboardingViewModel @Inject constructor(
     /**
      * POST /user/metadata
      */
+    private fun normalizeAvailability(
+        light: Set<TimeSlot>,
+        deep: Set<TimeSlot>,
+        allSlots: List<TimeSlot>
+    ): Pair<Set<TimeSlot>, Set<TimeSlot>> {
+
+        val totalSlots = allSlots.toList()
+
+        val lightCount = light.size
+        val deepCount = deep.size
+        val totalSelected = lightCount + deepCount
+
+        // 이미 4개고 3:1 or 2:2 or 1:3이면 그대로 유지
+        if (totalSelected == 4) {
+            return light to deep
+        }
+
+        // 3 / 0 → 3 / 1
+        if (lightCount == 3 && deepCount == 0) {
+            val remaining = totalSlots.first { it !in light }
+            return light to setOf(remaining)
+        }
+
+        if (deepCount == 3 && lightCount == 0) {
+            val remaining = totalSlots.first { it !in deep }
+            return setOf(remaining) to deep
+        }
+
+        // 그 외는 무조건 2:2로 맞춘다
+        val finalLight = totalSlots.take(2).toSet()
+        val finalDeep = totalSlots.drop(2).toSet()
+
+        return finalLight to finalDeep
+    }
+
     private fun submitMetadata() {
         val state = _uiState.value
 
-        // 필수 값 검증
-        if (state.selectedEmploymentType == null ||
-            (state.lightReadingTimes.isEmpty() && state.deepReadingTimes.isEmpty())
-        ) {
+        // employment null 방지
+        val employment = state.selectedEmploymentType
+        if (employment == null) {
             _uiState.update {
-                it.copy(errorMessage = "필수 정보를 선택해주세요.")
+                it.copy(errorMessage = "직업을 선택해주세요.")
+            }
+            return
+        }
+
+        // 시간 정규화 (항상 실행)
+        val (normalizedLight, normalizedDeep) =
+            normalizeAvailability(
+                light = state.lightReadingTimes,
+                deep = state.deepReadingTimes,
+                allSlots = state.availabilityOptions
+            )
+
+        // 2:2 보장 체크
+        if (normalizedLight.size != 2 || normalizedDeep.size != 2) {
+            _uiState.update {
+                it.copy(errorMessage = "시간 선택이 올바르지 않습니다.")
             }
             return
         }
 
         val submitEntity = UserMetadataSubmit(
-            employmentType = state.selectedEmploymentType,
+            employmentType = employment,
             availability = UserAvailability(
-                light = state.lightReadingTimes.toList(),
-                deep = state.deepReadingTimes.toList()
+                light = normalizedLight.toList(),
+                deep = normalizedDeep.toList()
             ),
             interests = state.selectedInterests
         )
@@ -176,10 +240,19 @@ class OnboardingViewModel @Inject constructor(
     private fun moveToNextStep() {
         val state = _uiState.value
 
-        if (!state.isNextEnabled) return
+        val (normalizedLight, normalizedDeep) =
+            normalizeAvailability(
+                light = state.lightReadingTimes,
+                deep = state.deepReadingTimes,
+                allSlots = state.availabilityOptions
+            )
 
         _uiState.update {
-            it.copy(step = OnboardingStep.INTERESTS)
+            it.copy(
+                lightReadingTimes = normalizedLight,
+                deepReadingTimes = normalizedDeep,
+                step = OnboardingStep.INTERESTS
+            )
         }
     }
 
@@ -208,7 +281,7 @@ class OnboardingViewModel @Inject constructor(
 
                 else -> JobUiModel(
                     type = type,
-                    label = type,
+                    label = "기타",
                     iconRes = R.drawable.ic_job_etc
                 )
             }
