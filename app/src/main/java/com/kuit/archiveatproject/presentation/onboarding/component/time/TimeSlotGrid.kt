@@ -26,10 +26,17 @@ fun TimeSlotGrid(
         modifier = modifier.fillMaxWidth()
     ) {
         timeSlots.forEach { slot ->
+
+            val isSelected = slot in selectedTimes
+            val isDisabled =
+                slot in disabledTimes ||
+
+                        (selectedTimes.size >= 2 && slot !in selectedTimes)
+
             TimeSelectionItem(
                 text = slot.toDisplayText(employmentType),
-                isSelected = slot in selectedTimes,
-                isDisabled = slot in disabledTimes,
+                isSelected = isSelected,
+                isDisabled = isDisabled,
                 onClick = { onTimeClicked(slot) },
                 modifier = Modifier.fillMaxWidth(0.48f)
             )
