@@ -3,13 +3,17 @@ package com.kuit.archiveatproject.presentation.explore.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.R
+import com.kuit.archiveatproject.domain.entity.LlmStatus
 import com.kuit.archiveatproject.domain.model.Explore
 import com.kuit.archiveatproject.domain.repository.ExploreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,6 +24,8 @@ class ExploreViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ExploreUiState(isLoading = true))
     val uiState: StateFlow<ExploreUiState> = _uiState.asStateFlow()
+
+    private var llmPollingJob: Job? = null
 
     init {
         fetchExplore()
@@ -98,6 +104,31 @@ class ExploreViewModel @Inject constructor(
         )
     }
 
+    fun startLlmPolling() {
+        if (llmPollingJob != null) return
+
+        llmPollingJob = viewModelScope.launch {
+            while (isActive) {
+                fetchLlmStatus()
+                delay(10_000)
+            }
+        }
+    }
+
+    fun stopLlmPolling() {
+        llmPollingJob?.cancel()
+        llmPollingJob = null
+    }
+
+    private suspend fun fetchLlmStatus() {
+        runCatching {
+            exploreRepository.getExplore()
+        }.onSuccess { explore ->
+            _uiState.update {
+                it.copy(llmStatus = explore.llmStatus)
+            }
+        }
+    }
 
     private fun mapCategoryIcon(name: String): Int =
         when (name) {
