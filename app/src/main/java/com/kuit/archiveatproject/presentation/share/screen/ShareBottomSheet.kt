@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -140,14 +142,22 @@ private fun ShareBottomSheetContent(
 
         Spacer(Modifier.height(18.dp))
 
-        Image(
-            painter = painterResource(id = R.drawable.send),
-            contentDescription = "save",
+        Button(
+            onClick = { onSave() },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
-                .clickable { onSave() }
-        )
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ArchiveatProjectTheme.colors.primary,
+                contentColor = ArchiveatProjectTheme.colors.white
+            )
+        ) {
+            Text(
+                text = "보관하기",
+                style = ArchiveatProjectTheme.typography.Subhead_2_semibold
+            )
+        }
     }
 }
 
