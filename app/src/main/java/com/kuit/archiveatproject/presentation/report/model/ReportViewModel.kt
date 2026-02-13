@@ -20,10 +20,6 @@ class ReportViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ReportUiState())
     val uiState: StateFlow<ReportUiState> = _uiState.asStateFlow()
 
-    init {
-        fetchReport()
-    }
-
     fun fetchReport() {
         viewModelScope.launch {
             runCatching { reportRepository.getReport() }
