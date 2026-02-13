@@ -212,8 +212,7 @@ fun ExploreContent(
                 ExploreInboxComponent(
                     title = "방금 담은 지식",
                     showLlmProcessingMessage =
-                        uiState.llmStatus == LlmStatus.RUNNING ||
-                                uiState.llmStatus == LlmStatus.PENDING,
+                        uiState.llmStatus != LlmStatus.DONE,
                     onClick = onInboxClick,
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )

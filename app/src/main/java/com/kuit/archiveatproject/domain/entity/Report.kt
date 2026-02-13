@@ -6,5 +6,10 @@ data class Report(
     val aiComment: String,
     val status: ReportStatus,
     val balance: ReportBalance,
-    val interestGaps: List<ReportInterestGap>
+    val interestGaps: List<ReportMainInterestGap>
+)
+data class ReportMainInterestGap(
+    val topicName: String,
+    val savedCount: Int,
+    val readCount: Int
 )

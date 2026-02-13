@@ -14,7 +14,7 @@ data class ReportUiState(
     val balance: ReportBalanceUiState = ReportBalanceUiState(),
 
     // 관심사별 소비 격차
-    val interestGaps: List<InterestGapUiItem> = emptyList(),
+    val interestGaps: List<MainInterestGapUiItem> = emptyList(),
 
     // 최근 학습 기록
     val recentReadNewsletters: List<RecentReadNewsletterUiItem> = emptyList(),
@@ -26,6 +26,12 @@ data class ReportUiState(
     // 에러 상태
     val isError: Boolean = false,
     val errorMessage: String? = null
+)
+
+data class MainInterestGapUiItem(
+    val topicName: String,
+    val savedCount: Int,
+    val readCount: Int
 )
 
 data class InterestGapUiItem(

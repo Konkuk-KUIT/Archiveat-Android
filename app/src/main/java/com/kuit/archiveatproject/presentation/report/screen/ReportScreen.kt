@@ -1,16 +1,20 @@
 package com.kuit.archiveatproject.presentation.report.screen
 
+import android.R.attr.bottom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.presentation.report.component.ReportChartComponent
 import com.kuit.archiveatproject.presentation.report.component.WeeklyAiFeedbackSection
 import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
+import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportViewModel
@@ -31,6 +36,10 @@ fun ReportScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchReport()
+    }
 
     ReportScreenContent(
         uiState = uiState,
@@ -91,16 +100,24 @@ fun ReportScreenContent(
                 .weight(1f)
                 .fillMaxWidth()
                 .background(ArchiveatProjectTheme.colors.gray50)
-                .padding(top = 24.dp)
         ) {
-            ReportChartComponent(
-                totalSavedCount = uiState.totalSavedCount,
-                totalReadCount = uiState.totalReadCount,
-                readPercentage = uiState.readPercentage,
-                lightPercentage = uiState.balance.lightPercentage,
-                nowPercentage = uiState.balance.nowPercentage,
-                interestGaps = uiState.interestGaps
-            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 24.dp)
+            ) {
+                item {
+                    Spacer(Modifier.height(24.dp))
+                    ReportChartComponent(
+                        totalSavedCount = uiState.totalSavedCount,
+                        totalReadCount = uiState.totalReadCount,
+                        readPercentage = uiState.readPercentage,
+                        lightPercentage = uiState.balance.lightPercentage,
+                        nowPercentage = uiState.balance.nowPercentage,
+                        interestGaps = uiState.interestGaps
+                    )
+                }
+            }
         }
     }
 
@@ -111,11 +128,11 @@ fun ReportScreenContent(
 private fun ReportScreenPreview() {
     ArchiveatProjectTheme {
         ReportScreenContent(
-        uiState = ReportUiState(
-            referenceDate = "2026-01-25T13:14:06.480115",
-            totalSavedCount = 120,
-            totalReadCount = 42,
-            readPercentage = 35,
+            uiState = ReportUiState(
+                referenceDate = "2026-01-25T13:14:06.480115",
+                totalSavedCount = 120,
+                totalReadCount = 42,
+                readPercentage = 35,
                 balance = ReportBalanceUiState(
                     lightPercentage = 30,
                     deepPercentage = 70,
@@ -123,17 +140,15 @@ private fun ReportScreenPreview() {
                     futurePercentage = 50
                 ),
                 interestGaps = listOf(
-                    InterestGapUiItem(
+                    MainInterestGapUiItem(
                         topicName = "건강",
                         savedCount = 50,
-                        readCount = 5,
-                        gap = 45
+                        readCount = 5
                     ),
-                    InterestGapUiItem(
+                    MainInterestGapUiItem(
                         topicName = "AI",
                         savedCount = 30,
-                        readCount = 25,
-                        gap = 5
+                        readCount = 25
                     )
                 ),
                 weeklyFeedbackWeekLabel = "1월 19일-1월 25일",
