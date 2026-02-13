@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
+import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 
 @Composable
 fun ReportChartComponent(
@@ -17,7 +18,7 @@ fun ReportChartComponent(
     readPercentage: Int,
     lightPercentage: Int,
     nowPercentage: Int,
-    interestGaps: List<InterestGapUiItem>,
+    interestGaps: List<MainInterestGapUiItem>,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -58,18 +59,16 @@ private fun ReportChartComponentPreview() {
         lightPercentage = 71,
         nowPercentage = 47,
         interestGaps = listOf(
-            InterestGapUiItem(
+            MainInterestGapUiItem(
                 topicName = "건강",
                 savedCount = 50,
-                readCount = 5,
-                gap = 45
+                readCount = 5
             ),
-            InterestGapUiItem(
+            MainInterestGapUiItem(
                 topicName = "AI",
                 savedCount = 30,
-                readCount = 25,
-                gap = 5
+                readCount = 25
             )
-        )
+        ),
     )
 }
