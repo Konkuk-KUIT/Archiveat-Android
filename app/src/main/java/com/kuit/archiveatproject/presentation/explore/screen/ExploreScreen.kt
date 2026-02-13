@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +58,10 @@ fun ExploreScreen(
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        viewModel.startLlmPolling()
+    }
+
     val lifecycleOwner = LocalLifecycleOwner.current
 
     DisposableEffect(lifecycleOwner) {
@@ -69,6 +74,7 @@ fun ExploreScreen(
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+            viewModel.stopLlmPolling()
         }
     }
 
@@ -206,8 +212,7 @@ fun ExploreContent(
                 ExploreInboxComponent(
                     title = "방금 담은 지식",
                     showLlmProcessingMessage =
-                        uiState.llmStatus == LlmStatus.RUNNING ||
-                                uiState.llmStatus == LlmStatus.PENDING,
+                        uiState.llmStatus != LlmStatus.DONE,
                     onClick = onInboxClick,
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )

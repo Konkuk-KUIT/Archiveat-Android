@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +40,7 @@ fun MemoComponent(
                 )
                 .padding(vertical = 16.dp, horizontal = 20.dp)
                 .padding(end = 24.dp)
+                .fillMaxWidth()
         ){
             Text(
                 text = memo,
@@ -53,6 +55,6 @@ fun MemoComponent(
 @Composable
 fun MemoComponentPrev(){
     MemoComponent(
-        memo = "가독성을 해치지 않기 위해 배경 블러(Blur) 값을 높이고, 테두리(Border)를 명확하게 사용하는 것이 핵심 차별점입니다."
+        memo = "짧아용"
     )
 }

@@ -27,15 +27,15 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 val onboardingSlides = listOf(
     OnboardingSlideModel(
-        imageRes = R.drawable.img_onboarding_1,
+        imageRes = R.drawable.img_onboarding,
         title = "링크, 스크린샷, 노트까지\n공유 한번으로 저장해요"
     ),
     OnboardingSlideModel(
-        imageRes = R.drawable.img_onboarding_1,
+        imageRes = R.drawable.img_onboarding,
         title = "관심사 기반으로\n콘텐츠를 추천해요"
     ),
     OnboardingSlideModel(
-        imageRes = R.drawable.img_onboarding_1,
+        imageRes = R.drawable.img_onboarding,
         title = "나만의 아카이브를\n완성해보세요"
     )
 )
