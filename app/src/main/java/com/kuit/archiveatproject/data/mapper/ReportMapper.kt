@@ -3,12 +3,14 @@ package com.kuit.archiveatproject.data.mapper
 import com.kuit.archiveatproject.data.dto.response.report.RecentReadNewsletterDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportBalanceDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportInterestGapDto
+import com.kuit.archiveatproject.data.dto.response.report.ReportMainInterestGapDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportResponseDto
 import com.kuit.archiveatproject.data.dto.response.report.ReportStatusDto
 import com.kuit.archiveatproject.domain.entity.RecentReadNewsletter
 import com.kuit.archiveatproject.domain.entity.Report
 import com.kuit.archiveatproject.domain.entity.ReportBalance
 import com.kuit.archiveatproject.domain.entity.ReportInterestGap
+import com.kuit.archiveatproject.domain.entity.ReportMainInterestGap
 import com.kuit.archiveatproject.domain.entity.ReportStatus
 
 fun ReportResponseDto.toDomain(): Report {
@@ -74,6 +76,13 @@ fun ReportBalanceDto.toDomain(): ReportBalance {
         patternQuote = patternQuote.orEmpty()
     )
 }
+
+fun ReportMainInterestGapDto.toDomain(): ReportMainInterestGap =
+    ReportMainInterestGap(
+        topicName = topicName,
+        savedCount = savedCount,
+        readCount = readCount
+    )
 
 fun ReportInterestGapDto.toDomain(): ReportInterestGap =
     ReportInterestGap(

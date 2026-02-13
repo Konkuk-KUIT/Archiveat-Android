@@ -30,9 +30,21 @@ data class ReportResponseDto(
     val futureCount: Int,
 
     @SerialName("interestGaps")
-    val interestGaps: List<ReportInterestGapDto>,
+    val interestGaps: List<ReportMainInterestGapDto>,
 
     // BaseResponse.timestamp를 전달받아 채움
     @SerialName("serverTimestamp")
     val serverTimestamp: String = ""
+)
+
+@Serializable
+data class ReportMainInterestGapDto(
+    @SerialName("topicName")
+    val topicName: String,
+
+    @SerialName("savedCount")
+    val savedCount: Int,
+
+    @SerialName("readCount")
+    val readCount: Int
 )
