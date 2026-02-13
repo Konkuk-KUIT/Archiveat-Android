@@ -81,11 +81,11 @@ fun ReportInterestGapCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
-
             interestGaps.forEachIndexed { index, item ->
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(34.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
