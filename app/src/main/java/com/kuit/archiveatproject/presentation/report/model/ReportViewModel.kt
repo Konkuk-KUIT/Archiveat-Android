@@ -56,11 +56,10 @@ class ReportViewModel @Inject constructor(
                 patternQuote = balance.patternQuote
             ),
             interestGaps = interestGaps.map { gap ->
-                InterestGapUiItem(
+                MainInterestGapUiItem(
                     topicName = gap.topicName,
                     savedCount = gap.savedCount,
-                    readCount = gap.readCount,
-                    gap = (gap.savedCount - gap.readCount).coerceAtLeast(0)
+                    readCount = gap.readCount
                 )
             },
             weeklyFeedbackWeekLabel = weekLabel,

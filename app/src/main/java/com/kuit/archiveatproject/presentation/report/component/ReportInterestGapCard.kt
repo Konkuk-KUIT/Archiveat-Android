@@ -19,13 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
+import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import kotlin.collections.forEachIndexed
 import kotlin.collections.lastIndex
 
 @Composable
 fun ReportInterestGapCard(
-    interestGaps: List<InterestGapUiItem>,
+    interestGaps: List<MainInterestGapUiItem>,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -92,11 +93,16 @@ fun ReportInterestGapCard(
     }
 }
 
-private fun InterestGapUiItem.toConsumptionPercentage(): Int {
+private fun MainInterestGapUiItem.toConsumptionPercentage(): Int {
     return if (savedCount == 0) 0
     else (readCount * 100 / savedCount).coerceIn(0, 100)
 }
 
+@Preview(
+    name = "ReportInterestGapCard",
+    showBackground = true,
+    backgroundColor = 0xFFF5F5F5
+)
 @Preview(
     name = "ReportInterestGapCard",
     showBackground = true,
@@ -111,17 +117,15 @@ private fun ReportInterestGapCardPreview() {
     ) {
         ReportInterestGapCard(
             interestGaps = listOf(
-                InterestGapUiItem(
+                MainInterestGapUiItem(
                     topicName = "건강",
                     savedCount = 50,
-                    readCount = 5,
-                    gap = 45
+                    readCount = 5
                 ),
-                InterestGapUiItem(
+                MainInterestGapUiItem(
                     topicName = "AI",
                     savedCount = 30,
-                    readCount = 25,
-                    gap = 5
+                    readCount = 25
                 )
             )
         )
