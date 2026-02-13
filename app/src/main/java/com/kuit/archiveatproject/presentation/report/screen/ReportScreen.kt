@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.presentation.report.component.ReportChartComponent
 import com.kuit.archiveatproject.presentation.report.component.WeeklyAiFeedbackSection
 import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
+import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportViewModel
@@ -111,11 +112,11 @@ fun ReportScreenContent(
 private fun ReportScreenPreview() {
     ArchiveatProjectTheme {
         ReportScreenContent(
-        uiState = ReportUiState(
-            referenceDate = "2026-01-25T13:14:06.480115",
-            totalSavedCount = 120,
-            totalReadCount = 42,
-            readPercentage = 35,
+            uiState = ReportUiState(
+                referenceDate = "2026-01-25T13:14:06.480115",
+                totalSavedCount = 120,
+                totalReadCount = 42,
+                readPercentage = 35,
                 balance = ReportBalanceUiState(
                     lightPercentage = 30,
                     deepPercentage = 70,
@@ -123,17 +124,15 @@ private fun ReportScreenPreview() {
                     futurePercentage = 50
                 ),
                 interestGaps = listOf(
-                    InterestGapUiItem(
+                    MainInterestGapUiItem(
                         topicName = "건강",
                         savedCount = 50,
-                        readCount = 5,
-                        gap = 45
+                        readCount = 5
                     ),
-                    InterestGapUiItem(
+                    MainInterestGapUiItem(
                         topicName = "AI",
                         savedCount = 30,
-                        readCount = 25,
-                        gap = 5
+                        readCount = 25
                     )
                 ),
                 weeklyFeedbackWeekLabel = "1월 19일-1월 25일",
