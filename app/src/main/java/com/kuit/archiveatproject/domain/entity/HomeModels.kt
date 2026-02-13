@@ -42,6 +42,15 @@ enum class HomeTabType {
     companion object {
         fun from(raw: String?): HomeTabType =
             runCatching { valueOf(raw?.trim().orEmpty()) }.getOrElse { ALL }
+
+        fun fromLabel(label: String?): HomeTabType = when (label?.trim()) {
+            "전체" -> ALL
+            "영감수집" -> INSPIRATION
+            "집중탐구" -> DEEP_DIVE
+            "성장한입" -> GROWTH
+            "관점확장" -> VIEW_EXPANSION
+            else -> from(label)
+        }
     }
 }
 
