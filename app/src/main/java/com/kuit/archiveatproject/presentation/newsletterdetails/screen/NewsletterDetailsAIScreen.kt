@@ -155,7 +155,7 @@ fun NewsletterDetailsAIContent(
                         .crossfade(true)
                         .build(),
                     contentDescription = "thumbnail",
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(219.dp)
                         .clip(RoundedCornerShape(16.dp)),
@@ -215,7 +215,7 @@ fun NewsletterDetailsAIContent(
 
             // 버튼
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .height(46.dp)
                     .clip(RoundedCornerShape(12.dp))
@@ -232,7 +232,7 @@ fun NewsletterDetailsAIContent(
             if (fromAI) { // AI 요약으로 들어온 뉴스레터 상세라면 다 읽었어요 버튼(추후에 분리가 필요하다면 분리)
                 Spacer(Modifier.height(18.dp))
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(46.dp)
                         .clip(RoundedCornerShape(12.dp))

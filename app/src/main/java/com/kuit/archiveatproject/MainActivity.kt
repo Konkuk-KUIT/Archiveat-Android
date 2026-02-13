@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -43,8 +42,7 @@ class MainActivity : ComponentActivity() {
                     NavTab.entries.find { tab ->
                         currentDestination?.route == tab.route
                     }
-                val showBottomBar =
-                    currentDestination?.hierarchy?.any { it.route == Route.Main.route } == true
+                val showBottomBar = currentTab != null
 
 
                 Scaffold(//0xFFF1F3F6

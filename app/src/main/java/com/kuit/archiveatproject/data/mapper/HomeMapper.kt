@@ -26,7 +26,7 @@ fun HomeResponseDto.toDomain(): Home {
         contentCards = contentCards.map { dto ->
             val tabType = tabTypeByLabel[dto.tabLabel] ?: HomeTabType.ALL
             HomeContentCard(
-                newsletterId = dto.newsletterId,
+                newsletterId = dto.userNewsletterId,
                 tabType = tabType,
                 tabLabel = dto.tabLabel,
                 cardType = HomeCardType.fromLabel(dto.cardType),
