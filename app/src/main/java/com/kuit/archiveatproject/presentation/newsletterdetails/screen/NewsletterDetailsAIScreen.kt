@@ -10,13 +10,12 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -108,9 +107,10 @@ fun NewsletterDetailsAIContent(
         modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
-            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .navigationBarsPadding()
     ) {
         BackTopBar(
+            modifier = Modifier.statusBarsPadding(),
             title = "",
             onBack = onBack,
             height = 45

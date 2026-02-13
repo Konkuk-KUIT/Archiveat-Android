@@ -33,7 +33,7 @@ fun BackTopBar(
     height: Int = 56,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(ArchiveatProjectTheme.colors.white)
             .height(height.dp)

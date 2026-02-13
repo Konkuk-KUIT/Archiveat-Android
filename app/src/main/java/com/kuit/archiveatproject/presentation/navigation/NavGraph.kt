@@ -181,7 +181,7 @@ fun NavGraph(
                     onClickWebView = { url ->
                         navController.navigate(Route.WebView.createRoute(url))
                     },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(
@@ -193,7 +193,7 @@ fun NavGraph(
                     onClickWebView = { url ->
                         navController.navigate(Route.WebView.createRoute(url))
                     },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(
@@ -205,7 +205,7 @@ fun NavGraph(
                     onClickItem = { userNewsletterId ->
                         navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
                     },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(
@@ -216,7 +216,7 @@ fun NavGraph(
                 WebViewScreen(
                     url = url,
                     onBack = { navController.popBackStack() },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(route = Route.Report.route) {

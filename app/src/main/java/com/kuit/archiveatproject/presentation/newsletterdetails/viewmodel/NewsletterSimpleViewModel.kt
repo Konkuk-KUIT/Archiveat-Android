@@ -45,7 +45,12 @@ class NewsletterSimpleViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
-                val nickname = runCatching { userRepository.getNickname() }.getOrDefault("나")
+                val nickname = try {
+                    userRepository.getNickname()
+                } catch (t: Throwable) {
+                    if (t is CancellationException) throw t
+                    "나"
+                }
                 val simple = newsletterRepository.getNewsletterSimple(userNewsletterId)
                 _uiState.update {
                     it.copy(

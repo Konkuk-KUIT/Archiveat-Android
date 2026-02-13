@@ -49,44 +49,46 @@ class MainActivity : ComponentActivity() {
                     containerColor = Color(0xFFFFFFFF),
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .shadow(
-                                    elevation = 12.dp,
-                                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
-                                    clip = false
-                                )
-                                .background(
-                                    Color.White,
-                                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-                                )
-                        ) {
-                            BottomNavBar(
-                                visible = showBottomBar,
-                                tabs = NavTab.entries,
-                                currentTab = currentTab,
-                                onItemSelected = { tab ->
-                                    val mainGraphStartId = (navController.graph
-                                        .findNode(Route.Main.route) as? NavGraph)
-                                        ?.findStartDestination()
-                                        ?.id
-                                    navController.navigate(tab.route) {
-                                        if (mainGraphStartId != null) {
-                                            popUpTo(mainGraphStartId) {
-                                                saveState = true
+                        if (showBottomBar) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(
+                                        elevation = 12.dp,
+                                        shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
+                                        clip = false
+                                    )
+                                    .background(
+                                        Color.White,
+                                        shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                                    )
+                            ) {
+                                BottomNavBar(
+                                    visible = true,
+                                    tabs = NavTab.entries,
+                                    currentTab = currentTab,
+                                    onItemSelected = { tab ->
+                                        val mainGraphStartId = (navController.graph
+                                            .findNode(Route.Main.route) as? NavGraph)
+                                            ?.findStartDestination()
+                                            ?.id
+                                        navController.navigate(tab.route) {
+                                            if (mainGraphStartId != null) {
+                                                popUpTo(mainGraphStartId) {
+                                                    saveState = true
+                                                }
+                                            } else {
+                                                popUpTo(Route.Home.route) {
+                                                    saveState = true
+                                                }
                                             }
-                                        } else {
-                                            popUpTo(Route.Home.route) {
-                                                saveState = true
-                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
                                         }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
 
-                                },
-                            )
+                                    },
+                                )
+                            }
                         }
                     }
                 ) { innerPadding ->
