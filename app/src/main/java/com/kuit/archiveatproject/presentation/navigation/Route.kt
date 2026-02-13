@@ -23,6 +23,10 @@ sealed class Route (
         fun createRoute(userNewsletterId: Long): String =
             "newsletters/$userNewsletterId/simple"
     }
+    data object NewsletterAI: Route(route = "newsletters/{userNewsletterId}") {
+        fun createRoute(userNewsletterId: Long): String =
+            "newsletters/$userNewsletterId"
+    }
     data object NewsletterCollection: Route(route = "collections/{collectionId}") {
         fun createRoute(collectionId: Long): String =
             "collections/$collectionId"
