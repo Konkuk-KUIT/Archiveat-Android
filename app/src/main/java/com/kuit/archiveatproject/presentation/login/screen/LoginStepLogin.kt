@@ -110,7 +110,7 @@ fun LoginStepLogin(
                         color = ArchiveatProjectTheme.colors.gray950
                     )
                     Text(
-                        text = "에 로그인",
+                        text = "에 로그인할",
                         style = ArchiveatProjectTheme.typography.Heading_2_semibold,
                         color = ArchiveatProjectTheme.colors.gray950
                     )
