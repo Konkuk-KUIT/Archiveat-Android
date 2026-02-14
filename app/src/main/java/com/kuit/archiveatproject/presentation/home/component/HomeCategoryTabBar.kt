@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,17 +25,21 @@ fun HomeCategoryTabBar(
     selectedTab: HomeTabType,
     onTabSelected: (HomeTabType) -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     val selectedTabUiModel =
         tabs.firstOrNull { it.type == selectedTab }
+
+    val isRightAligned =
+        selectedTab == HomeTabType.GROWTH ||
+                selectedTab == HomeTabType.VIEW_EXPANSION
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(ArchiveatProjectTheme.colors.white)
-    ){
+    ) {
         LazyRow(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .background(ArchiveatProjectTheme.colors.white),
             contentPadding = PaddingValues(horizontal = 16.dp),
@@ -52,15 +57,23 @@ fun HomeCategoryTabBar(
                 )
             }
         }
+
         selectedTabUiModel?.let { tab ->
-            SubMessageComponent(
-                subMessage = tab.subMessage,
-                colorType = tab.type.color(),
-                modifier = Modifier.padding(start = 21.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 21.dp),
+                horizontalArrangement =
+                    if (isRightAligned) Arrangement.End
+                    else Arrangement.Start
+            ) {
+                SubMessageComponent(
+                    subMessage = tab.subMessage,
+                    colorType = tab.type.color()
+                )
+            }
         }
     }
-
 }
 
 @Preview(showBackground = true)
@@ -74,7 +87,7 @@ fun HomeCategoryTabBarPreview() {
             HomeTab(HomeTabType.GROWTH, "성장한입", "잠깐의 틈을 채워줄, 현재의 관심사와 맞닿은 인사이트"),
             HomeTab(HomeTabType.VIEW_EXPANSION, "관점확장", "생각의 크기를 키워주는 깊이 있는 통찰"),
         ),
-        selectedTab = HomeTabType.INSPIRATION,
+        selectedTab = HomeTabType.GROWTH,
         onTabSelected = {}
     )
 }

@@ -26,6 +26,7 @@ data class OnboardingUiState(
     // UI 상태
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
+    val isUsingFallbackData: Boolean = false,
 ) {
     // step2 노출 조건
     val isStep2Visible: Boolean
@@ -74,6 +75,7 @@ sealed interface OnboardingUiEvent {
 
 sealed interface OnboardingNavigationEvent {
     object SubmitSuccess : OnboardingNavigationEvent
+    object NavigateToSignupStart : OnboardingNavigationEvent
 }
 
 enum class TimeSlot {

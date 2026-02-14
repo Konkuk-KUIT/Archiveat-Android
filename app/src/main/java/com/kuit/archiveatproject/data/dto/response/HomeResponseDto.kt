@@ -45,13 +45,13 @@ data class HomeContentCardDto(
     val cardType: String,     // "AI 요약"
 
     @SerialName("title")
-    val title: String,
+    val title: String? = null,
 
     @SerialName("smallCardSummary")
-    val smallCardSummary: String,
+    val smallCardSummary: String? = null,
 
     @SerialName("mediumCardSummary")
-    val mediumCardSummary: String,
+    val mediumCardSummary: String? = null,
 
     @SerialName("thumbnailUrl")
     val thumbnailUrl: String?
@@ -66,11 +66,11 @@ data class HomeContentCollectionCardDto(
     @SerialName("cardType")
     val cardType: String, // "컬렉션"
     @SerialName("title")
-    val title: String,
+    val title: String? = null,
     @SerialName("smallCardSummary")
-    val smallCardSummary: String,
+    val smallCardSummary: String? = null,
     @SerialName("mediumCardSummary")
-    val mediumCardSummary: String,
+    val mediumCardSummary: String? = null,
     @SerialName("thumbnailUrls")
     val thumbnailUrls: List<String> = emptyList(),
 )

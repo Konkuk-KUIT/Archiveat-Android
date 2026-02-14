@@ -97,6 +97,12 @@ fun NavGraph(
                         popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
                         launchSingleTop = true
                     }
+                },
+                onRequireSignup = {
+                    navController.navigate(Route.Login.route) {
+                        popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -221,7 +227,7 @@ fun NavGraph(
             }
             composable(route = Route.Report.route) {
                 ReportScreen(
-                    modifier = screenModifier
+                    padding = padding
                 )
             }
             composable(route = Route.Etc.route) {
