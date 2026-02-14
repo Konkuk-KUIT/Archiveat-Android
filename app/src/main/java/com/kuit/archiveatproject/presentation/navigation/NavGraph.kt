@@ -23,6 +23,7 @@ import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
 import com.kuit.archiveatproject.presentation.inbox.screen.InboxScreen
 import com.kuit.archiveatproject.presentation.login.screen.LoginScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsCollectionScreen
+import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsAIScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsSimpleScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.WebViewScreen
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingInterestScreen
@@ -104,7 +105,15 @@ fun NavGraph(
             route = Route.Main.route
         ) {
             composable(route = Route.Home.route) {
-                HomeScreen(modifier = screenModifier)
+                HomeScreen(
+                    modifier = screenModifier,
+                    onClickCollectionCard = { collectionId ->
+                        navController.navigate(Route.NewsletterCollection.createRoute(collectionId))
+                    },
+                    onClickAiCard = { userNewsletterId ->
+                        navController.navigate(Route.NewsletterAI.createRoute(userNewsletterId))
+                    }
+                )
             }
             composable(route = Route.Explore.route) {
                 ExploreScreen(
@@ -164,6 +173,18 @@ fun NavGraph(
                 )
             }
             composable(
+                route = Route.NewsletterAI.route,
+                arguments = listOf(navArgument("userNewsletterId") { type = NavType.LongType })
+            ) {
+                NewsletterDetailsAIScreen(
+                    onBack = { navController.popBackStack() },
+                    onClickWebView = { url ->
+                        navController.navigate(Route.WebView.createRoute(url))
+                    },
+                    modifier = Modifier
+                )
+            }
+            composable(
                 route = Route.NewsletterSimple.route,
                 arguments = listOf(navArgument("userNewsletterId") { type = NavType.LongType })
             ) {
@@ -172,7 +193,7 @@ fun NavGraph(
                     onClickWebView = { url ->
                         navController.navigate(Route.WebView.createRoute(url))
                     },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(
@@ -184,7 +205,7 @@ fun NavGraph(
                     onClickItem = { userNewsletterId ->
                         navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
                     },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(
@@ -195,12 +216,12 @@ fun NavGraph(
                 WebViewScreen(
                     url = url,
                     onBack = { navController.popBackStack() },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(route = Route.Report.route) {
                 ReportScreen(
-                    modifier = screenModifier
+                    padding = padding
                 )
             }
             composable(route = Route.Etc.route) {

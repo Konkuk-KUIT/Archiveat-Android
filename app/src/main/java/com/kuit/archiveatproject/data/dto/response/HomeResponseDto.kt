@@ -35,8 +35,8 @@ data class HomeTabDto(
 
 @Serializable
 data class HomeContentCardDto(
-    @SerialName("newsletterId")
-    val newsletterId: Long,
+    @SerialName("userNewsletterId")
+    val userNewsletterId: Long,
 
     @SerialName("tabLabel")
     val tabLabel: String,     // TabDto.label과 동일 ("영감수집")

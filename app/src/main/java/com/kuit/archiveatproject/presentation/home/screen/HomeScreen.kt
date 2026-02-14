@@ -33,6 +33,8 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
+    onClickCollectionCard: (Long) -> Unit = {},
+    onClickAiCard: (Long) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -51,7 +53,12 @@ fun HomeScreen(
     HomeScreenContent(
         uiState = uiState,
         onTabSelected = viewModel::onTabSelected,
-        onCardClick = { /* navigate */ },
+        onCardClick = { card ->
+            when (card.cardType) {
+                HomeCardType.COLLECTION -> onClickCollectionCard(card.archiveId)
+                HomeCardType.AI_SUMMARY -> onClickAiCard(card.archiveId)
+            }
+        },
         modifier = modifier
     )
 }
