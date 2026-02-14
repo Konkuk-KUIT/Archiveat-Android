@@ -89,8 +89,6 @@ fun ReportInterestGapCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
-
                 interestGaps.forEachIndexed { index, item ->
                     Row(
                         modifier = Modifier
