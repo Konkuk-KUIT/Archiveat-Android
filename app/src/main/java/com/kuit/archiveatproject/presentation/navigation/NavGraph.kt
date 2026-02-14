@@ -243,7 +243,15 @@ fun NavGraph(
                 )
             }
             composable(route = Route.Etc.route) {
-                EtcScreen(modifier = screenModifier)
+                EtcScreen(
+                    modifier = screenModifier,
+                    onLogoutSuccess = {
+                        navController.navigate(Route.OnboardingIntro.route) {
+                            popUpTo(Route.Main.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                )
             }
             composable(route = Route.Share.route) {
                 ShareScreen(modifier = screenModifier)
