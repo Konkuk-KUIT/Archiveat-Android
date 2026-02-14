@@ -1,5 +1,6 @@
 package com.kuit.archiveatproject.presentation.onboarding.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.R
@@ -15,6 +16,7 @@ import com.kuit.archiveatproject.domain.repository.UserMetadataRepository
 import com.kuit.archiveatproject.presentation.onboarding.model.JobUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
+import org.json.JSONObject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -31,6 +33,9 @@ class OnboardingViewModel @Inject constructor(
     private val pendingSignupRepository: PendingSignupRepository,
     private val userMetadataRepository: UserMetadataRepository,
 ) : ViewModel() {
+    companion object {
+        private const val TAG = "OnboardingViewModel"
+    }
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState
@@ -47,11 +52,20 @@ class OnboardingViewModel @Inject constructor(
             is HttpException -> code()
             else -> null
         }
-        val serverMessage = (message ?: "").trim()
+        val serverMessage = when (this) {
+            is HttpException -> extractHttpErrorMessage()
+            else -> (message ?: "").trim()
+        }
         val hasServerMessage =
             serverMessage.isNotEmpty() &&
-                    !serverMessage.startsWith("HTTP ", ignoreCase = true) &&
-                    !serverMessage.equals("Unauthorized", ignoreCase = true)
+                !serverMessage.startsWith("HTTP ", ignoreCase = true) &&
+                !serverMessage.equals("Unauthorized", ignoreCase = true) &&
+                !serverMessage.equals("Forbidden", ignoreCase = true) &&
+                !serverMessage.equals("Bad Request", ignoreCase = true) &&
+                !serverMessage.equals("Not Found", ignoreCase = true) &&
+                !serverMessage.equals("Conflict", ignoreCase = true) &&
+                !serverMessage.equals("Too Many Requests", ignoreCase = true) &&
+                !serverMessage.equals("Internal Server Error", ignoreCase = true)
 
         if (hasServerMessage) return serverMessage
 
@@ -65,6 +79,30 @@ class OnboardingViewModel @Inject constructor(
             in 500..599 -> "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
             else -> if (this is IOException) "네트워크 연결을 확인해주세요." else defaultMessage
         }
+    }
+
+    private fun HttpException.extractHttpErrorMessage(): String {
+        val rawBody = try {
+            response()?.errorBody()?.string().orEmpty().trim()
+        } catch (_: Exception) {
+            ""
+        }
+
+        if (rawBody.isEmpty()) {
+            return (message() ?: "").trim()
+        }
+
+        val parsedMessage = try {
+            val json = JSONObject(rawBody)
+            listOf("message", "error", "detail", "title")
+                .firstNotNullOfOrNull { key ->
+                    json.optString(key).takeIf { it.isNotBlank() }
+                }
+        } catch (_: Exception) {
+            null
+        }
+
+        return (parsedMessage ?: rawBody).trim()
     }
 
     private fun Set<TimeSlot>.toggle(timeSlot: TimeSlot): Set<TimeSlot> =
@@ -162,17 +200,21 @@ class OnboardingViewModel @Inject constructor(
                             runCatching { TimeSlot.valueOf(name) }.getOrNull()
                         }.ifEmpty { TimeSlot.entries },
                         interestCategories = result.categories,
-                        isLoading = false
+                        isLoading = false,
+                        errorMessage = null,
+                        isUsingFallbackData = false
                     )
                 }
             }.onFailure { e ->
+                Log.w(TAG, "Failed to load metadata. Using fallback defaults.", e)
                 _uiState.update {
                     it.copy(
                         employmentOptions = mapEmploymentTypes(DEFAULT_EMPLOYMENT_TYPES),
                         availabilityOptions = TimeSlot.entries,
                         interestCategories = FALLBACK_CATEGORIES,
                         isLoading = false,
-                        errorMessage = null
+                        errorMessage = "메타데이터 로드 실패: 서버 데이터 대신 기본값을 사용합니다.",
+                        isUsingFallbackData = true
                     )
                 }
             }
