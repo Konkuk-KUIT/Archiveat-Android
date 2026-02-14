@@ -50,8 +50,8 @@ class OnboardingViewModel @Inject constructor(
         val serverMessage = (message ?: "").trim()
         val hasServerMessage =
             serverMessage.isNotEmpty() &&
-                !serverMessage.startsWith("HTTP ", ignoreCase = true) &&
-                !serverMessage.equals("Unauthorized", ignoreCase = true)
+                    !serverMessage.startsWith("HTTP ", ignoreCase = true) &&
+                    !serverMessage.equals("Unauthorized", ignoreCase = true)
 
         if (hasServerMessage) return serverMessage
 
@@ -268,12 +268,26 @@ class OnboardingViewModel @Inject constructor(
             runCatching {
                 if (!isSignupCompleted) {
                     val signupDraft = requireNotNull(draft)
-                    authRepository.signup(
-                        email = signupDraft.email,
-                        password = signupDraft.password,
-                        nickname = signupDraft.nickname
-                    )
-                    isSignupCompleted = true
+                    try {
+                        authRepository.signup(
+                            email = signupDraft.email,
+                            password = signupDraft.password,
+                            nickname = signupDraft.nickname
+                        )
+                        isSignupCompleted = true
+                    } catch (e: ApiException) {
+                        if (e.code == 409) {
+                            isSignupCompleted = true
+                        } else {
+                            throw e
+                        }
+                    } catch (e: HttpException) {
+                        if (e.code() == 409) {
+                            isSignupCompleted = true
+                        } else {
+                            throw e
+                        }
+                    }
                 }
                 userMetadataRepository.submitUserMetadata(submitEntity).getOrThrow()
             }.onSuccess {
