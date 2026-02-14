@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun OnboardingInterestScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),
     onFinished: () -> Unit,
+    onRequireSignup: () -> Unit = {},
     modifier: Modifier = Modifier
 ){
     val uiState by viewModel.uiState.collectAsState()
@@ -50,6 +51,7 @@ fun OnboardingInterestScreen(
         viewModel.navigationEvent.collectLatest { event ->
             when (event) {
                 OnboardingNavigationEvent.SubmitSuccess -> onFinished()
+                OnboardingNavigationEvent.NavigateToSignupStart -> onRequireSignup()
             }
         }
     }

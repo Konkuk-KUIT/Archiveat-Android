@@ -158,9 +158,9 @@ class OnboardingViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         employmentOptions = mapEmploymentTypes(result.employmentTypes),
-                        availabilityOptions = result.availabilityOptions.map {
-                            TimeSlot.valueOf(it)
-                        },
+                        availabilityOptions = result.availabilityOptions.mapNotNull { name ->
+                            runCatching { TimeSlot.valueOf(name) }.getOrNull()
+                        }.ifEmpty { TimeSlot.entries },
                         interestCategories = result.categories,
                         isLoading = false
                     )
@@ -259,6 +259,7 @@ class OnboardingViewModel @Inject constructor(
             _uiState.update {
                 it.copy(errorMessage = "가입 정보가 없습니다. 처음부터 다시 진행해주세요.")
             }
+            _navigationEvent.tryEmit(OnboardingNavigationEvent.NavigateToSignupStart)
             return
         }
 

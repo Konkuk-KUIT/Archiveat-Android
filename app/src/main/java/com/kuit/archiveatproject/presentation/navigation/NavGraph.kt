@@ -97,6 +97,12 @@ fun NavGraph(
                         popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
                         launchSingleTop = true
                     }
+                },
+                onRequireSignup = {
+                    navController.navigate(Route.Login.route) {
+                        popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }

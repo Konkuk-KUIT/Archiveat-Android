@@ -74,6 +74,7 @@ sealed interface OnboardingUiEvent {
 
 sealed interface OnboardingNavigationEvent {
     object SubmitSuccess : OnboardingNavigationEvent
+    object NavigateToSignupStart : OnboardingNavigationEvent
 }
 
 enum class TimeSlot {
