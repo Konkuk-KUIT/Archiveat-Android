@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,21 +23,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
 import com.kuit.archiveatproject.presentation.report.component.interestgap.InterestGapBubbleChart
 import com.kuit.archiveatproject.presentation.report.component.interestgap.InterestGapSelectedDetail
-import com.kuit.archiveatproject.presentation.report.model.InterestGapTopicUiModel
+import com.kuit.archiveatproject.presentation.report.model.ReportInterestGapAnalysisViewModel
 import com.kuit.archiveatproject.presentation.report.model.top4ByGap
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun ReportInterestGapAnalysisScreen(
     padding: PaddingValues,
-    topics: List<InterestGapTopicUiModel>, // ✅ 나중에 Route에서 API 결과를 이 형태로 넘겨주기만 하면 됨
     onBack: () -> Unit,
     onClickTopicShortcut: (topicId: Long, topicName: String) -> Unit,
+    viewModel: ReportInterestGapAnalysisViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    val topics = uiState.topics
     val top4 = remember(topics) { topics.top4ByGap() }
 
     var selectedId by remember { mutableStateOf<Long?>(null) }
@@ -128,7 +132,12 @@ fun ReportInterestGapAnalysisScreen(
         ) {
             PrimaryRoundedButton(
                 text = selected?.name?.let { "'$it' 바로가기" } ?: "바로가기",
-                onClick = { selected?.let { onClickTopicShortcut(it.id, it.name) } },
+                onClick = {
+                    selected?.topicId?.let { topicId ->
+                        onClickTopicShortcut(topicId, selected.name)
+                    }
+                },
+                enabled = selected?.topicId != null,
                 containerColor = ArchiveatProjectTheme.colors.black,
                 cornerRadiusDp = 12
             )
@@ -141,13 +150,7 @@ fun ReportInterestGapAnalysisScreen(
 private fun ReportInterestGapAnalysisScreenPrev() {
     ReportInterestGapAnalysisScreen(
         padding = PaddingValues(0.dp),
-        listOf(
-            InterestGapTopicUiModel(1, "경제", 24, 2),
-            InterestGapTopicUiModel(2, "IT/Tech", 20, 10),
-            InterestGapTopicUiModel(3, "인문", 10, 0),
-            InterestGapTopicUiModel(4, "디자인", 2, 0)
-        ),
-        {},
-        { a, b -> }
+        onBack = {},
+        onClickTopicShortcut = { _, _ -> }
     )
 }

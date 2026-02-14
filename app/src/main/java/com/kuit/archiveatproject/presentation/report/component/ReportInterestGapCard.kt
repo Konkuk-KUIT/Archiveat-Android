@@ -1,6 +1,7 @@
 package com.kuit.archiveatproject.presentation.report.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,10 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
 import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import kotlin.collections.forEachIndexed
@@ -29,11 +28,13 @@ import kotlin.collections.lastIndex
 @Composable
 fun ReportInterestGapCard(
     interestGaps: List<MainInterestGapUiItem>,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .border(
                 width = 1.25.dp,
                 color = ArchiveatProjectTheme.colors.gray100,
@@ -153,8 +154,9 @@ private fun ReportInterestGapCardPreview() {
                     MainInterestGapUiItem("브랜드/마케팅", 35, 19),
                     MainInterestGapUiItem("거시경제", 14, 6),
                     MainInterestGapUiItem("팝컬쳐/트렌드", 29, 13),
-                    MainInterestGapUiItem("공간/플레이스", 16, 7),
-                )
+                    MainInterestGapUiItem("공간/플레이스", 16, 7)
+                ),
+                onClick = {}
             )
         }
     }
