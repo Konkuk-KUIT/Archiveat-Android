@@ -221,7 +221,7 @@ fun NavGraph(
             }
             composable(route = Route.Report.route) {
                 ReportScreen(
-                    modifier = screenModifier
+                    padding = padding
                 )
             }
             composable(route = Route.Etc.route) {
