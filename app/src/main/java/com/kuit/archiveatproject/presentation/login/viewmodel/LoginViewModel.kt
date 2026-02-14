@@ -3,7 +3,9 @@ package com.kuit.archiveatproject.presentation.login.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.core.util.ApiException
+import com.kuit.archiveatproject.domain.entity.SignupDraft
 import com.kuit.archiveatproject.domain.repository.AuthRepository
+import com.kuit.archiveatproject.domain.repository.PendingSignupRepository
 import com.kuit.archiveatproject.presentation.login.uistate.LoginStep
 import com.kuit.archiveatproject.presentation.login.uistate.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +20,7 @@ import retrofit2.HttpException
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
+    private val pendingSignupRepository: PendingSignupRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -168,8 +171,12 @@ class LoginViewModel @Inject constructor(
     fun onSignup() {
         val state = _uiState.value
         if (state.isLoading) return
+        val email = state.email.trim()
         val nickname = state.nickname.trim()
-        if (state.email.isBlank() || state.password.isBlank() || nickname.isBlank()) {
+        val isEmailValid = isValidEmail(email, 254)
+        val isPasswordValid = state.password.length in 8..20
+
+        if (!isEmailValid || !isPasswordValid || nickname.isBlank()) {
             _uiState.update { it.copy(errorMessage = "필수 정보를 입력해주세요.") }
             return
         }
@@ -178,25 +185,14 @@ class LoginViewModel @Inject constructor(
             return
         }
 
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            runCatching {
-                authRepository.signup(
-                    email = state.email.trim(),
-                    password = state.password,
-                    nickname = nickname
-                )
-            }.onSuccess {
-                _uiState.update { it.copy(isLoading = false, isSignupSuccess = true) }
-            }.onFailure { e ->
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = e.toUserMessage("회원가입에 실패했습니다.")
-                    )
-                }
-            }
-        }
+        pendingSignupRepository.save(
+            SignupDraft(
+                email = email,
+                password = state.password,
+                nickname = nickname
+            )
+        )
+        _uiState.update { it.copy(errorMessage = null, isSignupSuccess = true) }
     }
 
     fun onLogin() {
