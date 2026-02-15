@@ -34,13 +34,14 @@ import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
 fun NavGraph(
     navController: NavHostController,
     padding: PaddingValues,
+    startDestination: String,
     modifier: Modifier = Modifier
 ) {
     val screenModifier = modifier.padding(padding)
 
     NavHost(
         navController = navController,
-        startDestination = Route.OnboardingIntro.route // startDestination 온보딩 인트로
+        startDestination = startDestination
     ) {
         composable(route = Route.Login.route) {
             LoginScreen(

@@ -113,7 +113,7 @@ private fun ExploreTopicListPreview() {
                 ExploreTopicUiItem(4, "데이터/보안", 5, R.drawable.ic_topic_security),
                 ExploreTopicUiItem(5, "테크", 6, R.drawable.ic_topic_tech),
             ),
-            onTopicClick = {} as (Long, String) -> Unit,
+            onTopicClick = { _, _ -> },
             modifier = Modifier.padding(20.dp)
         )
     }

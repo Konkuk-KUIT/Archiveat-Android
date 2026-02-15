@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -24,16 +26,33 @@ import com.kuit.archiveatproject.presentation.navigation.Route
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.kuit.archiveatproject.domain.repository.TokenRepository
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var tokenRepository: TokenRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ArchiveatProjectTheme {
+                val startDestination by produceState<String?>(initialValue = null) {
+                    val token = tokenRepository.accessTokenFlow.first()
+                    value = if (token.isNullOrBlank()) {
+                        Route.OnboardingIntro.route
+                    } else {
+                        Route.Main.route
+                    }
+                }
+
+                if (startDestination == null) return@ArchiveatProjectTheme
+
                 val navController = rememberNavController()
                 val currentDestination =
                     navController.currentBackStackEntryAsState().value?.destination
@@ -94,7 +113,8 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavGraph(
                         navController = navController,
-                        padding = innerPadding
+                        padding = innerPadding,
+                        startDestination = startDestination!!
                     )
                 }
             }
