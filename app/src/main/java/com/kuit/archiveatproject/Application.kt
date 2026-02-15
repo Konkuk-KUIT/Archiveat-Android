@@ -17,7 +17,7 @@ class Application: android.app.Application(){
     lateinit var appScope: CoroutineScope
 
     override fun onCreate(){
-        super.onCreate()
+        super.onCreate()    
         instance = this
 
         // "앱 재시작(프로세스 새로 시작)"하면 무조건 로그아웃

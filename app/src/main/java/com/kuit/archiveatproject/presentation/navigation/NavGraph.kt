@@ -31,6 +31,7 @@ import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingJobTim
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingScreen as OnboardingIntroScreen
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
+import com.kuit.archiveatproject.presentation.report.screen.ReportStatusScreen
 import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
 
 @Composable
@@ -227,15 +228,24 @@ fun NavGraph(
             }
             composable(route = Route.Report.route) {
                 ReportScreen(
-                    padding = padding
+                    padding = padding,
+                    onClickStatus = { navController.navigate(Route.ReportStatus.route) }
                 )
             }
+            composable(route = Route.ReportStatus.route) {
+                ReportStatusScreen(
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+
             composable(route = Route.Etc.route) {
                 EtcScreen(modifier = screenModifier)
             }
             composable(route = Route.Share.route) {
                 ShareScreen(modifier = screenModifier)
             }
+
+
         }
     }
 }

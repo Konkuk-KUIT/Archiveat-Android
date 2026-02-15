@@ -1,10 +1,10 @@
 package com.kuit.archiveatproject.presentation.report.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,13 +39,22 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun ReportStatusScreen(
+    onBackClick: () -> Unit, // ✅ 추가: NavGraph에서 popBackStack 넘겨줄 것
     viewModel: ReportStatusViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchReportStatus()
+    }
+
+    // ✅ 시스템 뒤로가기(제스처/버튼)도 동일하게 처리
+    BackHandler { onBackClick() }
+
     ReportStatusContent(
         uiState = uiState,
+        onBackClick = onBackClick, // ✅ 전달
         modifier = modifier
     )
 }
@@ -52,6 +62,7 @@ fun ReportStatusScreen(
 @Composable
 fun ReportStatusContent(
     uiState: ReportUiState,
+    onBackClick: () -> Unit, // ✅ 추가
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -59,7 +70,9 @@ fun ReportStatusContent(
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.gray50)
     ) {
-        BackTopBar(title = "핵심 소비 현황", onBack = {})
+        // ✅ TopBar 뒤로가기 연결
+        BackTopBar(title = "핵심 소비 현황", onBack = onBackClick)
+
         // ===== 스크롤 영역 =====
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -134,7 +147,7 @@ fun ReportStatusContent(
             items(uiState.recentReadNewsletters) { item ->
                 RecentNewsletterComponent(
                     item = item,
-                    serverTimestamp = uiState.referenceDate, // or timestamp string
+                    item.lastViewedAt,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -151,7 +164,9 @@ fun ReportStatusContent(
                 text = "안 읽은 콘텐츠 보러 가기",
                 true,
                 onClick = { /* TODO */ },
-                modifier = Modifier.fillMaxWidth().navigationBarsPadding()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
             )
         }
     }
@@ -186,41 +201,12 @@ private fun ReportStatusContentPreview() {
                         title = "비트코인 4년 주기론 끝났나?",
                         categoryName = "경제",
                         lastViewedAt = "2026-01-24"
-                    ),
-                    RecentReadNewsletterUiItem(
-                        id = 3,
-                        title = "개발자 취업 시장, 정말 반등기일까?",
-                        categoryName = "커리어",
-                        lastViewedAt = "2026-01-20"
-                    ),
-                    RecentReadNewsletterUiItem(
-                        id = 4,
-                        title = "React 업데이트 핵심 요약",
-                        categoryName = "IT/Tech",
-                        lastViewedAt = "2026-01-20"
-                    ),
-                    RecentReadNewsletterUiItem(
-                        id = 5,
-                        title = "AI 에이전트가 바꿀 업무 방식 5가지",
-                        categoryName = "AI",
-                        lastViewedAt = "2026-01-19"
-                    ),
-                    RecentReadNewsletterUiItem(
-                        id = 6,
-                        title = "디자이너가 꼭 알아야 할 컬러 시스템 정리",
-                        categoryName = "디자인",
-                        lastViewedAt = "2026-01-18"
-                    ),
-                    RecentReadNewsletterUiItem(
-                        id = 7,
-                        title = "미국 금리 인하, 한국 경제에 미치는 영향",
-                        categoryName = "경제",
-                        lastViewedAt = "2026-01-17"
                     )
                 ),
                 weeklyFeedbackWeekLabel = "",
                 weeklyFeedbackBody = ""
             ),
+            onBackClick = {}, // ✅ Preview용
             modifier = Modifier.fillMaxSize()
         )
     }
