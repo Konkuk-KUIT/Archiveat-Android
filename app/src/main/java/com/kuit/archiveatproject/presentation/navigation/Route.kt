@@ -41,6 +41,8 @@ sealed class Route (
 
     data object ReportStatus : Route(route = "report/status")
 
+    data object ReportBalance : Route(route = "report/balance")
+
     data object Etc: Route(route = "etc")
 
 }

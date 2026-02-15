@@ -2,7 +2,6 @@ package com.kuit.archiveatproject.presentation.report.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,7 +29,7 @@ import com.kuit.archiveatproject.presentation.report.component.balance.BalancePa
 import com.kuit.archiveatproject.presentation.report.component.balance.BalanceSummaryCard
 import com.kuit.archiveatproject.presentation.report.component.balance.StatusTextTag
 import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
-import com.kuit.archiveatproject.presentation.report.model.ReportStatusViewModel
+import com.kuit.archiveatproject.presentation.report.model.ReportBalanceViewModel
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
 import com.kuit.archiveatproject.presentation.report.model.toActionButtonText
 import com.kuit.archiveatproject.presentation.report.model.toKnowledgePosition
@@ -37,13 +37,19 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun ReportBalanceScreen(
-    viewModel: ReportStatusViewModel = hiltViewModel(),
+    onBackClick: () -> Unit, // ✅ 추가 (NavGraph랑 연결)
+    viewModel: ReportBalanceViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchReportBalance()
+    }
+
     ReportBalanceContent(
         uiState = uiState,
+        onBackClick = onBackClick, // ✅ 전달
         modifier = modifier
     )
 }
@@ -51,6 +57,7 @@ fun ReportBalanceScreen(
 @Composable
 fun ReportBalanceContent(
     uiState: ReportUiState,
+    onBackClick: () -> Unit, // ✅ 추가
     modifier: Modifier = Modifier
 ) {
     val position = uiState.toKnowledgePosition()
@@ -60,7 +67,7 @@ fun ReportBalanceContent(
         topBar = {
             BackTopBar(
                 title = "나의 소비 밸런스",
-                onBack = {}
+                onBack = onBackClick // ✅ 연결
             )
         },
         bottomBar = {
@@ -92,9 +99,10 @@ fun ReportBalanceContent(
             item {
                 Spacer(Modifier.height(21.dp))
 
-                // TODO: user dto 추가 후 닉네임 데이터로 교체
                 StatusTextTag(
-                    text = "이준님의 지식 좌표",ArchiveatProjectTheme.colors.primary)
+                    text = "이준님의 지식 좌표",
+                    ArchiveatProjectTheme.colors.primary
+                )
 
                 Spacer(Modifier.height(21.dp))
                 BalanceCanvasComponent(
@@ -154,7 +162,8 @@ private fun fakeReportBalanceUiState(): ReportUiState =
 private fun ReportBalanceContentPreview() {
     ArchiveatProjectTheme {
         ReportBalanceContent(
-            uiState = fakeReportBalanceUiState()
+            uiState = fakeReportBalanceUiState(),
+            onBackClick = {} // ✅ Preview용
         )
     }
 }

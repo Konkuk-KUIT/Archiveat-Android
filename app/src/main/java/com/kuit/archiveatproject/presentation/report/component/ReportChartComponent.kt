@@ -19,7 +19,8 @@ fun ReportChartComponent(
     lightPercentage: Int,
     nowPercentage: Int,
     interestGaps: List<MainInterestGapUiItem>,
-    onClickStatus: () -> Unit, // ✅ 추가
+    onClickStatus: () -> Unit,
+    onClickBalance: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -28,18 +29,17 @@ fun ReportChartComponent(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-
-        // ✅ 핵심 소비 현황 카드만 클릭 가능하게
         ReportConsumptionSummaryCard(
             totalSavedCount = totalSavedCount,
             totalReadCount = totalReadCount,
             readPercentage = readPercentage,
-            modifier = Modifier.clickable { onClickStatus() } // ⭐ 핵심
+            modifier = Modifier.clickable { onClickStatus() }
         )
 
         ReportConsumptionBalanceCard(
             lengthBalancePercentage = lightPercentage,
-            purposeBalancePercentage = nowPercentage
+            purposeBalancePercentage = nowPercentage,
+            modifier = Modifier.clickable { onClickBalance() } // ⭐ 추가
         )
 
         ReportInterestGapCard(
@@ -73,6 +73,7 @@ private fun ReportChartComponentPreview() {
                 readCount = 25
             )
         ),
-        onClickStatus = {} // ✅ Preview용
+        onClickStatus = {},
+        onClickBalance = {}
     )
 }
