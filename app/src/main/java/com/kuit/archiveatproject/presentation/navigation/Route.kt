@@ -23,6 +23,10 @@ sealed class Route (
         fun createRoute(userNewsletterId: Long): String =
             "newsletters/$userNewsletterId/simple"
     }
+    data object NewsletterAI: Route(route = "newsletters/{userNewsletterId}") {
+        fun createRoute(userNewsletterId: Long): String =
+            "newsletters/$userNewsletterId"
+    }
     data object NewsletterCollection: Route(route = "collections/{collectionId}") {
         fun createRoute(collectionId: Long): String =
             "collections/$collectionId"
@@ -32,6 +36,7 @@ sealed class Route (
             "webview?url=${android.net.Uri.encode(url)}"
     }
     data object Report: Route(route = "report")
+    data object ReportInterestGapAnalysis: Route(route = "report/interest-gap-analysis")
     data object Etc: Route(route = "etc")
 
 }

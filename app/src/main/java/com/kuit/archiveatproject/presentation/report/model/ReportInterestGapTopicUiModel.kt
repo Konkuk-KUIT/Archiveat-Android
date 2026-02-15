@@ -7,6 +7,7 @@ data class InterestGapTopicUiModel(
     val name: String,
     val savedCount: Int,
     val readCount: Int,
+    val topicId: Long? = id
 ) {
     val gap: Int get() = (savedCount - readCount).coerceAtLeast(0)
 

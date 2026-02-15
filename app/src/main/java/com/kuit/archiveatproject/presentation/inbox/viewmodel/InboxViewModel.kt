@@ -6,6 +6,7 @@ import android.util.Log
 import com.kuit.archiveatproject.domain.entity.Inbox
 import com.kuit.archiveatproject.domain.entity.InboxItem
 import com.kuit.archiveatproject.domain.entity.LlmStatus
+import com.kuit.archiveatproject.domain.repository.InboxClassificationRepository
 import com.kuit.archiveatproject.domain.repository.InboxRepository
 import com.kuit.archiveatproject.domain.repository.NewsletterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ import kotlinx.coroutines.delay
 class InboxViewModel @Inject constructor(
     private val inboxRepository: InboxRepository,
     private val newsletterRepository: NewsletterRepository,
+    private val inboxClassificationRepository: InboxClassificationRepository,
 ) : ViewModel() {
 
     private companion object {
@@ -43,6 +45,17 @@ class InboxViewModel @Inject constructor(
         viewModelScope.launch {
             val inbox = fetchInbox(showLoading = true)
             if (inbox != null) updatePolling(inbox)
+        }
+    }
+
+    fun confirmExploreInboxAll() {
+        viewModelScope.launch {
+            try {
+                inboxClassificationRepository.confirmExploreInboxAll()
+            } catch (e: Throwable) {
+                if (e is CancellationException) throw e
+                Log.e(TAG, "confirmExploreInboxAll failed", e)
+            }
         }
     }
 

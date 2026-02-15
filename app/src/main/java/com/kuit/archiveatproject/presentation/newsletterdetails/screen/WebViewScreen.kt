@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -48,6 +49,7 @@ fun WebViewScreen(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             BackTopBar(
+                modifier = Modifier.statusBarsPadding(),
                 title = "",
                 onBack = onBack,
                 height = 45

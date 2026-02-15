@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
 import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 
 @Composable
@@ -19,6 +18,7 @@ fun ReportChartComponent(
     lightPercentage: Int,
     nowPercentage: Int,
     interestGaps: List<MainInterestGapUiItem>,
+    onClickInterestGapCard: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -40,7 +40,8 @@ fun ReportChartComponent(
         )
 
         ReportInterestGapCard(
-            interestGaps = interestGaps
+            interestGaps = interestGaps,
+            onClick = onClickInterestGapCard
         )
     }
 }
@@ -70,5 +71,6 @@ private fun ReportChartComponentPreview() {
                 readCount = 25
             )
         ),
+        onClickInterestGapCard = {}
     )
 }

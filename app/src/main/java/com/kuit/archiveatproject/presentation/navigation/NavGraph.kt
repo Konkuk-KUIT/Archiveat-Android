@@ -3,12 +3,9 @@ package com.kuit.archiveatproject.presentation.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,11 +15,11 @@ import androidx.navigation.navArgument
 import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreTopicDetailScreen
-import com.kuit.archiveatproject.presentation.explore.viewmodel.ExploreTopicDetailViewModel
 import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
 import com.kuit.archiveatproject.presentation.inbox.screen.InboxScreen
 import com.kuit.archiveatproject.presentation.login.screen.LoginScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsCollectionScreen
+import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsAIScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsSimpleScreen
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.WebViewScreen
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingInterestScreen
@@ -30,19 +27,21 @@ import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingJobTim
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingScreen as OnboardingIntroScreen
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
+import com.kuit.archiveatproject.presentation.report.screen.ReportInterestGapAnalysisScreen
 import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     padding: PaddingValues,
+    startDestination: String,
     modifier: Modifier = Modifier
 ) {
     val screenModifier = modifier.padding(padding)
 
     NavHost(
         navController = navController,
-        startDestination = Route.OnboardingIntro.route // startDestination 온보딩 인트로
+        startDestination = startDestination
     ) {
         composable(route = Route.Login.route) {
             LoginScreen(
@@ -96,6 +95,12 @@ fun NavGraph(
                         popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
                         launchSingleTop = true
                     }
+                },
+                onRequireSignup = {
+                    navController.navigate(Route.Login.route) {
+                        popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -104,7 +109,15 @@ fun NavGraph(
             route = Route.Main.route
         ) {
             composable(route = Route.Home.route) {
-                HomeScreen(modifier = screenModifier)
+                HomeScreen(
+                    modifier = screenModifier,
+                    onClickCollectionCard = { collectionId ->
+                        navController.navigate(Route.NewsletterCollection.createRoute(collectionId))
+                    },
+                    onClickAiCard = { userNewsletterId ->
+                        navController.navigate(Route.NewsletterAI.createRoute(userNewsletterId))
+                    }
+                )
             }
             composable(route = Route.Explore.route) {
                 ExploreScreen(
@@ -164,6 +177,18 @@ fun NavGraph(
                 )
             }
             composable(
+                route = Route.NewsletterAI.route,
+                arguments = listOf(navArgument("userNewsletterId") { type = NavType.LongType })
+            ) {
+                NewsletterDetailsAIScreen(
+                    onBack = { navController.popBackStack() },
+                    onClickWebView = { url ->
+                        navController.navigate(Route.WebView.createRoute(url))
+                    },
+                    modifier = Modifier
+                )
+            }
+            composable(
                 route = Route.NewsletterSimple.route,
                 arguments = listOf(navArgument("userNewsletterId") { type = NavType.LongType })
             ) {
@@ -172,7 +197,7 @@ fun NavGraph(
                     onClickWebView = { url ->
                         navController.navigate(Route.WebView.createRoute(url))
                     },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(
@@ -184,7 +209,7 @@ fun NavGraph(
                     onClickItem = { userNewsletterId ->
                         navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
                     },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(
@@ -195,16 +220,39 @@ fun NavGraph(
                 WebViewScreen(
                     url = url,
                     onBack = { navController.popBackStack() },
-                    modifier = screenModifier
+                    modifier = Modifier
                 )
             }
             composable(route = Route.Report.route) {
                 ReportScreen(
-                    modifier = screenModifier
+                    padding = padding,
+                    onClickInterestGapCard = {
+                        navController.navigate(Route.ReportInterestGapAnalysis.route)
+                    }
+                )
+            }
+            composable(route = Route.ReportInterestGapAnalysis.route) {
+                ReportInterestGapAnalysisScreen(
+                    padding = padding,
+                    onBack = { navController.popBackStack() },
+                    onClickTopicShortcut = { topicId, topicName ->
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("topicName", topicName)
+                        navController.navigate(Route.ExploreTopicDetail.createRoute(topicId))
+                    }
                 )
             }
             composable(route = Route.Etc.route) {
-                EtcScreen(modifier = screenModifier)
+                EtcScreen(
+                    modifier = screenModifier,
+                    onLogoutSuccess = {
+                        navController.navigate(Route.OnboardingIntro.route) {
+                            popUpTo(Route.Main.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                )
             }
             composable(route = Route.Share.route) {
                 ShareScreen(modifier = screenModifier)

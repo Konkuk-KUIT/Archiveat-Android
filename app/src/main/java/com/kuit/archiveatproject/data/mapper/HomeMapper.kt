@@ -23,29 +23,35 @@ fun HomeResponseDto.toDomain(): Home {
                 subMessage = it.subMessage
             )
         },
-        contentCards = contentCards.map { dto ->
+        contentCards = contentCards.mapNotNull { dto ->
             val tabType = tabTypeByLabel[dto.tabLabel] ?: HomeTabType.ALL
+            val title = dto.title?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+            val smallSummary = dto.smallCardSummary.orEmpty()
+            val mediumSummary = dto.mediumCardSummary.orEmpty()
             HomeContentCard(
-                newsletterId = dto.newsletterId,
+                newsletterId = dto.userNewsletterId,
                 tabType = tabType,
                 tabLabel = dto.tabLabel,
                 cardType = HomeCardType.fromLabel(dto.cardType),
-                title = dto.title,
-                smallCardSummary = dto.smallCardSummary,
-                mediumCardSummary = dto.mediumCardSummary,
+                title = title,
+                smallCardSummary = smallSummary,
+                mediumCardSummary = mediumSummary,
                 thumbnailUrl = dto.thumbnailUrl
             )
         },
-        contentCollectionCards = contentCollectionCards.map { dto ->
+        contentCollectionCards = contentCollectionCards.mapNotNull { dto ->
             val tabType = tabTypeByLabel[dto.tabLabel] ?: HomeTabType.ALL
+            val title = dto.title?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+            val smallSummary = dto.smallCardSummary.orEmpty()
+            val mediumSummary = dto.mediumCardSummary.orEmpty()
             HomeContentCollectionCard(
                 collectionId = dto.collectionId,
                 tabType = tabType,
                 tabLabel = dto.tabLabel,
                 cardType = HomeCardType.fromLabel(dto.cardType),
-                title = dto.title,
-                smallCardSummary = dto.smallCardSummary,
-                mediumCardSummary = dto.mediumCardSummary,
+                title = title,
+                smallCardSummary = smallSummary,
+                mediumCardSummary = mediumSummary,
                 thumbnailUrls = dto.thumbnailUrls
             )
         }
