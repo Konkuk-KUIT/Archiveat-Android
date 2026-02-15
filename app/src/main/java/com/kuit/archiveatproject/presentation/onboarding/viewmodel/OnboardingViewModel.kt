@@ -193,16 +193,29 @@ class OnboardingViewModel @Inject constructor(
             runCatching {
                 userMetadataRepository.getUserMetadata()
             }.onSuccess { result ->
+                val resolvedEmploymentOptions =
+                    mapEmploymentTypes(result.employmentTypes).ifEmpty {
+                        mapEmploymentTypes(DEFAULT_EMPLOYMENT_TYPES)
+                    }
+                val resolvedAvailabilityOptions =
+                    result.availabilityOptions.mapNotNull { name ->
+                        runCatching { TimeSlot.valueOf(name) }.getOrNull()
+                    }.ifEmpty { TimeSlot.entries }
+                val resolvedInterestCategories =
+                    result.categories.ifEmpty { FALLBACK_CATEGORIES }
+                val isFallbackApplied =
+                    resolvedEmploymentOptions.size != result.employmentTypes.size ||
+                        resolvedAvailabilityOptions.size != result.availabilityOptions.size ||
+                        result.categories.isEmpty()
+
                 _uiState.update {
                     it.copy(
-                        employmentOptions = mapEmploymentTypes(result.employmentTypes),
-                        availabilityOptions = result.availabilityOptions.mapNotNull { name ->
-                            runCatching { TimeSlot.valueOf(name) }.getOrNull()
-                        }.ifEmpty { TimeSlot.entries },
-                        interestCategories = result.categories,
+                        employmentOptions = resolvedEmploymentOptions,
+                        availabilityOptions = resolvedAvailabilityOptions,
+                        interestCategories = resolvedInterestCategories,
                         isLoading = false,
                         errorMessage = null,
-                        isUsingFallbackData = false
+                        isUsingFallbackData = isFallbackApplied
                     )
                 }
             }.onFailure { e ->
