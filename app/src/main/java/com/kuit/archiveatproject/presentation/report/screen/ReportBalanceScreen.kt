@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.core.component.BackTopBar
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.report.component.ReportButtonComponent
 import com.kuit.archiveatproject.presentation.report.component.balance.BalanceCanvasComponent
 import com.kuit.archiveatproject.presentation.report.component.balance.BalancePatternInsightCard
@@ -31,13 +32,74 @@ import com.kuit.archiveatproject.presentation.report.component.balance.StatusTex
 import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportBalanceViewModel
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
-import com.kuit.archiveatproject.presentation.report.model.toActionButtonText
 import com.kuit.archiveatproject.presentation.report.model.toKnowledgePosition
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+
+private enum class BalanceUserType {
+    LIGHT_NOW,      // Type A
+    DEEP_NOW,       // Type B
+    LIGHT_FUTURE,   // Type C
+    DEEP_FUTURE     // Type D
+}
+
+private data class BalanceCtaInfo(
+    val userType: BalanceUserType,
+    val buttonText: String,
+    val destinationTab: HomeTabType
+)
+
+/**
+ * Type A (Light+Now): Light >= Deep AND Now >= Future
+ * Type B (Deep+Now):  Light <  Deep AND Now >= Future
+ * Type C (Light+Future): Light >= Deep AND Now < Future
+ * Type D (Deep+Future):  Light <  Deep AND Now < Future
+ *
+ * CTA 목적지 매핑:
+ * Light + Now   -> 관점확장 (VIEW_EXPANSION)
+ * Deep + Now    -> 성장한입 (GROWTH)
+ * Light + Future-> 집중탐구 (DEEP_DIVE)
+ * Deep + Future -> 영감수집 (INSPIRATION)
+ */
+private fun decideCta(
+    light: Int,
+    deep: Int,
+    now: Int,
+    future: Int
+): BalanceCtaInfo {
+    val isLight = light >= deep
+    val isNow = now >= future
+
+    return when {
+        isLight && isNow -> BalanceCtaInfo(
+            userType = BalanceUserType.LIGHT_NOW,
+            buttonText = "관점 확장하러 가기",
+            destinationTab = HomeTabType.VIEW_EXPANSION
+        )
+
+        !isLight && isNow -> BalanceCtaInfo(
+            userType = BalanceUserType.DEEP_NOW,
+            buttonText = "성장 한입하러 가기",
+            destinationTab = HomeTabType.GROWTH
+        )
+
+        isLight && !isNow -> BalanceCtaInfo(
+            userType = BalanceUserType.LIGHT_FUTURE,
+            buttonText = "집중 탐구하러 가기",
+            destinationTab = HomeTabType.DEEP_DIVE
+        )
+
+        else -> BalanceCtaInfo(
+            userType = BalanceUserType.DEEP_FUTURE,
+            buttonText = "영감 수집하러 가기",
+            destinationTab = HomeTabType.INSPIRATION
+        )
+    }
+}
 
 @Composable
 fun ReportBalanceScreen(
     onBackClick: () -> Unit,
+    onClickCta: (HomeTabType) -> Unit,
     viewModel: ReportBalanceViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -50,6 +112,7 @@ fun ReportBalanceScreen(
     ReportBalanceContent(
         uiState = uiState,
         onBackClick = onBackClick,
+        onClickCta = onClickCta,
         modifier = modifier
     )
 }
@@ -58,9 +121,17 @@ fun ReportBalanceScreen(
 fun ReportBalanceContent(
     uiState: ReportUiState,
     onBackClick: () -> Unit,
+    onClickCta: (HomeTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val position = uiState.toKnowledgePosition()
+
+    val cta = decideCta(
+        light = uiState.balance.lightPercentage,
+        deep = uiState.balance.deepPercentage,
+        now = uiState.balance.nowPercentage,
+        future = uiState.balance.futurePercentage
+    )
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -79,9 +150,9 @@ fun ReportBalanceContent(
                     .navigationBarsPadding()
             ) {
                 ReportButtonComponent(
-                    text = position.toActionButtonText(),
+                    text = cta.buttonText,
                     enabled = true,
-                    onClick = { /* TODO */ },
+                    onClick = { onClickCta(cta.destinationTab) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -163,7 +234,8 @@ private fun ReportBalanceContentPreview() {
     ArchiveatProjectTheme {
         ReportBalanceContent(
             uiState = fakeReportBalanceUiState(),
-            onBackClick = {}
+            onBackClick = {},
+            onClickCta = {}
         )
     }
 }

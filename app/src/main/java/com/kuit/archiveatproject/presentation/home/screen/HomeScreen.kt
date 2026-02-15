@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
+    initialTabName: String? = null,
     onClickCollectionCard: (Long) -> Unit = {},
     onClickAiCard: (Long) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -48,6 +50,24 @@ fun HomeScreen(
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    /**
+     * ✅ 특정 탭으로 "강제 진입"해야 할 때만 탭 반영
+     * - initialTabName == null 이면 아무 것도 하지 않음 (기존 selectedTab 유지)
+     * - initialTabName이 enum으로 변환 가능하면 그 탭으로 이동
+     */
+    LaunchedEffect(initialTabName) {
+        if (initialTabName.isNullOrBlank()) return@LaunchedEffect
+
+        val tabType = runCatching { HomeTabType.valueOf(initialTabName) }
+            .getOrNull()
+            ?: return@LaunchedEffect
+
+        // 같은 탭이면 불필요한 호출 방지
+        if (uiState.selectedTab != tabType) {
+            viewModel.onTabSelected(tabType)
+        }
     }
 
     HomeScreenContent(
@@ -78,6 +98,7 @@ fun HomeScreenContent(
         TopLogoBar(
             modifier = Modifier.padding(top = 11.dp)
         )
+
         uiState.greeting?.let {
             GreetingBar(
                 nickname = uiState.nickname,
@@ -139,31 +160,7 @@ private fun HomeScreenPreview() {
                 )
             ),
             selectedTab = HomeTabType.ALL,
-            contentCards = listOf(
-                HomeContentCardUiModel(
-                    archiveId = 1L,
-                    tabType = HomeTabType.ALL,
-                    tabLabel = "전체",
-                    cardType = HomeCardType.AI_SUMMARY,
-                    title = "2025 UI 디자인 트렌드: 글래스모피즘의 귀환",
-                    smallCardSummary = "저장한 'Design' 아티클 요약",
-                    mediumCardSummary = "UI 디자인 트렌드를 한눈에 정리한 핵심 요약.",
-                    imageUrls = listOf("https://picsum.photos/id/10/800/600")
-                ),
-                HomeContentCardUiModel(
-                    archiveId = 2L,
-                    tabType = HomeTabType.ALL,
-                    tabLabel = "전체",
-                    cardType = HomeCardType.COLLECTION,
-                    title = "AI 에이전트, 검색을 넘어 행동으로",
-                    smallCardSummary = "저장한 'AI' 아티클 요약",
-                    mediumCardSummary = "AI 에이전트가 실제 업무 흐름에서 하는 일과 변화 포인트.",
-                    imageUrls = listOf(
-                        "https://picsum.photos/id/11/800/600",
-                        "https://picsum.photos/id/12/800/600"
-                    )
-                )
-            )
+            contentCards = emptyList()
         ),
         onTabSelected = {},
         onCardClick = {}

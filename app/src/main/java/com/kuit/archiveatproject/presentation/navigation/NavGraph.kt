@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreTopicDetailScreen
@@ -26,10 +27,10 @@ import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingIntere
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingJobTimeScreen
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingScreen as OnboardingIntroScreen
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
+import com.kuit.archiveatproject.presentation.report.screen.ReportBalanceScreen
 import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
 import com.kuit.archiveatproject.presentation.report.screen.ReportStatusScreen
 import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
-import com.kuit.archiveatproject.presentation.report.screen.ReportBalanceScreen
 
 @Composable
 fun NavGraph(
@@ -80,9 +81,7 @@ fun NavGraph(
             OnboardingJobTimeScreen(
                 viewModel = onboardingViewModel,
                 onNext = {
-                    navController.navigate(Route.OnboardingInterest.route) {
-                        launchSingleTop = true
-                    }
+                    navController.navigate(Route.OnboardingInterest.route) { launchSingleTop = true }
                 }
             )
         }
@@ -114,9 +113,21 @@ fun NavGraph(
             startDestination = Route.Home.route,
             route = Route.Main.route
         ) {
-            composable(route = Route.Home.route) {
+
+            composable(
+                route = Route.Home.route,
+                arguments = listOf(
+                    navArgument("tab") {
+                        type = NavType.StringType
+                        defaultValue = HomeTabType.ALL.name
+                    }
+                )
+            ) { backStackEntry ->
+                val tabName = backStackEntry.arguments?.getString("tab") ?: HomeTabType.ALL.name
+
                 HomeScreen(
                     modifier = screenModifier,
+                    initialTabName = tabName,
                     onClickCollectionCard = { collectionId ->
                         navController.navigate(Route.NewsletterCollection.createRoute(collectionId))
                     },
@@ -129,14 +140,9 @@ fun NavGraph(
             composable(route = Route.Explore.route) {
                 ExploreScreen(
                     modifier = screenModifier,
-                    onInboxClick = {
-                        navController.navigate(Route.ExploreInbox.route)
-                    },
+                    onInboxClick = { navController.navigate(Route.ExploreInbox.route) },
                     onTopicClick = { topicId, topicName ->
-                        navController.currentBackStackEntry
-                            ?.savedStateHandle
-                            ?.set("topicName", topicName)
-
+                        navController.currentBackStackEntry?.savedStateHandle?.set("topicName", topicName)
                         navController.navigate(Route.ExploreTopicDetail.createRoute(topicId))
                     }
                 )
@@ -144,9 +150,7 @@ fun NavGraph(
 
             composable(route = Route.ExploreInbox.route) {
                 InboxScreen(
-                    onBackToExploreFirstDepth = {
-                        navController.popBackStack(Route.Explore.route, inclusive = false)
-                    },
+                    onBackToExploreFirstDepth = { navController.popBackStack(Route.Explore.route, inclusive = false) },
                     onOpenOriginal = { userNewsletterId ->
                         navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
                     },
@@ -159,11 +163,7 @@ fun NavGraph(
                 arguments = listOf(navArgument("topicId") { type = NavType.LongType })
             ) { backStackEntry ->
                 val topicId = backStackEntry.arguments!!.getLong("topicId")
-                val topicName =
-                    navController.previousBackStackEntry
-                        ?.savedStateHandle
-                        ?.get<String>("topicName")
-                        ?: ""
+                val topicName = navController.previousBackStackEntry?.savedStateHandle?.get<String>("topicName") ?: ""
 
                 ExploreTopicDetailScreen(
                     modifier = screenModifier,
@@ -227,12 +227,8 @@ fun NavGraph(
             composable(route = Route.Report.route) {
                 ReportScreen(
                     padding = padding,
-                    onClickStatus = {
-                        navController.navigate(Route.ReportStatus.route)
-                    },
-                    onClickBalance = {
-                        navController.navigate(Route.ReportBalance.route)
-                    }
+                    onClickStatus = { navController.navigate(Route.ReportStatus.route) },
+                    onClickBalance = { navController.navigate(Route.ReportBalance.route) }
                 )
             }
 
@@ -240,7 +236,7 @@ fun NavGraph(
                 ReportStatusScreen(
                     onBackClick = { navController.popBackStack() },
                     onClickNewsletter = {
-                        navController.navigate(Route.Home.route) {
+                        navController.navigate(Route.Home.createRoute(HomeTabType.ALL)) {
                             popUpTo(Route.Main.route) { inclusive = false }
                             launchSingleTop = true
                         }
@@ -256,7 +252,13 @@ fun NavGraph(
 
             composable(route = Route.ReportBalance.route) {
                 ReportBalanceScreen(
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
+                    onClickCta = { tabType ->
+                        navController.navigate(Route.Home.createRoute(tabType)) {
+                            popUpTo(Route.Main.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
 
