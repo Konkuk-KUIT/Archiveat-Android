@@ -2,6 +2,7 @@ package com.kuit.archiveatproject.presentation.report.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +30,7 @@ import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
 import com.kuit.archiveatproject.presentation.report.component.interestgap.InterestGapBubbleChart
 import com.kuit.archiveatproject.presentation.report.component.interestgap.InterestGapSelectedDetail
+import com.kuit.archiveatproject.presentation.report.model.ReportInterestGapAnalysisUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportInterestGapAnalysisViewModel
 import com.kuit.archiveatproject.presentation.report.model.top4ByGap
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
@@ -40,32 +43,6 @@ fun ReportInterestGapAnalysisScreen(
     viewModel: ReportInterestGapAnalysisViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val topics = uiState.topics
-    val top4 = remember(topics) { topics.top4ByGap() }
-
-    var selectedId by remember { mutableStateOf<Long?>(null) }
-
-    // Default: 1위 선택
-    LaunchedEffect(top4) {
-        if (selectedId == null) selectedId = top4.firstOrNull()?.id
-    }
-
-    val selected = remember(top4, selectedId) {
-        top4.firstOrNull { it.id == selectedId } ?: top4.firstOrNull()
-    }
-
-    val selectedIndex = remember(top4, selectedId) {
-        val idx = top4.indexOfFirst { it.id == selectedId }
-        if (idx >= 0) idx else 0
-    }
-
-    val selectedTagBgColor =
-        when (selectedIndex) {
-            0 -> ArchiveatProjectTheme.colors.primary
-            1 -> ArchiveatProjectTheme.colors.sub_2
-            2 -> ArchiveatProjectTheme.colors.sub_1
-            else -> ArchiveatProjectTheme.colors.sub_3
-        }
 
     Box(
         modifier = Modifier
@@ -74,74 +51,137 @@ fun ReportInterestGapAnalysisScreen(
             .background(Color.White)
             .systemBarsPadding()
     ) {
-        Column (
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            BackTopBar(
-                title = "관심사 갭 분석",
-                onBack = onBack,
-                height = 56
-            )
-            LazyColumn {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(Modifier.height(32.dp))
+        when {
+            uiState.isLoading -> {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = ArchiveatProjectTheme.colors.primary
+                )
+            }
 
-                        Text(
-                            text = "무엇이 쌓여가고 있나요?",
-                            style = ArchiveatProjectTheme.typography.Heading_2_bold,
-                            color = ArchiveatProjectTheme.colors.gray950
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "원을 눌러 상세 현황을 확인해보세요.",
-                            style = ArchiveatProjectTheme.typography.Body_2_medium,
-                            color = ArchiveatProjectTheme.colors.gray600
-                        )
-                        Spacer(Modifier.height(8.dp))
+            uiState.isError -> {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(horizontal = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = uiState.errorMessage ?: "데이터를 불러오지 못했어요.",
+                        style = ArchiveatProjectTheme.typography.Body_2_medium,
+                        color = ArchiveatProjectTheme.colors.gray700
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    PrimaryRoundedButton(
+                        text = "다시 시도",
+                        onClick = { viewModel.fetchInterestGap() },
+                        fullWidth = false,
+                        containerColor = ArchiveatProjectTheme.colors.black,
+                        cornerRadiusDp = 12
+                    )
+                }
+            }
 
-                        InterestGapBubbleChart(
-                            topicsTop4 = top4,
-                            selectedTopicId = selectedId,
-                            onSelectTopic = { selectedId = it }
-                        )
+            else -> {
+                ReportInterestGapAnalysisContent(
+                    uiState = uiState,
+                    onBack = onBack,
+                    onClickTopicShortcut = onClickTopicShortcut
+                )
+            }
+        }
+    }
+}
 
-                        Spacer(Modifier.height(40.dp))
+@Composable
+private fun BoxScope.ReportInterestGapAnalysisContent(
+    uiState: ReportInterestGapAnalysisUiState,
+    onBack: () -> Unit,
+    onClickTopicShortcut: (topicId: Long, topicName: String) -> Unit
+) {
+    val topics = uiState.topics
+    val top4 = remember(topics) { topics.top4ByGap() }
+    var selectedId by remember { mutableStateOf<Long?>(null) }
 
-                        selected?.let {
-                            InterestGapSelectedDetail(selected = it, tagBgColor = selectedTagBgColor)
-                        }
+    LaunchedEffect(top4) {
+        if (selectedId == null) selectedId = top4.firstOrNull()?.id
+    }
 
-                        Spacer(Modifier.height(90.dp)) // CTA에 가리지 않게
+    val selected = remember(top4, selectedId) {
+        top4.firstOrNull { it.id == selectedId } ?: top4.firstOrNull()
+    }
+
+    val selectedTagBgColor = when (top4.indexOfFirst { it.id == selectedId }) {
+        0 -> ArchiveatProjectTheme.colors.primary
+        1 -> ArchiveatProjectTheme.colors.sub_2
+        2 -> ArchiveatProjectTheme.colors.sub_1
+        else -> ArchiveatProjectTheme.colors.sub_3
+    }
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        BackTopBar(
+            title = "관심사 갭 분석",
+            onBack = onBack,
+            height = 56
+        )
+        LazyColumn {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(Modifier.height(32.dp))
+
+                    Text(
+                        text = "무엇이 쌓여가고 있나요?",
+                        style = ArchiveatProjectTheme.typography.Heading_2_bold,
+                        color = ArchiveatProjectTheme.colors.gray950
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "원을 눌러 상세 현황을 확인해보세요.",
+                        style = ArchiveatProjectTheme.typography.Body_2_medium,
+                        color = ArchiveatProjectTheme.colors.gray600
+                    )
+                    Spacer(Modifier.height(8.dp))
+
+                    InterestGapBubbleChart(
+                        topicsTop4 = top4,
+                        selectedTopicId = selectedId,
+                        onSelectTopic = { selectedId = it }
+                    )
+
+                    Spacer(Modifier.height(40.dp))
+
+                    selected?.let {
+                        InterestGapSelectedDetail(selected = it, tagBgColor = selectedTagBgColor)
                     }
+
+                    Spacer(Modifier.height(90.dp))
                 }
             }
         }
+    }
 
-        // Sticky CTA
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .background(Color.White)
-                .padding(horizontal = 20.dp)
-        ) {
-            PrimaryRoundedButton(
-                text = selected?.name?.let { "'$it' 바로가기" } ?: "바로가기",
-                onClick = {
-                    selected?.topicId?.let { topicId ->
-                        onClickTopicShortcut(topicId, selected.name)
-                    }
-                },
-                enabled = selected?.topicId != null,
-                containerColor = ArchiveatProjectTheme.colors.black,
-                cornerRadiusDp = 12
-            )
-        }
+    Column(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .background(Color.White)
+            .padding(horizontal = 20.dp)
+    ) {
+        PrimaryRoundedButton(
+            text = selected?.name?.let { "'$it' 바로가기" } ?: "바로가기",
+            onClick = {
+                selected?.topicId?.let { topicId ->
+                    onClickTopicShortcut(topicId, selected.name)
+                }
+            },
+            enabled = selected?.topicId != null,
+            containerColor = ArchiveatProjectTheme.colors.black,
+            cornerRadiusDp = 12
+        )
     }
 }
 
