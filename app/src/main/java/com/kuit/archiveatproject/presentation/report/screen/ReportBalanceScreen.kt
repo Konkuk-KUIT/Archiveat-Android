@@ -37,7 +37,7 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun ReportBalanceScreen(
-    onBackClick: () -> Unit, // ✅ 추가 (NavGraph랑 연결)
+    onBackClick: () -> Unit,
     viewModel: ReportBalanceViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -49,7 +49,7 @@ fun ReportBalanceScreen(
 
     ReportBalanceContent(
         uiState = uiState,
-        onBackClick = onBackClick, // ✅ 전달
+        onBackClick = onBackClick,
         modifier = modifier
     )
 }
@@ -57,7 +57,7 @@ fun ReportBalanceScreen(
 @Composable
 fun ReportBalanceContent(
     uiState: ReportUiState,
-    onBackClick: () -> Unit, // ✅ 추가
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val position = uiState.toKnowledgePosition()
@@ -67,7 +67,7 @@ fun ReportBalanceContent(
         topBar = {
             BackTopBar(
                 title = "나의 소비 밸런스",
-                onBack = onBackClick // ✅ 연결
+                onBack = onBackClick
             )
         },
         bottomBar = {
@@ -163,7 +163,7 @@ private fun ReportBalanceContentPreview() {
     ArchiveatProjectTheme {
         ReportBalanceContent(
             uiState = fakeReportBalanceUiState(),
-            onBackClick = {} // ✅ Preview용
+            onBackClick = {}
         )
     }
 }

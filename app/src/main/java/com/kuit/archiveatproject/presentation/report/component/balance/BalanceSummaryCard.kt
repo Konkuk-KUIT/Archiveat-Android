@@ -31,7 +31,6 @@ fun BalanceSummaryCard(
             .padding(18.dp)
     ) {
 
-        // ===== 콘텐츠 길이 =====
         BalanceBarRow(
             title = "콘텐츠 길이",
             leftLabel = "10분 미만",
@@ -44,7 +43,6 @@ fun BalanceSummaryCard(
 
         Spacer(Modifier.height(21.dp))
 
-        // ===== 소비 목적 =====
         BalanceBarRow(
             title = "소비 목적",
             leftLabel = "현재 필요",

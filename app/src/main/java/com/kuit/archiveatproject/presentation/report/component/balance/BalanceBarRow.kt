@@ -19,6 +19,17 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
+private const val MIN_WEIGHT = 0.0001f
+
+private fun safeWeight(value: Float): Float {
+    // RowScope.weight는 반드시 0보다 커야 함
+    return when {
+        value.isNaN() || value.isInfinite() -> MIN_WEIGHT
+        value <= 0f -> MIN_WEIGHT
+        else -> value
+    }
+}
+
 @Composable
 fun BalanceBarRow(
     title: String,
@@ -29,6 +40,14 @@ fun BalanceBarRow(
     rightPercent: Int,
     rightColor: Color
 ) {
+    val leftP = leftPercent.coerceIn(0, 100)
+    val rightP = rightPercent.coerceIn(0, 100)
+    val sum = leftP + rightP
+    val leftRatio = if (sum == 0) 0.5f else leftP.toFloat() / sum.toFloat()
+    val rightRatio = 1f - leftRatio
+    val leftW = safeWeight(leftRatio)
+    val rightW = safeWeight(rightRatio)
+
     Column {
 
         // 상단 타이틀
@@ -59,7 +78,7 @@ fun BalanceBarRow(
                             .copy(color = ArchiveatProjectTheme.colors.gray500)
                             .toSpanStyle()
                     ) {
-                        append("${leftPercent}%")
+                        append("${leftP}%")
                     }
                 }
             )
@@ -78,7 +97,7 @@ fun BalanceBarRow(
                             .copy(color = ArchiveatProjectTheme.colors.gray500)
                             .toSpanStyle()
                     ) {
-                        append("${rightPercent}%")
+                        append("${rightP}%")
                     }
                 }
             )
@@ -98,7 +117,7 @@ fun BalanceBarRow(
         ) {
             Box(
                 modifier = Modifier
-                    .weight(leftPercent.toFloat())
+                    .weight(leftW)
                     .fillMaxHeight()
                     .background(
                         color = leftColor,
@@ -110,7 +129,7 @@ fun BalanceBarRow(
             )
             Box(
                 modifier = Modifier
-                    .weight(rightPercent.toFloat())
+                    .weight(rightW)
                     .fillMaxHeight()
                     .background(
                         color = rightColor,

@@ -29,8 +29,6 @@ import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingVie
 import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
 import com.kuit.archiveatproject.presentation.report.screen.ReportStatusScreen
 import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
-
-// ✅ 너 프로젝트에 이미 있다고 한 3-2-2 화면 (패키지/이름만 맞춰서 import 해줘)
 import com.kuit.archiveatproject.presentation.report.screen.ReportBalanceScreen
 
 @Composable
@@ -226,23 +224,18 @@ fun NavGraph(
                 )
             }
 
-            // =========================================================
-            // ✅ Report 탭: 먼저 ReportScreen으로 들어가야 함 (3-2-0 느낌)
-            // =========================================================
             composable(route = Route.Report.route) {
                 ReportScreen(
                     padding = padding,
                     onClickStatus = {
                         navController.navigate(Route.ReportStatus.route)
                     },
-                    // ✅ 여기가 이번 3-2-2 핵심: 나의 소비 밸런스 버튼 → ReportBalanceScreen
                     onClickBalance = {
                         navController.navigate(Route.ReportBalance.route)
                     }
                 )
             }
 
-            // ✅ 3-2-1 상태 화면
             composable(route = Route.ReportStatus.route) {
                 ReportStatusScreen(
                     onBackClick = { navController.popBackStack() },
@@ -261,7 +254,6 @@ fun NavGraph(
                 )
             }
 
-            // ✅ 3-2-2 소비 밸런스 화면
             composable(route = Route.ReportBalance.route) {
                 ReportBalanceScreen(
                     onBackClick = { navController.popBackStack() }
