@@ -39,7 +39,10 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun ReportStatusScreen(
-    onBackClick: () -> Unit, // ✅ 추가: NavGraph에서 popBackStack 넘겨줄 것
+    onBackClick: () -> Unit,
+    onClickNewsletter: () -> Unit,
+    onClickExplore: () -> Unit,
+
     viewModel: ReportStatusViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -49,12 +52,13 @@ fun ReportStatusScreen(
         viewModel.fetchReportStatus()
     }
 
-    // ✅ 시스템 뒤로가기(제스처/버튼)도 동일하게 처리
     BackHandler { onBackClick() }
 
     ReportStatusContent(
         uiState = uiState,
-        onBackClick = onBackClick, // ✅ 전달
+        onBackClick = onBackClick,
+        onClickNewsletter = onClickNewsletter,
+        onClickExplore = onClickExplore,
         modifier = modifier
     )
 }
@@ -62,7 +66,10 @@ fun ReportStatusScreen(
 @Composable
 fun ReportStatusContent(
     uiState: ReportUiState,
-    onBackClick: () -> Unit, // ✅ 추가
+    onBackClick: () -> Unit,
+    onClickNewsletter: () -> Unit,
+    onClickExplore: () -> Unit,
+
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -70,14 +77,11 @@ fun ReportStatusContent(
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.gray50)
     ) {
-        // ✅ TopBar 뒤로가기 연결
         BackTopBar(title = "핵심 소비 현황", onBack = onBackClick)
-
-        // ===== 스크롤 영역 =====
+        
         LazyColumn(
             modifier = Modifier.weight(1f),
         ) {
-
             item {
                 Box(
                     modifier = Modifier
@@ -160,14 +164,26 @@ fun ReportStatusContent(
                 .background(ArchiveatProjectTheme.colors.white)
                 .padding(horizontal = 20.dp, vertical = 14.dp)
         ) {
-            ReportButtonComponent(
-                text = "안 읽은 콘텐츠 보러 가기",
-                true,
-                onClick = { /* TODO */ },
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .navigationBarsPadding()
-            )
+                    .navigationBarsPadding(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ReportButtonComponent(
+                    text = "뉴스레터 보러가기",
+                    true,
+                    onClick = onClickNewsletter,
+                    modifier = Modifier.weight(1f)
+                )
+
+                ReportButtonComponent(
+                    text = "콘텐츠 탐색하기",
+                    true,
+                    onClick = onClickExplore,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
@@ -206,7 +222,9 @@ private fun ReportStatusContentPreview() {
                 weeklyFeedbackWeekLabel = "",
                 weeklyFeedbackBody = ""
             ),
-            onBackClick = {}, // ✅ Preview용
+            onBackClick = {},
+            onClickNewsletter = {},
+            onClickExplore = {},
             modifier = Modifier.fillMaxSize()
         )
     }

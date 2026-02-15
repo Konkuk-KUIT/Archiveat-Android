@@ -17,7 +17,7 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun ReportScreen(
     padding: PaddingValues,
-    onClickStatus: () -> Unit, // ✅ 추가
+    onClickStatus: () -> Unit,
     viewModel: ReportViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -35,7 +35,7 @@ fun ReportScreen(
         ReportScreenContent(
             uiState = uiState,
             padding = padding,
-            onClickStatus = onClickStatus // ✅ 전달
+            onClickStatus = onClickStatus
         )
     }
 }
@@ -44,7 +44,7 @@ fun ReportScreen(
 fun ReportScreenContent(
     uiState: ReportUiState,
     padding: PaddingValues,
-    onClickStatus: () -> Unit // ✅ 추가
+    onClickStatus: () -> Unit
 ) {
     val topPadding = padding.calculateTopPadding()
     val bottomPadding = padding.calculateBottomPadding()
@@ -100,7 +100,7 @@ fun ReportScreenContent(
                     lightPercentage = uiState.balance.lightPercentage,
                     nowPercentage = uiState.balance.nowPercentage,
                     interestGaps = uiState.interestGaps,
-                    onClickStatus = onClickStatus // ✅ 핵심 연결
+                    onClickStatus = onClickStatus
                 )
             }
         }
