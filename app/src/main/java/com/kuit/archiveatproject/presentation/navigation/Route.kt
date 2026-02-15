@@ -36,6 +36,7 @@ sealed class Route (
             "webview?url=${android.net.Uri.encode(url)}"
     }
     data object Report: Route(route = "report")
+    data object ReportInterestGapAnalysis: Route(route = "report/interest-gap-analysis")
     data object Etc: Route(route = "etc")
 
 }

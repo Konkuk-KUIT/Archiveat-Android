@@ -3,12 +3,9 @@ package com.kuit.archiveatproject.presentation.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,7 +15,6 @@ import androidx.navigation.navArgument
 import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
 import com.kuit.archiveatproject.presentation.explore.screen.ExploreTopicDetailScreen
-import com.kuit.archiveatproject.presentation.explore.viewmodel.ExploreTopicDetailViewModel
 import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
 import com.kuit.archiveatproject.presentation.inbox.screen.InboxScreen
 import com.kuit.archiveatproject.presentation.login.screen.LoginScreen
@@ -31,6 +27,7 @@ import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingJobTim
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingScreen as OnboardingIntroScreen
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
+import com.kuit.archiveatproject.presentation.report.screen.ReportInterestGapAnalysisScreen
 import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
 
 @Composable
@@ -227,7 +224,22 @@ fun NavGraph(
             }
             composable(route = Route.Report.route) {
                 ReportScreen(
-                    padding = padding
+                    padding = padding,
+                    onClickInterestGapCard = {
+                        navController.navigate(Route.ReportInterestGapAnalysis.route)
+                    }
+                )
+            }
+            composable(route = Route.ReportInterestGapAnalysis.route) {
+                ReportInterestGapAnalysisScreen(
+                    padding = padding,
+                    onBack = { navController.popBackStack() },
+                    onClickTopicShortcut = { topicId, topicName ->
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("topicName", topicName)
+                        navController.navigate(Route.ExploreTopicDetail.createRoute(topicId))
+                    }
                 )
             }
             composable(route = Route.Etc.route) {
