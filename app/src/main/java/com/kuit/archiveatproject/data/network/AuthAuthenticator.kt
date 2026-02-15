@@ -24,7 +24,8 @@ class AuthAuthenticator @Inject constructor(
 
     override fun authenticate(route: Route?, response: Response): Request? {
         // reissue 자체가 실패한 경우에는 재시도 루프를 막음
-        if (response.request.url.encodedPath == "/auth/reissue") return null
+        val path = response.request.url.encodedPath.removeSuffix("/")
+        if (path.endsWith("/auth/reissue")) return null
         // 최대 1회만 재시도 (원요청 + 재시도 요청)
         if (responseCount(response) >= 2) return null
 
