@@ -12,7 +12,7 @@ data class ReportInterestGapResponseDto(
 @Serializable
 data class ReportInterestGapDto(
     @SerialName("id")
-    val id: Long?,
+    val id: Long? = null,
 
     @SerialName("name")
     val name: String,
