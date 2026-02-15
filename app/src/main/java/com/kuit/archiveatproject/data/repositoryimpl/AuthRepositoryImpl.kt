@@ -43,11 +43,12 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout() {
         try {
-            // 서버에 로그아웃 요청 (실패할 수도 있음)
-            authApiService.logout()
+            // 서버 로그아웃 실패는 로컬 로그아웃을 막지 않음
+            runCatching { authApiService.logout() }
         } finally {
             // 로컬 로그아웃은 무조건 보장
             tokenRepository.clearAccessToken()
+            tokenRepository.clearRefreshToken()
         }
     }
 
@@ -59,8 +60,8 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun reissue(): String {
-        // 이번 MVP(재시작 로그아웃)에서는 보통 안 씀
-        val res = authApiService.reissue()
+        val cookie = tokenRepository.getCachedRefreshToken()?.let { "refreshToken=$it" }
+        val res = authApiService.reissue(cookie)
         val token = res.requireData().accessToken
         tokenRepository.saveAccessToken(token)
         return token

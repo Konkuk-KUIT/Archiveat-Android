@@ -384,7 +384,7 @@ private fun ExploreContentPreview() {
 
             onCategorySelected = {},
             onInboxClick = {},
-            onTopicClick = {} as (Long, String) -> Unit,
+            onTopicClick = { _, _ -> },
 
             onSearchFocus = {
                 searchUiState = searchUiState.copy(isSearchMode = true)
