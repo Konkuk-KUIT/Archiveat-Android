@@ -64,48 +64,57 @@ fun ReportInterestGapCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             /** 저장 / 소비 헤더 */
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 64.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            if (interestGaps.isEmpty()) {
                 Text(
-                    text = "저장",
-                    style = ArchiveatProjectTheme.typography.Caption_medium,
-                    color = ArchiveatProjectTheme.colors.gray600
+                    text = "아직 저장한 아티클이 없습니다",
+                    style = ArchiveatProjectTheme.typography.Body_2_medium,
+                    color = ArchiveatProjectTheme.colors.gray500,
+                    modifier = Modifier.fillMaxWidth(),
                 )
-                Text(
-                    text = "소비",
-                    style = ArchiveatProjectTheme.typography.Caption_medium,
-                    color = ArchiveatProjectTheme.colors.gray600
-                )
-            }
-
-            interestGaps.forEachIndexed { index, item ->
+            } else {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(34.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(start = 64.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = item.topicName.toDisplayTopicName(),
-                        style = ArchiveatProjectTheme.typography.Body_2_medium,
-                        color = ArchiveatProjectTheme.colors.gray600,
-                        modifier = Modifier.width(52.dp)
+                        text = "저장",
+                        style = ArchiveatProjectTheme.typography.Caption_medium,
+                        color = ArchiveatProjectTheme.colors.gray600
                     )
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    BasicProgressBar(
-                        percentage = item.toConsumptionPercentage(),
-                        modifier = Modifier.weight(1f)
+                    Text(
+                        text = "소비",
+                        style = ArchiveatProjectTheme.typography.Caption_medium,
+                        color = ArchiveatProjectTheme.colors.gray600
                     )
                 }
 
-                if (index != interestGaps.lastIndex) {
-                    Spacer(modifier = Modifier.height(12.dp))
+                interestGaps.forEachIndexed { index, item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(36.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = item.topicName.toDisplayTopicName(),
+                            style = ArchiveatProjectTheme.typography.Body_2_medium,
+                            color = ArchiveatProjectTheme.colors.gray600,
+                            modifier = Modifier.width(52.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        BasicProgressBar(
+                            percentage = item.toConsumptionPercentage(),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    if (index != interestGaps.lastIndex) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
         }
@@ -145,7 +154,6 @@ private fun ReportInterestGapCardPreview() {
                     MainInterestGapUiItem("건강", 50, 5),
                     MainInterestGapUiItem("AI", 30, 25),
 
-                    // 🔥 줄바꿈 테스트용
                     MainInterestGapUiItem("인공지능", 40, 12),
                     MainInterestGapUiItem("백엔드/인프라", 32, 8),
                     MainInterestGapUiItem("프론트/모바일", 27, 15),
