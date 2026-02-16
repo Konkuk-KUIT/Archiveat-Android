@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
 import com.kuit.archiveatproject.presentation.report.component.interestgap.InterestGapBubbleChart
 import com.kuit.archiveatproject.presentation.report.component.interestgap.InterestGapSelectedDetail
+import com.kuit.archiveatproject.presentation.report.model.InterestGapTopicUiModel
 import com.kuit.archiveatproject.presentation.report.model.ReportInterestGapAnalysisUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportInterestGapAnalysisViewModel
 import com.kuit.archiveatproject.presentation.report.model.top4ByGap
@@ -124,7 +126,11 @@ private fun BoxScope.ReportInterestGapAnalysisContent(
             onBack = onBack,
             height = 56
         )
-        LazyColumn {
+        LazyColumn (
+            modifier = Modifier
+                .fillMaxHeight()
+                .background(ArchiveatProjectTheme.colors.white)
+        ){
             item {
                 Column(
                     modifier = Modifier
@@ -188,9 +194,42 @@ private fun BoxScope.ReportInterestGapAnalysisContent(
 @Preview
 @Composable
 private fun ReportInterestGapAnalysisScreenPrev() {
-    ReportInterestGapAnalysisScreen(
-        padding = PaddingValues(0.dp),
-        onBack = {},
-        onClickTopicShortcut = { _, _ -> }
-    )
+    ArchiveatProjectTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ReportInterestGapAnalysisContent(
+                uiState = previewInterestGapUiState(),
+                onBack = {},
+                onClickTopicShortcut = { _, _ -> }
+            )
+        }
+    }
 }
+
+private fun previewInterestGapUiState() = ReportInterestGapAnalysisUiState(
+    topics = listOf(
+        InterestGapTopicUiModel(
+            id = 1L,
+            name = "테크",
+            savedCount = 30,
+            readCount = 8
+        ),
+        InterestGapTopicUiModel(
+            id = 2L,
+            name = "경제",
+            savedCount = 25,
+            readCount = 11
+        ),
+        InterestGapTopicUiModel(
+            id = 3L,
+            name = "디자인",
+            savedCount = 18,
+            readCount = 9
+        ),
+        InterestGapTopicUiModel(
+            id = 4L,
+            name = "커리어",
+            savedCount = 16,
+            readCount = 6
+        )
+    )
+)
