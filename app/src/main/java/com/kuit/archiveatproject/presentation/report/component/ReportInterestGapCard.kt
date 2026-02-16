@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.core.util.noRippleClickable
@@ -31,6 +32,8 @@ fun ReportInterestGapCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val leftLabelColor = Color(0xFF55417A)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -81,7 +84,7 @@ fun ReportInterestGapCard(
                     Text(
                         text = "저장",
                         style = ArchiveatProjectTheme.typography.Caption_medium,
-                        color = ArchiveatProjectTheme.colors.gray600
+                        color = leftLabelColor
                     )
                     Text(
                         text = "소비",
