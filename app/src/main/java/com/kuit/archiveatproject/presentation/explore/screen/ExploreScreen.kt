@@ -1,7 +1,9 @@
 package com.kuit.archiveatproject.presentation.explore.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
@@ -137,8 +140,8 @@ fun ExploreContent(
     val selectedCategory = uiState.categories
         .firstOrNull { it.id == uiState.selectedCategoryId }
 
-    val focusManager = LocalFocusManager.current
     val listState = rememberLazyListState()
+    val focusManager = LocalFocusManager.current
 
     var searchBarBottomY by remember { mutableStateOf(0) }
     val headerHeightPx = with(LocalDensity.current) { 136.dp.toPx().toInt() }
@@ -147,12 +150,6 @@ fun ExploreContent(
         modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
-            .pointerInput(Unit) {
-                detectTapGestures {
-                    focusManager.clearFocus()
-                    onClearSearchMode()
-                }
-            }
     ) {
 
         // ===== 고정 헤더 =====
@@ -187,7 +184,6 @@ fun ExploreContent(
 
             item { Spacer(Modifier.height(16.dp)) }
 
-            // SearchBar 위치 측정
             item {
                 Box(
                     modifier = Modifier
@@ -246,8 +242,23 @@ fun ExploreContent(
             }
         }
 
-        // =====  Overlay Search Panel =====
+        // ===== Overlay Search Panel =====
         if (searchUiState.isSearchMode && searchBarBottomY > 0) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Transparent)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) {
+                        focusManager.clearFocus()
+                        onClearSearchMode()
+                    }
+                    .zIndex(2f)
+            )
+
             ExploreSearchSuggestionPanel(
                 recommendedKeywords = searchUiState.recommendedKeywords,
                 recentSearches = searchUiState.recentSearches,

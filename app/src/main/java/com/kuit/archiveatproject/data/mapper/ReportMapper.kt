@@ -88,6 +88,7 @@ fun ReportBalanceDto.toDomain(): ReportBalance {
 
 fun ReportMainInterestGapDto.toDomain(): ReportMainInterestGap =
     ReportMainInterestGap(
+        topicId = topicId,
         topicName = topicName,
         savedCount = savedCount,
         readCount = readCount

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.util.Log
 import com.kuit.archiveatproject.domain.entity.Report
+import com.kuit.archiveatproject.domain.repository.ExploreRepository
 import com.kuit.archiveatproject.domain.repository.ReportRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ReportViewModel @Inject constructor(
     private val reportRepository: ReportRepository,
+    private val exploreRepository: ExploreRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReportUiState())
@@ -22,12 +24,26 @@ class ReportViewModel @Inject constructor(
 
     fun fetchReport() {
         viewModelScope.launch {
+
+            val exploreCategories = runCatching {
+                exploreRepository.getExplore().categories
+            }.getOrDefault(emptyList())
+
+            val topicMetaById = exploreCategories
+                .flatMap { category ->
+                    category.topics.map { topic ->
+                        topic.id to category.name
+                    }
+                }
+                .toMap()
+
             runCatching { reportRepository.getReport() }
                 .onSuccess { report ->
-                    _uiState.value = report.toUiState()
+
+                    _uiState.value = report.toUiState(topicMetaById)
+
                 }
                 .onFailure { throwable ->
-                    Log.e("ReportViewModel", "fetchReport failed", throwable)
                     _uiState.value = ReportUiState(
                         isError = true,
                         errorMessage = throwable.message
@@ -36,7 +52,9 @@ class ReportViewModel @Inject constructor(
         }
     }
 
-    private fun Report.toUiState(): ReportUiState =
+    private fun Report.toUiState(
+        topicMetaById: Map<Long, String>
+    ): ReportUiState =
         ReportUiState(
             referenceDate = serverTimestamp,
             totalSavedCount = status.totalSavedCount,
@@ -52,8 +70,17 @@ class ReportViewModel @Inject constructor(
                 patternQuote = balance.patternQuote
             ),
             interestGaps = interestGaps.map { gap ->
+
+                val categoryName = topicMetaById[gap.topicId]
+
+                val resolvedTopicName =
+                    if (gap.topicName == "기타" && categoryName != null)
+                        "$categoryName-기타"
+                    else
+                        gap.topicName
+
                 MainInterestGapUiItem(
-                    topicName = gap.topicName,
+                    topicName = resolvedTopicName,
                     savedCount = gap.savedCount,
                     readCount = gap.readCount
                 )

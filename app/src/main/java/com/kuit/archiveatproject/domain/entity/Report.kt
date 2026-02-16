@@ -9,6 +9,7 @@ data class Report(
     val interestGaps: List<ReportMainInterestGap>
 )
 data class ReportMainInterestGap(
+    val topicId: Long,
     val topicName: String,
     val savedCount: Int,
     val readCount: Int
