@@ -31,19 +31,29 @@ class ReportInterestGapAnalysisViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(isLoading = true, isError = false, errorMessage = null)
             runCatching { reportRepository.getReportInterestGap() }
                 .onSuccess { topics ->
-                    val topicIdByName = runCatching {
-                        exploreRepository.getExplore()
-                            .categories
-                            .flatMap { it.topics }
-                            .groupBy { it.name }
-                            .mapValues { (_, groupedTopics) ->
-                                // 이름이 유일한 경우만 매핑한다. (예: "기타"는 카테고리마다 중복)
-                                groupedTopics.singleOrNull()?.id
+                    val exploreCategories = runCatching {
+                        exploreRepository.getExplore().categories
+                    }.getOrDefault(emptyList())
+                    val topicIdByName = exploreCategories
+                        .flatMap { it.topics }
+                        .groupBy { it.name }
+                        .mapValues { (_, groupedTopics) ->
+                            // 이름이 유일한 경우만 매핑한다. (예: "기타"는 카테고리마다 중복)
+                            groupedTopics.singleOrNull()?.id
+                        }
+                    val topicMetaById = exploreCategories
+                        .flatMap { category ->
+                            category.topics.map { topic ->
+                                topic.id to TopicMeta(
+                                    categoryName = category.name,
+                                    topicName = topic.name
+                                )
                             }
-                    }.getOrDefault(emptyMap())
+                        }
+                        .toMap()
 
                     _uiState.value = ReportInterestGapAnalysisUiState(
-                        topics = topics.map { it.toUiModel(topicIdByName) },
+                        topics = topics.map { it.toUiModel(topicIdByName, topicMetaById) },
                         isLoading = false
                     )
                 }
@@ -58,14 +68,31 @@ class ReportInterestGapAnalysisViewModel @Inject constructor(
         }
     }
 
-    private fun ReportInterestGap.toUiModel(topicIdByName: Map<String, Long?>): InterestGapTopicUiModel {
+    private fun ReportInterestGap.toUiModel(
+        topicIdByName: Map<String, Long?>,
+        topicMetaById: Map<Long, TopicMeta>
+    ): InterestGapTopicUiModel {
         val resolvedTopicId = id ?: topicIdByName[topicName]
+        val bubbleTitle = if (topicName == "기타") {
+            resolvedTopicId
+                ?.let { topicMetaById[it] }
+                ?.let { "${it.categoryName}-${it.topicName}" }
+                ?: topicName
+        } else {
+            topicName
+        }
         return InterestGapTopicUiModel(
             id = resolvedTopicId ?: topicName.hashCode().toLong(),
             name = topicName,
             savedCount = savedCount,
             readCount = readCount,
-            topicId = resolvedTopicId
+            topicId = resolvedTopicId,
+            bubbleTitle = bubbleTitle
         )
     }
+
+    private data class TopicMeta(
+        val categoryName: String,
+        val topicName: String
+    )
 }

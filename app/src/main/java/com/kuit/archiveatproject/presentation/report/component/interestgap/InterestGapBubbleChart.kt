@@ -13,12 +13,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.takeOrElse
 import com.kuit.archiveatproject.core.util.noRippleCircleClickable
 import com.kuit.archiveatproject.presentation.report.model.InterestGapTopicUiModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
@@ -80,7 +87,7 @@ fun InterestGapBubbleChart(
                 p1?.let { t ->
                     val d = purple.diameterIn(designW, designH) * scale
                     BubbleItem(
-                        title = t.name,
+                        title = t.bubbleTitle,
                         value = "+${t.gap}",
                         size = d,
                         bg = ArchiveatProjectTheme.colors.primary,
@@ -97,7 +104,7 @@ fun InterestGapBubbleChart(
                 p2?.let { t ->
                     val d = orange.diameterIn(designW, designH) * scale
                     BubbleItem(
-                        title = t.name,
+                        title = t.bubbleTitle,
                         value = "+${t.gap}",
                         size = d,
                         bg = ArchiveatProjectTheme.colors.sub_2,
@@ -114,7 +121,7 @@ fun InterestGapBubbleChart(
                 p3?.let { t ->
                     val d = blue.diameterIn(designW, designH) * scale
                     BubbleItem(
-                        title = t.name,
+                        title = t.bubbleTitle,
                         value = "+${t.gap}",
                         size = d,
                         bg = ArchiveatProjectTheme.colors.sub_1,
@@ -131,7 +138,7 @@ fun InterestGapBubbleChart(
                 p4?.let { t ->
                     val d = yellow.diameterIn(designW, designH) * scale
                     BubbleItem(
-                        title = t.name,
+                        title = t.bubbleTitle,
                         value = "+${t.gap}",
                         size = d,
                         bg = ArchiveatProjectTheme.colors.sub_3,
@@ -161,6 +168,11 @@ private fun BubbleItem(
     modifier: Modifier = Modifier,
 ) {
     val borderColor = if (isSelected) bg.copy(alpha = 0.4f) else Color.Transparent
+    val titleStyle = autoFitTitleTextStyle(
+        title = title,
+        size = size,
+        base = ArchiveatProjectTheme.typography.Subhead_1_bold
+    )
 
     Box(
         contentAlignment = Alignment.Center,
@@ -179,7 +191,7 @@ private fun BubbleItem(
             Text(
                 text = title,
                 color = content,
-                style = ArchiveatProjectTheme.typography.Subhead_1_bold,
+                style = titleStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -192,6 +204,36 @@ private fun BubbleItem(
             )
         }
     }
+}
+
+@Composable
+private fun autoFitTitleTextStyle(title: String, size: Dp, base: TextStyle): TextStyle {
+    val textMeasurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val maxWidthPx = with(density) { (size * 0.72f).roundToPx() }
+
+    val maxFontSize = base.fontSize.takeOrElse { 16.sp }
+    val minFontSize = 9.sp
+    val startStep = (maxFontSize.value * 2f).toInt()
+    val endStep = (minFontSize.value * 2f).toInt()
+
+    var fitted = minFontSize
+    for (step in startStep downTo endStep) {
+        val candidate = (step / 2f).sp
+        val result = textMeasurer.measure(
+            text = AnnotatedString(title),
+            style = base.copy(fontSize = candidate),
+            maxLines = 1,
+            overflow = TextOverflow.Clip,
+            constraints = Constraints(maxWidth = maxWidthPx)
+        )
+        if (!result.hasVisualOverflow) {
+            fitted = candidate
+            break
+        }
+    }
+
+    return base.copy(fontSize = fitted)
 }
 
 @Preview(showBackground = true)
