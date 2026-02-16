@@ -167,7 +167,7 @@ class ExploreViewModel @Inject constructor(
             "브랜드/마케팅" -> R.drawable.ic_topic_marketing
             "거시경제" -> R.drawable.ic_topic_macroeconomy
             "지정학/외교" -> R.drawable.ic_topic_diplomacy
-            "미국/중국" -> R.drawable.ic_topic_macroeconomy
+            "미국/중국" -> R.drawable.ic_topic_globe
             "글로벌 비즈니스" -> R.drawable.ic_topic_business
             "기후/에너지" -> R.drawable.ic_topic_climate
             "영화/OTT" -> R.drawable.ic_topic_movie
