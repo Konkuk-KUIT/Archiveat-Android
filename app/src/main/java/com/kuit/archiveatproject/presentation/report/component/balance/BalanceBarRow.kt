@@ -18,6 +18,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+import kotlin.math.roundToInt
 
 private const val MIN_WEIGHT = 0.0001f
 
@@ -46,8 +47,8 @@ fun BalanceBarRow(
     val leftRatio = if (sum > 0) leftRaw.toFloat() / sum.toFloat() else 0.5f
     val rightRatio = 1f - leftRatio
 
-    val displayLeftP = if (sum > 0) (leftRatio * 100f).toInt() else 0
-    val displayRightP = if (sum > 0) (rightRatio * 100f).toInt() else 0
+    val displayLeftP = if (sum > 0) (leftRatio * 100f).roundToInt().coerceIn(0, 100) else 0
+    val displayRightP = if (sum > 0) 100 - displayLeftP else 0
 
     val leftW = if (leftRaw == 0) 0f else safeWeight(leftRatio)
     val rightW = if (rightRaw == 0) 0f else safeWeight(rightRatio)
