@@ -38,7 +38,9 @@ fun BalanceBarRow(
     leftColor: Color,
     rightLabel: String,
     rightPercent: Int,
-    rightColor: Color
+    rightColor: Color,
+    leftLabelColor: Color = Color(0xFF7A5A00),
+    rightLabelColor: Color = Color(0xFF1E4E9E),
 ) {
     val leftRaw = leftPercent.coerceAtLeast(0)
     val rightRaw = rightPercent.coerceAtLeast(0)
@@ -70,14 +72,14 @@ fun BalanceBarRow(
                 text = buildAnnotatedString {
                     withStyle(
                         ArchiveatProjectTheme.typography.Caption_medium
-                            .copy(color = ArchiveatProjectTheme.colors.gray500)
+                            .copy(color = leftLabelColor)
                             .toSpanStyle()
                     ) {
                         append("$leftLabel ")
                     }
                     withStyle(
                         ArchiveatProjectTheme.typography.Caption_semibold
-                            .copy(color = ArchiveatProjectTheme.colors.gray500)
+                            .copy(color = leftLabelColor)
                             .toSpanStyle()
                     ) {
                         append("${displayLeftP}%")
@@ -89,14 +91,14 @@ fun BalanceBarRow(
                 text = buildAnnotatedString {
                     withStyle(
                         ArchiveatProjectTheme.typography.Caption_medium
-                            .copy(color = ArchiveatProjectTheme.colors.gray500)
+                            .copy(color = rightLabelColor)
                             .toSpanStyle()
                     ) {
                         append("$rightLabel ")
                     }
                     withStyle(
                         ArchiveatProjectTheme.typography.Caption_semibold
-                            .copy(color = ArchiveatProjectTheme.colors.gray500)
+                            .copy(color = rightLabelColor)
                             .toSpanStyle()
                     ) {
                         append("${displayRightP}%")
