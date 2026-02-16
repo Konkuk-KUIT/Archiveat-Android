@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class ReportStatusViewModel @Inject constructor(
@@ -29,6 +30,7 @@ class ReportStatusViewModel @Inject constructor(
                     _uiState.value = status.toUiState()
                 }
                 .onFailure { e ->
+                    if (e is CancellationException) throw e
                     Log.e("ReportStatusVM", "getReportStatus failed", e)
                     _uiState.value = ReportUiState(
                         isError = true,

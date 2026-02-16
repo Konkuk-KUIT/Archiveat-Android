@@ -151,7 +151,7 @@ fun ReportStatusContent(
             items(uiState.recentReadNewsletters) { item ->
                 RecentNewsletterComponent(
                     item = item,
-                    item.lastViewedAt,
+                    serverTimestamp = item.lastViewedAt,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
