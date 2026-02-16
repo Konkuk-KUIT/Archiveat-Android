@@ -101,10 +101,10 @@ fun ReportInterestGapCard(
                             text = item.topicName.toDisplayTopicName(),
                             style = ArchiveatProjectTheme.typography.Body_2_medium,
                             color = ArchiveatProjectTheme.colors.gray600,
-                            modifier = Modifier.width(52.dp)
+                            modifier = Modifier.width(58.dp)
                         )
 
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
 
                         BasicProgressBar(
                             percentage = item.toConsumptionPercentage(),
