@@ -53,7 +53,13 @@ class ReportInterestGapAnalysisViewModel @Inject constructor(
                         .toMap()
 
                     _uiState.value = ReportInterestGapAnalysisUiState(
-                        topics = topics.map { it.toUiModel(topicIdByName, topicMetaById) },
+                        topics = topics.mapIndexed { i, topic ->
+                            topic.toUiModel(
+                                index = i,
+                                topicIdByName = topicIdByName,
+                                topicMetaById = topicMetaById
+                            )
+                        },
                         isLoading = false
                     )
                 }
@@ -69,6 +75,7 @@ class ReportInterestGapAnalysisViewModel @Inject constructor(
     }
 
     private fun ReportInterestGap.toUiModel(
+        index: Int,
         topicIdByName: Map<String, Long?>,
         topicMetaById: Map<Long, TopicMeta>
     ): InterestGapTopicUiModel {
@@ -82,7 +89,7 @@ class ReportInterestGapAnalysisViewModel @Inject constructor(
             topicName
         }
         return InterestGapTopicUiModel(
-            id = resolvedTopicId ?: topicName.hashCode().toLong(),
+            id = resolvedTopicId ?: -(index.toLong() + 1),
             name = topicName,
             savedCount = savedCount,
             readCount = readCount,
