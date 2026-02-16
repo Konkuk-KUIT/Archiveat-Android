@@ -93,18 +93,17 @@ fun ReportInterestGapCard(
                 interestGaps.forEachIndexed { index, item ->
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(36.dp),
+                            .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = item.topicName.toDisplayTopicName(),
                             style = ArchiveatProjectTheme.typography.Body_2_medium,
                             color = ArchiveatProjectTheme.colors.gray600,
-                            modifier = Modifier.width(52.dp)
+                            modifier = Modifier.width(58.dp)
                         )
 
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
 
                         BasicProgressBar(
                             percentage = item.toConsumptionPercentage(),
