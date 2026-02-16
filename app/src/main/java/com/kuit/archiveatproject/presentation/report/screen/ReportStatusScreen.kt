@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -77,7 +78,17 @@ fun ReportStatusContent(
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.gray50)
     ) {
-        BackTopBar(title = "핵심 소비 현황", onBack = onBackClick)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ArchiveatProjectTheme.colors.white)
+                .statusBarsPadding()
+        ) {
+            BackTopBar(
+                title = "핵심 소비 현황",
+                onBack = onBackClick
+            )
+        }
         
         LazyColumn(
             modifier = Modifier.weight(1f),

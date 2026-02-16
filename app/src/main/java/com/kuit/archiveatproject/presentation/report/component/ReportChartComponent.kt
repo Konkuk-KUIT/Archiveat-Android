@@ -1,6 +1,5 @@
 package com.kuit.archiveatproject.presentation.report.component
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 
 @Composable
@@ -34,13 +34,13 @@ fun ReportChartComponent(
             totalSavedCount = totalSavedCount,
             totalReadCount = totalReadCount,
             readPercentage = readPercentage,
-            modifier = Modifier.clickable { onClickStatus() }
+            modifier = Modifier.noRippleClickable { onClickStatus() }
         )
 
         ReportConsumptionBalanceCard(
             lengthBalancePercentage = lightPercentage,
             purposeBalancePercentage = nowPercentage,
-            modifier = Modifier.clickable { onClickBalance() } // ⭐ 추가
+            modifier = Modifier.noRippleClickable { onClickBalance() }
         )
 
         ReportInterestGapCard(
