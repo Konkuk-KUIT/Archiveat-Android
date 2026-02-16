@@ -60,7 +60,7 @@ fun EtcScreen(
 @Composable
 fun EtcScreenContent(
     modifier: Modifier = Modifier,
-    nickName: String = "나",
+    nickName: String = "회원",
     onLogoutClick: () -> Unit = {},
 ) {
     val nickNameFont = TextStyle(
