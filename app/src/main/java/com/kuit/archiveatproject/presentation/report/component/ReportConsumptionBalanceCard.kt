@@ -66,10 +66,10 @@ fun ReportConsumptionBalanceCard(
                     text = "길이",
                     style = ArchiveatProjectTheme.typography.Body_2_medium,
                     color = ArchiveatProjectTheme.colors.gray600,
-                    modifier = Modifier.width(32.dp) // 라벨 고정폭
+                    modifier = Modifier.width(62.dp) // 라벨 고정폭
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(6.dp))
 
                 LabeledProgressBar(
                     leftLabel = "짧은 글",
@@ -79,7 +79,7 @@ fun ReportConsumptionBalanceCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             /** 목적 Row */
             Row(
@@ -90,10 +90,10 @@ fun ReportConsumptionBalanceCard(
                     text = "목적",
                     style = ArchiveatProjectTheme.typography.Body_2_medium,
                     color = ArchiveatProjectTheme.colors.gray600,
-                    modifier = Modifier.width(32.dp)
+                    modifier = Modifier.width(62.dp)
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(6.dp))
 
                 LabeledProgressBar(
                     leftLabel = "단기성",
