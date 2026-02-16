@@ -38,6 +38,9 @@ data class ReportResponseDto(
 
 @Serializable
 data class ReportMainInterestGapDto(
+    @SerialName("topicId")
+    val topicId: Long,
+
     @SerialName("topicName")
     val topicName: String,
 
