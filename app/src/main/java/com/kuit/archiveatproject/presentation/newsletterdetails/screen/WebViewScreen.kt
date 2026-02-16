@@ -36,10 +36,10 @@ fun WebViewScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val decodedUrl = Uri.decode(url)
-    val safeUrl = decodedUrl.takeIf {
+    val safeUrl = url.takeIf {
         it.startsWith("http://") || it.startsWith("https://")
     }.orEmpty()
+
     val isPreview = LocalInspectionMode.current
     var lastRequestedUrl by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current

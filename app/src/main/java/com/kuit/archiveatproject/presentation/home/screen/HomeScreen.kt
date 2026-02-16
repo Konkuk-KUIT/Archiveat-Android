@@ -53,7 +53,6 @@ fun HomeScreen(
     }
 
     /**
-     * ✅ 특정 탭으로 "강제 진입"해야 할 때만 탭 반영
      * - initialTabName == null 이면 아무 것도 하지 않음 (기존 selectedTab 유지)
      * - initialTabName이 enum으로 변환 가능하면 그 탭으로 이동
      */
@@ -66,8 +65,9 @@ fun HomeScreen(
 
         // 같은 탭이면 불필요한 호출 방지
         if (uiState.selectedTab != tabType) {
-            viewModel.onTabSelected(tabType)
+            viewModel.setInitialTab(tabType)
         }
+
     }
 
     HomeScreenContent(

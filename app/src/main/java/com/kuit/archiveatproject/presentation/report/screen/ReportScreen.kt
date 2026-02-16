@@ -24,7 +24,7 @@ fun ReportScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
-        android.util.Log.d("ReportStatusScreen", "LaunchedEffect called")
+        android.util.Log.d("ReportScreen", "LaunchedEffect called")
         viewModel.fetchReport()
     }
 

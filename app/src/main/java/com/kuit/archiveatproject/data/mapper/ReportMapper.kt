@@ -17,7 +17,8 @@ fun ReportResponseDto.toDomain(): Report {
     val status = ReportStatus(
         totalSavedCount = totalSavedCount,
         totalReadCount = totalReadCount,
-        percentage = if (totalSavedCount == 0) 0 else (totalReadCount * 100) / totalSavedCount
+        percentage = if (totalSavedCount == 0) 0
+        else ((totalReadCount.toDouble() * 100.0) / totalSavedCount.toDouble()).toInt().coerceIn(0, 100)
     )
 
     val balance = ReportBalanceDto(
@@ -41,7 +42,8 @@ fun ReportStatusDto.toDomain(): ReportStatus =
     ReportStatus(
         totalSavedCount = totalSavedCount,
         totalReadCount = totalReadCount,
-        percentage = if (totalSavedCount == 0) 0 else (totalReadCount * 100) / totalSavedCount,
+        percentage = if (totalSavedCount == 0) 0
+        else ((totalReadCount.toDouble() * 100.0) / totalSavedCount.toDouble()).toInt().coerceIn(0, 100),
         recentReadNewsletters = recentReadNewsletters.map { it.toDomain() }
     )
 
@@ -54,7 +56,7 @@ fun RecentReadNewsletterDto.toDomain(): RecentReadNewsletter =
     )
 
 /**
- * ✅ 여기만 "안전한 퍼센트 계산"으로 교체됨 (UI 안 건드리고 음수/이상치 방지)
+ * 여기만 "안전한 퍼센트 계산"으로 교체됨 (UI 안 건드리고 음수/이상치 방지)
  */
 fun ReportBalanceDto.toDomain(): ReportBalance {
 

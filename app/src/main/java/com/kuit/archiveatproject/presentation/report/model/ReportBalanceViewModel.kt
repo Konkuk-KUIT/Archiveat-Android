@@ -1,8 +1,10 @@
 package com.kuit.archiveatproject.presentation.report.model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.domain.repository.ReportRepository
+import com.kuit.archiveatproject.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,18 +15,27 @@ import javax.inject.Inject
 @HiltViewModel
 class ReportBalanceViewModel @Inject constructor(
     private val reportRepository: ReportRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReportUiState())
     val uiState: StateFlow<ReportUiState> = _uiState
 
     fun fetchReportBalance() = viewModelScope.launch {
+        runCatching { userRepository.getNickname() }
+            .onSuccess { nickname ->
+                _uiState.update { it.copy(nickname = nickname) }
+            }
+            .onFailure { e ->
+                Log.e("ReportBalanceVM", "getNickname failed", e)
+            }
+
         runCatching {
-            reportRepository.getReportBalance() // Domain: ReportBalance
+            reportRepository.getReportBalance()
         }.onSuccess { balance ->
-            _uiState.update { it.copy(balance = balance.toUiState()) } // Presentation으로 변환
+            _uiState.update { it.copy(balance = balance.toUiState()) }
         }.onFailure { e ->
-            android.util.Log.e("ReportBalanceVM", "fetchReportBalance failed", e)
+            Log.e("ReportBalanceVM", "fetchReportBalance failed", e)
         }
     }
 

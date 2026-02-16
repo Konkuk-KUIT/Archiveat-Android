@@ -170,10 +170,15 @@ fun ReportBalanceContent(
             item {
                 Spacer(Modifier.height(21.dp))
 
+                val nickname = uiState.nickname.takeIf { it.isNotBlank() } ?: "사용자"
+
                 StatusTextTag(
-                    text = "이준님의 지식 좌표",
+                    text = "${nickname}님의 지식 좌표",
                     ArchiveatProjectTheme.colors.primary
                 )
+
+
+
 
                 Spacer(Modifier.height(21.dp))
                 BalanceCanvasComponent(

@@ -4,6 +4,9 @@ import com.kuit.archiveatproject.domain.entity.RecentReadNewsletter
 
 data class ReportUiState(
     val referenceDate: String = "",
+    // 사용자 닉네임
+    val nickname: String = "",
+
 
     // 핵심 소비 현황
     val totalSavedCount: Int = 0,
