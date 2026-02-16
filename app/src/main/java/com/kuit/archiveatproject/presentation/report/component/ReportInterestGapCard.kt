@@ -1,7 +1,6 @@
 package com.kuit.archiveatproject.presentation.report.component
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import kotlin.collections.forEachIndexed
@@ -34,7 +34,7 @@ fun ReportInterestGapCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .noRippleClickable(onClick = onClick)
             .border(
                 width = 1.25.dp,
                 color = ArchiveatProjectTheme.colors.gray100,

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.takeOrElse
 import com.kuit.archiveatproject.core.util.noRippleCircleClickable
 import com.kuit.archiveatproject.presentation.report.model.InterestGapTopicUiModel
+import com.kuit.archiveatproject.ui.theme.ArchiveatFontRegular
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 private data class BubblePadding(
@@ -94,6 +95,8 @@ fun InterestGapBubbleChart(
                         content = ArchiveatProjectTheme.colors.primary,
                         isSelected = selectedTopicId == t.id,
                         onClick = { onSelectTopic(t.id) },
+                        titleBaseStyle = ArchiveatProjectTheme.typography.Heading_1_bold,
+                        valueStyle = ArchiveatProjectTheme.typography.Subhead_2_medium,
                         modifier = Modifier.absoluteOffset(
                             x = purple.left * scale,
                             y = purple.top * scale
@@ -111,6 +114,8 @@ fun InterestGapBubbleChart(
                         content = Color(0xFFDB654B),
                         isSelected = selectedTopicId == t.id,
                         onClick = { onSelectTopic(t.id) },
+                        titleBaseStyle = ArchiveatProjectTheme.typography.Subhead_1_bold,
+                        valueStyle = ArchiveatProjectTheme.typography.Subhead_2_medium,
                         modifier = Modifier.absoluteOffset(
                             x = orange.left * scale,
                             y = orange.top * scale
@@ -120,6 +125,9 @@ fun InterestGapBubbleChart(
 
                 p3?.let { t ->
                     val d = blue.diameterIn(designW, designH) * scale
+                    val body2Regular = ArchiveatProjectTheme.typography.Body_2_medium.copy(
+                        fontFamily = ArchiveatFontRegular
+                    )
                     BubbleItem(
                         title = t.bubbleTitle,
                         value = "+${t.gap}",
@@ -128,6 +136,8 @@ fun InterestGapBubbleChart(
                         content = ArchiveatProjectTheme.colors.sub_1,
                         isSelected = selectedTopicId == t.id,
                         onClick = { onSelectTopic(t.id) },
+                        titleBaseStyle = ArchiveatProjectTheme.typography.Subhead_2_semibold,
+                        valueStyle = body2Regular,
                         modifier = Modifier.absoluteOffset(
                             x = blue.left * scale,
                             y = blue.top * scale
@@ -137,6 +147,9 @@ fun InterestGapBubbleChart(
 
                 p4?.let { t ->
                     val d = yellow.diameterIn(designW, designH) * scale
+                    val body2Regular = ArchiveatProjectTheme.typography.Body_2_medium.copy(
+                        fontFamily = ArchiveatFontRegular
+                    )
                     BubbleItem(
                         title = t.bubbleTitle,
                         value = "+${t.gap}",
@@ -145,6 +158,8 @@ fun InterestGapBubbleChart(
                         content = ArchiveatProjectTheme.colors.gray700,
                         isSelected = selectedTopicId == t.id,
                         onClick = { onSelectTopic(t.id) },
+                        titleBaseStyle = ArchiveatProjectTheme.typography.Subhead_2_semibold,
+                        valueStyle = body2Regular,
                         modifier = Modifier.absoluteOffset(
                             x = yellow.left * scale,
                             y = yellow.top * scale
@@ -165,13 +180,15 @@ private fun BubbleItem(
     content: Color,
     isSelected: Boolean,
     onClick: () -> Unit,
+    titleBaseStyle: TextStyle,
+    valueStyle: TextStyle,
     modifier: Modifier = Modifier,
 ) {
     val borderColor = if (isSelected) bg.copy(alpha = 0.4f) else Color.Transparent
     val titleStyle = autoFitTitleTextStyle(
         title = title,
         size = size,
-        base = ArchiveatProjectTheme.typography.Subhead_1_bold
+        base = titleBaseStyle
     )
 
     Box(
@@ -198,7 +215,7 @@ private fun BubbleItem(
             Text(
                 text = value,
                 color = ArchiveatProjectTheme.colors.gray500,
-                style = ArchiveatProjectTheme.typography.Subhead_2_medium,
+                style = valueStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -210,7 +227,9 @@ private fun BubbleItem(
 private fun autoFitTitleTextStyle(title: String, size: Dp, base: TextStyle): TextStyle {
     val textMeasurer = rememberTextMeasurer()
     val density = LocalDensity.current
-    val maxWidthPx = with(density) { (size * 0.72f).roundToPx() }
+    val horizontalPadding = 10.dp
+    val maxWidthPx = with(density) { (size - horizontalPadding * 2).roundToPx() }
+        .coerceAtLeast(1)
 
     val maxFontSize = base.fontSize.takeOrElse { 16.sp }
     val minFontSize = 9.sp
