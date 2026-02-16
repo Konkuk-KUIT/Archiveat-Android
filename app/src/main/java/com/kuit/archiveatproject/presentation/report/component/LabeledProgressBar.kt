@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
@@ -31,6 +32,7 @@ fun LabeledProgressBar(
     val progressColor = ArchiveatProjectTheme.colors.primary
     val trackColor = ArchiveatProjectTheme.colors.gray50
     val labelColor = ArchiveatProjectTheme.colors.gray600
+    val leftLabelColor = Color(0xFF55417A)
 
     Column(
         modifier = modifier.fillMaxWidth()
@@ -43,7 +45,7 @@ fun LabeledProgressBar(
             Text(
                 text = leftLabel,
                 style = ArchiveatProjectTheme.typography.Caption_medium,
-                color = labelColor
+                color = leftLabelColor
             )
             Text(
                 text = rightLabel,
