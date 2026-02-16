@@ -317,7 +317,7 @@ private fun fakeExploreUiState(
                 name = "국제",
                 topics = listOf(
                     ExploreTopicUiItem(6, "지정학/외교", 3, R.drawable.ic_topic_diplomacy),
-                    ExploreTopicUiItem(7, "미국/중국", 2, R.drawable.ic_topic_macroeconomy),
+                    ExploreTopicUiItem(7, "미국/중국", 2, R.drawable.ic_topic_globe),
                     ExploreTopicUiItem(8, "글로벌비즈니스", 2, R.drawable.ic_topic_business),
                     ExploreTopicUiItem(9, "기후/에너지", 1, R.drawable.ic_topic_climate),
                     ExploreTopicUiItem(199, "기타", 1, R.drawable.ic_topic_etc),
