@@ -17,29 +17,48 @@ class TokenRepositoryImpl @Inject constructor(
     @ApplicationScope private val appScope: CoroutineScope,
 ) : TokenRepository {
 
-    private val cachedToken = MutableStateFlow<String?>(null)
+    private val cachedAccessToken = MutableStateFlow<String?>(null)
+    private val cachedRefreshToken = MutableStateFlow<String?>(null)
 
     override val accessTokenFlow: Flow<String?> = local.accessTokenFlow
+    override val refreshTokenFlow: Flow<String?> = local.refreshTokenFlow
 
     init {
-        // 앱 스코프에서 토큰을 계속 캐싱
+        // 앱 스코프에서 access token을 계속 캐싱
         appScope.launch {
             local.accessTokenFlow.collectLatest { token ->
-                cachedToken.value = token
+                cachedAccessToken.value = token
+            }
+        }
+        // 앱 스코프에서 refresh token을 계속 캐싱
+        appScope.launch {
+            local.refreshTokenFlow.collectLatest { token ->
+                cachedRefreshToken.value = token
             }
         }
     }
 
-    override fun getCachedAccessToken(): String? = cachedToken.value
+    override fun getCachedAccessToken(): String? = cachedAccessToken.value
+    override fun getCachedRefreshToken(): String? = cachedRefreshToken.value
 
     override suspend fun saveAccessToken(token: String) {
         local.saveAccessToken(token)
-        cachedToken.value = token // 즉시 반영
+        cachedAccessToken.value = token // 즉시 반영
+    }
+
+    override suspend fun saveRefreshToken(token: String) {
+        local.saveRefreshToken(token)
+        cachedRefreshToken.value = token
     }
 
     override suspend fun clearAccessToken() {
         local.clearAccessToken()
-        cachedToken.value = null
+        cachedAccessToken.value = null
+    }
+
+    override suspend fun clearRefreshToken() {
+        local.clearRefreshToken()
+        cachedRefreshToken.value = null
     }
 }
 
@@ -47,6 +66,8 @@ class TokenRepositoryImpl @Inject constructor(
 [RepositoryImpl/UseCase/VM/...]
 로그인 성공했을 때
 : tokenRepository.saveAccessToken(accessToken)
+: refreshToken은 Set-Cookie를 RefreshTokenCookieInterceptor가 저장
 로그아웃
 : tokenRepository.clearAccessToken()
+: tokenRepository.clearRefreshToken()
 */

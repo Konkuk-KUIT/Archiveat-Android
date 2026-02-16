@@ -1,6 +1,5 @@
 package com.kuit.archiveatproject.presentation.report.screen
 
-import android.R.attr.bottom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,23 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.presentation.report.component.ReportChartComponent
 import com.kuit.archiveatproject.presentation.report.component.WeeklyAiFeedbackSection
-import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
-import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
-import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
 import com.kuit.archiveatproject.presentation.report.model.ReportViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
@@ -35,13 +25,18 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 @Composable
 fun ReportScreen(
     padding: PaddingValues,
+    onClickStatus: () -> Unit,
+    onClickBalance: () -> Unit,
+    onClickInterestGapCard: () -> Unit,
     viewModel: ReportViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
+        android.util.Log.d("ReportScreen", "LaunchedEffect called")
         viewModel.fetchReport()
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +44,10 @@ fun ReportScreen(
     ) {
         ReportScreenContent(
             uiState = uiState,
-            padding = padding
+            padding = padding,
+            onClickStatus = onClickStatus,
+            onClickBalance = onClickBalance,
+            onClickInterestGapCard = onClickInterestGapCard
         )
     }
 }
@@ -57,23 +55,23 @@ fun ReportScreen(
 @Composable
 fun ReportScreenContent(
     uiState: ReportUiState,
-    padding: PaddingValues
+    padding: PaddingValues,
+    onClickStatus: () -> Unit,
+    onClickBalance: () -> Unit,
+    onClickInterestGapCard: () -> Unit
 ) {
-
     val topPadding = padding.calculateTopPadding()
     val bottomPadding = padding.calculateBottomPadding()
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(ArchiveatProjectTheme.colors.white)
                 .padding(top = topPadding)
         ) {
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -115,7 +113,10 @@ fun ReportScreenContent(
                     readPercentage = uiState.readPercentage,
                     lightPercentage = uiState.balance.lightPercentage,
                     nowPercentage = uiState.balance.nowPercentage,
-                    interestGaps = uiState.interestGaps
+                    interestGaps = uiState.interestGaps,
+                    onClickStatus = onClickStatus,
+                    onClickBalance = onClickBalance,
+                    onClickInterestGapCard = onClickInterestGapCard
                 )
             }
         }

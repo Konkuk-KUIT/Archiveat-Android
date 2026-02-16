@@ -17,10 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import kotlin.collections.forEachIndexed
@@ -29,11 +28,13 @@ import kotlin.collections.lastIndex
 @Composable
 fun ReportInterestGapCard(
     interestGaps: List<MainInterestGapUiItem>,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .noRippleClickable(onClick = onClick)
             .border(
                 width = 1.25.dp,
                 color = ArchiveatProjectTheme.colors.gray100,
@@ -92,18 +93,17 @@ fun ReportInterestGapCard(
                 interestGaps.forEachIndexed { index, item ->
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(36.dp),
+                            .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = item.topicName.toDisplayTopicName(),
                             style = ArchiveatProjectTheme.typography.Body_2_medium,
                             color = ArchiveatProjectTheme.colors.gray600,
-                            modifier = Modifier.width(52.dp)
+                            modifier = Modifier.width(58.dp)
                         )
 
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
 
                         BasicProgressBar(
                             percentage = item.toConsumptionPercentage(),
@@ -161,8 +161,9 @@ private fun ReportInterestGapCardPreview() {
                     MainInterestGapUiItem("브랜드/마케팅", 35, 19),
                     MainInterestGapUiItem("거시경제", 14, 6),
                     MainInterestGapUiItem("팝컬쳐/트렌드", 29, 13),
-                    MainInterestGapUiItem("공간/플레이스", 16, 7),
-                )
+                    MainInterestGapUiItem("공간/플레이스", 16, 7)
+                ),
+                onClick = {}
             )
         }
     }

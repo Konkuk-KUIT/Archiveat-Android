@@ -6,6 +6,7 @@ import com.kuit.archiveatproject.data.dto.request.auth.SignupRequestDto
 import com.kuit.archiveatproject.data.dto.response.BaseResponse
 import com.kuit.archiveatproject.data.dto.response.auth.AuthTokenResponseDto
 import retrofit2.http.Body
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthApiService {
@@ -20,8 +21,9 @@ interface AuthApiService {
     ): BaseResponse<AuthTokenResponseDto>
 
     @POST("/auth/reissue")
-    suspend fun reissue(): BaseResponse<AuthTokenResponseDto>
-    // NOTE: 로그인 유지 단계에서 CookieJar/Authenticator와 함께 실제 사용 예정
+    suspend fun reissue(
+        @Header("Cookie") cookie: String? = null,
+    ): BaseResponse<AuthTokenResponseDto>
 
     @POST("/auth/logout")
     suspend fun logout(): BaseResponse<Unit>

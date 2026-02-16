@@ -99,6 +99,13 @@ class HomeViewModel @Inject constructor(
         updateVisibleContent(tabType)
     }
 
+    fun setInitialTab(tabType: HomeTabType) {
+        if (_uiState.value.selectedTab == tabType) return
+        _uiState.update { it.copy(selectedTab = tabType) }
+        updateVisibleContent(tabType)
+    }
+
+
     private fun updateVisibleContent(tabType: HomeTabType) {
         val currentHome = home ?: return
 
@@ -115,7 +122,7 @@ class HomeViewModel @Inject constructor(
         // 1. 일반 카드
         uiCards += baseCards.map { it.toUiModel() }
 
-        // 2. 컬렉션 카드 (카테고리 탭에서만)
+        // 2. 컬렉션 카드
         if (tabType != HomeTabType.ALL) {
             uiCards += currentHome.contentCollectionCards
                 .filter { it.tabType == tabType }

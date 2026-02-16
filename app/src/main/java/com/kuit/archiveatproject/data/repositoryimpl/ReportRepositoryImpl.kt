@@ -21,6 +21,7 @@ class ReportRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getReportStatus(): ReportStatus {
+        android.util.Log.d("ReportRepo", "getReportStatus() called")
         return apiService.getReportStatus()
             .requireData()
             .toDomain()

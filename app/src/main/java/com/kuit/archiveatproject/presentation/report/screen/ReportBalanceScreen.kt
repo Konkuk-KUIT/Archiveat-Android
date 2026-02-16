@@ -2,7 +2,6 @@ package com.kuit.archiveatproject.presentation.report.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,10 +9,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,27 +24,96 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kuit.archiveatproject.core.component.BackTopBar
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.report.component.ReportButtonComponent
 import com.kuit.archiveatproject.presentation.report.component.balance.BalanceCanvasComponent
 import com.kuit.archiveatproject.presentation.report.component.balance.BalancePatternInsightCard
 import com.kuit.archiveatproject.presentation.report.component.balance.BalanceSummaryCard
 import com.kuit.archiveatproject.presentation.report.component.balance.StatusTextTag
 import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
-import com.kuit.archiveatproject.presentation.report.model.ReportStatusViewModel
+import com.kuit.archiveatproject.presentation.report.model.ReportBalanceViewModel
 import com.kuit.archiveatproject.presentation.report.model.ReportUiState
-import com.kuit.archiveatproject.presentation.report.model.toActionButtonText
 import com.kuit.archiveatproject.presentation.report.model.toKnowledgePosition
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
+private enum class BalanceUserType {
+    LIGHT_NOW,      // Type A
+    DEEP_NOW,       // Type B
+    LIGHT_FUTURE,   // Type C
+    DEEP_FUTURE     // Type D
+}
+
+private data class BalanceCtaInfo(
+    val userType: BalanceUserType,
+    val buttonText: String,
+    val destinationTab: HomeTabType
+)
+
+/**
+ * Type A (Light+Now): Light >= Deep AND Now >= Future
+ * Type B (Deep+Now):  Light <  Deep AND Now >= Future
+ * Type C (Light+Future): Light >= Deep AND Now < Future
+ * Type D (Deep+Future):  Light <  Deep AND Now < Future
+ *
+ * CTA 목적지 매핑:
+ * Light + Now   -> 관점확장 (VIEW_EXPANSION)
+ * Deep + Now    -> 성장한입 (GROWTH)
+ * Light + Future-> 집중탐구 (DEEP_DIVE)
+ * Deep + Future -> 영감수집 (INSPIRATION)
+ */
+private fun decideCta(
+    light: Int,
+    deep: Int,
+    now: Int,
+    future: Int
+): BalanceCtaInfo {
+    val isLight = light >= deep
+    val isNow = now >= future
+
+    return when {
+        isLight && isNow -> BalanceCtaInfo(
+            userType = BalanceUserType.LIGHT_NOW,
+            buttonText = "관점 확장하러 가기",
+            destinationTab = HomeTabType.VIEW_EXPANSION
+        )
+
+        !isLight && isNow -> BalanceCtaInfo(
+            userType = BalanceUserType.DEEP_NOW,
+            buttonText = "성장 한입하러 가기",
+            destinationTab = HomeTabType.GROWTH
+        )
+
+        isLight && !isNow -> BalanceCtaInfo(
+            userType = BalanceUserType.LIGHT_FUTURE,
+            buttonText = "집중 탐구하러 가기",
+            destinationTab = HomeTabType.DEEP_DIVE
+        )
+
+        else -> BalanceCtaInfo(
+            userType = BalanceUserType.DEEP_FUTURE,
+            buttonText = "영감 수집하러 가기",
+            destinationTab = HomeTabType.INSPIRATION
+        )
+    }
+}
+
 @Composable
 fun ReportBalanceScreen(
-    viewModel: ReportStatusViewModel = hiltViewModel(),
+    onBackClick: () -> Unit,
+    onClickCta: (HomeTabType) -> Unit,
+    viewModel: ReportBalanceViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchReportBalance()
+    }
+
     ReportBalanceContent(
         uiState = uiState,
+        onBackClick = onBackClick,
+        onClickCta = onClickCta,
         modifier = modifier
     )
 }
@@ -51,16 +121,26 @@ fun ReportBalanceScreen(
 @Composable
 fun ReportBalanceContent(
     uiState: ReportUiState,
+    onBackClick: () -> Unit,
+    onClickCta: (HomeTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val position = uiState.toKnowledgePosition()
+
+    val cta = decideCta(
+        light = uiState.balance.lightPercentage,
+        deep = uiState.balance.deepPercentage,
+        now = uiState.balance.nowPercentage,
+        future = uiState.balance.futurePercentage
+    )
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             BackTopBar(
                 title = "나의 소비 밸런스",
-                onBack = {}
+                onBack = onBackClick,
+                modifier = Modifier.statusBarsPadding()
             )
         },
         bottomBar = {
@@ -72,9 +152,9 @@ fun ReportBalanceContent(
                     .navigationBarsPadding()
             ) {
                 ReportButtonComponent(
-                    text = position.toActionButtonText(),
+                    text = cta.buttonText,
                     enabled = true,
-                    onClick = { /* TODO */ },
+                    onClick = { onClickCta(cta.destinationTab) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -92,9 +172,15 @@ fun ReportBalanceContent(
             item {
                 Spacer(Modifier.height(21.dp))
 
-                // TODO: user dto 추가 후 닉네임 데이터로 교체
+                val nickname = uiState.nickname.takeIf { it.isNotBlank() } ?: "사용자"
+
                 StatusTextTag(
-                    text = "이준님의 지식 좌표",ArchiveatProjectTheme.colors.primary)
+                    text = "${nickname}님의 지식 좌표",
+                    ArchiveatProjectTheme.colors.primary
+                )
+
+
+
 
                 Spacer(Modifier.height(21.dp))
                 BalanceCanvasComponent(
@@ -154,7 +240,9 @@ private fun fakeReportBalanceUiState(): ReportUiState =
 private fun ReportBalanceContentPreview() {
     ArchiveatProjectTheme {
         ReportBalanceContent(
-            uiState = fakeReportBalanceUiState()
+            uiState = fakeReportBalanceUiState(),
+            onBackClick = {},
+            onClickCta = {}
         )
     }
 }

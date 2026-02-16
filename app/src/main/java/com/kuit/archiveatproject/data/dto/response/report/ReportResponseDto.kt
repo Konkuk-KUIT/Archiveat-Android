@@ -32,7 +32,6 @@ data class ReportResponseDto(
     @SerialName("interestGaps")
     val interestGaps: List<ReportMainInterestGapDto>,
 
-    // BaseResponse.timestamp를 전달받아 채움
     @SerialName("serverTimestamp")
     val serverTimestamp: String = ""
 )
