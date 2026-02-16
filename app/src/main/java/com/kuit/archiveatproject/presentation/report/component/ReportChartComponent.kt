@@ -21,6 +21,7 @@ fun ReportChartComponent(
     interestGaps: List<MainInterestGapUiItem>,
     onClickStatus: () -> Unit,
     onClickBalance: () -> Unit,
+    onClickInterestGapCard: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -43,7 +44,8 @@ fun ReportChartComponent(
         )
 
         ReportInterestGapCard(
-            interestGaps = interestGaps
+            interestGaps = interestGaps,
+            onClick = onClickInterestGapCard
         )
     }
 }
@@ -74,6 +76,7 @@ private fun ReportChartComponentPreview() {
             )
         ),
         onClickStatus = {},
-        onClickBalance = {}
+        onClickBalance = {},
+        onClickInterestGapCard = {}
     )
 }

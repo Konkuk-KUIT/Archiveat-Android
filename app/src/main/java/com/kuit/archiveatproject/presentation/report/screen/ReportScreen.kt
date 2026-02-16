@@ -1,7 +1,15 @@
 package com.kuit.archiveatproject.presentation.report.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -19,6 +27,7 @@ fun ReportScreen(
     padding: PaddingValues,
     onClickStatus: () -> Unit,
     onClickBalance: () -> Unit,
+    onClickInterestGapCard: () -> Unit,
     viewModel: ReportViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -37,7 +46,8 @@ fun ReportScreen(
             uiState = uiState,
             padding = padding,
             onClickStatus = onClickStatus,
-            onClickBalance = onClickBalance
+            onClickBalance = onClickBalance,
+            onClickInterestGapCard = onClickInterestGapCard
         )
     }
 }
@@ -47,7 +57,8 @@ fun ReportScreenContent(
     uiState: ReportUiState,
     padding: PaddingValues,
     onClickStatus: () -> Unit,
-    onClickBalance: () -> Unit
+    onClickBalance: () -> Unit,
+    onClickInterestGapCard: () -> Unit
 ) {
     val topPadding = padding.calculateTopPadding()
     val bottomPadding = padding.calculateBottomPadding()
@@ -104,7 +115,8 @@ fun ReportScreenContent(
                     nowPercentage = uiState.balance.nowPercentage,
                     interestGaps = uiState.interestGaps,
                     onClickStatus = onClickStatus,
-                    onClickBalance = onClickBalance
+                    onClickBalance = onClickBalance,
+                    onClickInterestGapCard = onClickInterestGapCard
                 )
             }
         }

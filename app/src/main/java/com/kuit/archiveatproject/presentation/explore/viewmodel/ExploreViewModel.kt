@@ -110,6 +110,15 @@ class ExploreViewModel @Inject constructor(
         llmPollingJob = viewModelScope.launch {
             while (isActive) {
                 fetchLlmStatus()
+
+                val currentStatus = _uiState.value.llmStatus
+
+                if (currentStatus == LlmStatus.DONE ||
+                    currentStatus == LlmStatus.FAILED
+                ) {
+                    stopLlmPolling()
+                    break
+                }
                 delay(10_000)
             }
         }
@@ -120,13 +129,17 @@ class ExploreViewModel @Inject constructor(
         llmPollingJob = null
     }
 
-    private suspend fun fetchLlmStatus() {
-        runCatching {
+    private suspend fun fetchLlmStatus(): LlmStatus? {
+        return runCatching {
             exploreRepository.getExplore()
-        }.onSuccess { explore ->
+        }.getOrNull()?.let { explore ->
+            val newStatus = explore.llmStatus
+
             _uiState.update {
-                it.copy(llmStatus = explore.llmStatus)
+                it.copy(llmStatus = newStatus)
             }
+
+            newStatus
         }
     }
 

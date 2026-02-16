@@ -12,14 +12,14 @@ fun ExploreResponseDto.toEntity(): Explore =
         inboxCount = inboxCount,
         // 안드에서는 exploreLlmStatus로 사용
         llmStatus = llmStatus.toEntity(),
-        categories = categories.map { it.toEntity() },
+        categories = categories.sortedBy { it.id }.map { it.toEntity() },
     )
 
 private fun ExploreCategoryDto.toEntity(): ExploreCategory =
     ExploreCategory(
         id = id,
         name = name,
-        topics = topics.map { it.toEntity() },
+        topics = topics.sortedBy { it.id }.map { it.toEntity() },
     )
 
 private fun ExploreTopicDto.toEntity(): ExploreTopic =

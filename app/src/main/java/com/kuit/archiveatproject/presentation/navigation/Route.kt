@@ -40,8 +40,8 @@ sealed class Route(
         fun createRoute(url: String): String =
             "webview?url=${android.net.Uri.encode(url)}"
     }
-
     data object Report : Route(route = "report")
+    data object ReportInterestGapAnalysis : Route(route = "report/interest-gap-analysis")
     data object ReportStatus : Route(route = "report/status")
     data object ReportBalance : Route(route = "report/balance")
     data object Etc : Route(route = "etc")

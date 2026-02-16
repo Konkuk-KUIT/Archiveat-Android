@@ -28,6 +28,7 @@ import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingJobTim
 import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingScreen as OnboardingIntroScreen
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.kuit.archiveatproject.presentation.report.screen.ReportBalanceScreen
+import com.kuit.archiveatproject.presentation.report.screen.ReportInterestGapAnalysisScreen
 import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
 import com.kuit.archiveatproject.presentation.report.screen.ReportStatusScreen
 import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
@@ -36,13 +37,14 @@ import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
 fun NavGraph(
     navController: NavHostController,
     padding: PaddingValues,
+    startDestination: String,
     modifier: Modifier = Modifier
 ) {
     val screenModifier = modifier.padding(padding)
 
     NavHost(
         navController = navController,
-        startDestination = Route.OnboardingIntro.route
+        startDestination = startDestination
     ) {
         composable(route = Route.Login.route) {
             LoginScreen(
@@ -228,7 +230,22 @@ fun NavGraph(
                 ReportScreen(
                     padding = padding,
                     onClickStatus = { navController.navigate(Route.ReportStatus.route) },
-                    onClickBalance = { navController.navigate(Route.ReportBalance.route) }
+                    onClickBalance = { navController.navigate(Route.ReportBalance.route) },
+                    onClickInterestGapCard = {
+                        navController.navigate(Route.ReportInterestGapAnalysis.route)
+                    }
+                )
+            }
+            composable(route = Route.ReportInterestGapAnalysis.route) {
+                ReportInterestGapAnalysisScreen(
+                    padding = padding,
+                    onBack = { navController.popBackStack() },
+                    onClickTopicShortcut = { topicId, topicName ->
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("topicName", topicName)
+                        navController.navigate(Route.ExploreTopicDetail.createRoute(topicId))
+                    }
                 )
             }
 
@@ -263,7 +280,15 @@ fun NavGraph(
             }
 
             composable(route = Route.Etc.route) {
-                EtcScreen(modifier = screenModifier)
+                EtcScreen(
+                    modifier = screenModifier,
+                    onLogoutSuccess = {
+                        navController.navigate(Route.OnboardingIntro.route) {
+                            popUpTo(Route.Main.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                )
             }
 
             composable(route = Route.Share.route) {

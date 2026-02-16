@@ -17,10 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import kotlin.collections.forEachIndexed
@@ -29,11 +28,13 @@ import kotlin.collections.lastIndex
 @Composable
 fun ReportInterestGapCard(
     interestGaps: List<MainInterestGapUiItem>,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .noRippleClickable(onClick = onClick)
             .border(
                 width = 1.25.dp,
                 color = ArchiveatProjectTheme.colors.gray100,
@@ -63,48 +64,57 @@ fun ReportInterestGapCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             /** 저장 / 소비 헤더 */
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 64.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            if (interestGaps.isEmpty()) {
                 Text(
-                    text = "저장",
-                    style = ArchiveatProjectTheme.typography.Caption_medium,
-                    color = ArchiveatProjectTheme.colors.gray600
+                    text = "아직 저장한 아티클이 없습니다",
+                    style = ArchiveatProjectTheme.typography.Body_2_medium,
+                    color = ArchiveatProjectTheme.colors.gray500,
+                    modifier = Modifier.fillMaxWidth(),
                 )
-                Text(
-                    text = "소비",
-                    style = ArchiveatProjectTheme.typography.Caption_medium,
-                    color = ArchiveatProjectTheme.colors.gray600
-                )
-            }
-
-            interestGaps.forEachIndexed { index, item ->
+            } else {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(34.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(start = 64.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = item.topicName.toDisplayTopicName(),
-                        style = ArchiveatProjectTheme.typography.Body_2_medium,
-                        color = ArchiveatProjectTheme.colors.gray600,
-                        modifier = Modifier.width(52.dp)
+                        text = "저장",
+                        style = ArchiveatProjectTheme.typography.Caption_medium,
+                        color = ArchiveatProjectTheme.colors.gray600
                     )
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    BasicProgressBar(
-                        percentage = item.toConsumptionPercentage(),
-                        modifier = Modifier.weight(1f)
+                    Text(
+                        text = "소비",
+                        style = ArchiveatProjectTheme.typography.Caption_medium,
+                        color = ArchiveatProjectTheme.colors.gray600
                     )
                 }
 
-                if (index != interestGaps.lastIndex) {
-                    Spacer(modifier = Modifier.height(12.dp))
+                interestGaps.forEachIndexed { index, item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(36.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = item.topicName.toDisplayTopicName(),
+                            style = ArchiveatProjectTheme.typography.Body_2_medium,
+                            color = ArchiveatProjectTheme.colors.gray600,
+                            modifier = Modifier.width(52.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        BasicProgressBar(
+                            percentage = item.toConsumptionPercentage(),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    if (index != interestGaps.lastIndex) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
         }
@@ -144,7 +154,6 @@ private fun ReportInterestGapCardPreview() {
                     MainInterestGapUiItem("건강", 50, 5),
                     MainInterestGapUiItem("AI", 30, 25),
 
-                    // 🔥 줄바꿈 테스트용
                     MainInterestGapUiItem("인공지능", 40, 12),
                     MainInterestGapUiItem("백엔드/인프라", 32, 8),
                     MainInterestGapUiItem("프론트/모바일", 27, 15),
@@ -153,8 +162,9 @@ private fun ReportInterestGapCardPreview() {
                     MainInterestGapUiItem("브랜드/마케팅", 35, 19),
                     MainInterestGapUiItem("거시경제", 14, 6),
                     MainInterestGapUiItem("팝컬쳐/트렌드", 29, 13),
-                    MainInterestGapUiItem("공간/플레이스", 16, 7),
-                )
+                    MainInterestGapUiItem("공간/플레이스", 16, 7)
+                ),
+                onClick = {}
             )
         }
     }
