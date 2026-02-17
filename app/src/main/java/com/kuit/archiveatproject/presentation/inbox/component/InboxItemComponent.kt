@@ -45,6 +45,14 @@ import com.kuit.archiveatproject.presentation.inbox.util.InboxFormatters
 import com.kuit.archiveatproject.ui.theme.ArchiveatFontSemiBold
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
+fun String?.toDisplayDomainName(): String {
+    return when (this?.lowercase()) {
+        "tistory" -> "Tistroy"
+        "Naver News" -> "Naver News"
+        else -> this ?: "웹사이트"
+    }
+}
+
 @Composable
 fun InboxItemComponent(
     item: InboxItem,
@@ -117,7 +125,7 @@ fun InboxItemComponent(
                     // 완료 상태
                     val logoRes = DomainLogoMapper.logoResIdOrNull(item.domainName)
                     ImageTag(
-                        text = item.domainName ?: "웹사이트",
+                        text = item.domainName.toDisplayDomainName(),
                         icon = ImageSource.Res(logoRes ?: R.drawable.ic_link),
                         textStyle = ArchiveatProjectTheme.typography.Caption_medium_sec,
                         textColor = ArchiveatProjectTheme.colors.gray800,
@@ -322,7 +330,7 @@ private fun InboxItemComponentDonePreview() {
                 userNewsletterId = 102,
                 llmStatus = LlmStatus.DONE,
                 contentUrl = "\"돈도 기업도 한국을 떠난다\" 2026년 한국 경제가 진짜 무서운 이유 (김정호 교수)",
-                domainName = "Youtube",
+                domainName = "tistory",
                 createdAt = "2026-01-18T14:30:00+09:00",
                 category = InboxCategory(id = 1, name = "경제"),
                 topic = InboxTopic(id = 1, name = "경제전망"),
