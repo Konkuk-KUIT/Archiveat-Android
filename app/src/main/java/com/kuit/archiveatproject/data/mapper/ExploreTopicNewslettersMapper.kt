@@ -18,6 +18,7 @@ private fun com.kuit.archiveatproject.data.dto.response.explore.ExploreTopicNews
         userNewsletterId = userNewsletterId,
         title = title,
         thumbnailUrl = thumbnailUrl?.trim()?.takeIf { it.isNotBlank() },
+        domainName = domainName,
         isRead = isRead,
         createdAt = createdAt,
     )

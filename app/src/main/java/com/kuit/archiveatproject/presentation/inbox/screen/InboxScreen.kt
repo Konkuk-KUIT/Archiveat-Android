@@ -1,5 +1,6 @@
 package com.kuit.archiveatproject.presentation.inbox.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,9 +14,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +37,7 @@ import com.kuit.archiveatproject.presentation.inbox.edit.InboxEditBottomSheet
 import com.kuit.archiveatproject.presentation.inbox.util.InboxFormatters
 import com.kuit.archiveatproject.presentation.inbox.viewmodel.InboxViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun InboxScreen(
@@ -43,10 +48,19 @@ fun InboxScreen(
     viewModel: InboxViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var isLeaving by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        viewModel.confirmExploreInboxAll()
+    val onBackFromInbox = onBackFromInbox@{
+        if (isLeaving) return@onBackFromInbox
+        isLeaving = true
+        coroutineScope.launch {
+            viewModel.confirmExploreInboxAll()
+            onBackToExploreFirstDepth()
+        }
     }
+
+    BackHandler { onBackFromInbox() }
 
     Box(
         modifier = modifier
@@ -54,7 +68,7 @@ fun InboxScreen(
     ) {
         InboxScreenContent(
             inbox = uiState.inbox,
-            onBackToExploreFirstDepth = onBackToExploreFirstDepth,
+            onBackToExploreFirstDepth = onBackFromInbox,
             onDelete = { id -> viewModel.deleteNewsletter(id, onDelete) },
             onOpenOriginal = onOpenOriginal,
             onClickEdit = viewModel::openEditSheet

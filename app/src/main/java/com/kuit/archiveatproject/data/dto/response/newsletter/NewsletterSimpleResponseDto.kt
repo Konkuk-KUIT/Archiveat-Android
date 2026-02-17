@@ -13,6 +13,8 @@ data class NewsletterSimpleResponseDto(
     val title: String,
     @SerialName("thumbnailUrl")
     val thumbnailUrl: String? = null,
+    @SerialName("domainName")
+    val domainName: String? = null,
     @SerialName("label")
     val label: String,
     @SerialName("memo")

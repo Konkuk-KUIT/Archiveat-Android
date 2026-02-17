@@ -89,13 +89,25 @@ private fun NewsletterDetail.toAiUiModel(userName: String): NewsletterDetailsAiU
         if (label.isNotBlank()) {
             add(TagUiModel(text = label, variant = TagVariant.Tab(HomeTabType.fromLabel(label))))
         }
-        add(TagUiModel(text = HomeCardType.AI_SUMMARY.label, variant = TagVariant.CardType(HomeCardType.AI_SUMMARY)))
+        add(
+            TagUiModel(
+                text = HomeCardType.AI_SUMMARY.label,
+                variant = TagVariant.CardType(HomeCardType.AI_SUMMARY)
+            )
+        )
+    }
+
+    val resolvedImageUrl = if (thumbnailUrl.isNotBlank()) {
+        thumbnailUrl
+    } else {
+        null // 실제 placeholder는 Composable에서 domainName 기준으로 처리
     }
 
     return NewsletterDetailsAiUiModel(
         topicText = topicText,
         subtitle = "콘텐츠의 핵심만 AI가 요약했어요",
         imageUrl = thumbnailUrl,
+        domainName = domainName?.trim()?.lowercase(),
         tags = tags,
         contentTitle = title,
         userName = userName,
