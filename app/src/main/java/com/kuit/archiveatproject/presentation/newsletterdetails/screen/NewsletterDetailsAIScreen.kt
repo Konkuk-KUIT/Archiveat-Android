@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -154,6 +157,7 @@ fun NewsletterDetailsAIContent(
             Spacer(Modifier.height(18.dp))
 
             when {
+
                 // 서버 이미지 존재
                 !model.imageUrl.isNullOrBlank() -> {
                     AsyncImage(
@@ -172,38 +176,56 @@ fun NewsletterDetailsAIContent(
 
                 // 썸네일 없고 Tistory
                 model.domainName == "tistory" -> {
-                    androidx.compose.foundation.Image(
-                        painter = painterResource(R.drawable.img_placeholder_tistory),
-                        contentDescription = "tistory placeholder",
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(219.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                        contentScale = ContentScale.Crop
-                    )
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFFC5100)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_logo_tistory),
+                            contentDescription = "tistory logo",
+                            tint = Color.Unspecified,
+                        )
+                    }
                 }
 
-                // 썸네일 없고 Naver News
-                model.domainName == "naver news" -> {
-                    androidx.compose.foundation.Image(
-                        painter = painterResource(R.drawable.img_placeholder_naver),
-                        contentDescription = "naver placeholder",
+                // 썸네일 없고 Naver
+                model.domainName?.lowercase() == "naver news" -> {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(219.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                        contentScale = ContentScale.Crop
-                    )
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFF2DB300)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_logo_naver),
+                            contentDescription = "naver logo",
+                            tint = Color.Unspecified,
+                        )
+                    }
                 }
 
+                // 그 외 (simple)
                 else -> {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(219.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .background(ArchiveatProjectTheme.colors.gray100)
-                    )
+                            .background(ArchiveatProjectTheme.colors.primary),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_logo_simple),
+                            contentDescription = "default logo",
+                            tint = Color.Unspecified,
+                        )
+                    }
                 }
             }
 
