@@ -67,7 +67,8 @@ class HomeViewModel @Inject constructor(
                             result.secondGreetingMessage
                         ),
                         tabs = result.tabs,
-                        selectedTab = currentTab
+                        selectedTab = currentTab,
+                        errorMessage = null
                     )
                 }
                 updateVisibleContent(_uiState.value.selectedTab)
