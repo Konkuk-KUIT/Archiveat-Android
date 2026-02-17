@@ -23,6 +23,8 @@ data class ExploreTopicNewsletterDto(
     val title: String, // "엔비디아의 새로운 칩 발표..."
     @SerialName("thumbnailUrl")
     val thumbnailUrl: String? = null, // "https://image.url/..."
+    @SerialName("domainName")
+    val domainName: String? = null,
     @SerialName("isRead")
     val isRead: Boolean,
     @SerialName("createdAt")
