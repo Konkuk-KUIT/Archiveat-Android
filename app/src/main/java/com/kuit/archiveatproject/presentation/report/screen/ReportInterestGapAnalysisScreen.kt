@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -51,7 +50,6 @@ fun ReportInterestGapAnalysisScreen(
             .fillMaxSize()
             .padding(padding) // MainActivity Scaffold에서 내려준 padding
             .background(Color.White)
-            .systemBarsPadding()
     ) {
         when {
             uiState.isLoading -> {
@@ -175,7 +173,7 @@ private fun BoxScope.ReportInterestGapAnalysisContent(
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .background(Color.White)
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp, vertical = 14.dp)
     ) {
         PrimaryRoundedButton(
             text = selected?.name?.let { "'$it' 바로가기" } ?: "바로가기",
