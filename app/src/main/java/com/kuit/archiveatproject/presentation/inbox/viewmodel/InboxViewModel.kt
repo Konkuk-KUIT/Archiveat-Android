@@ -48,14 +48,12 @@ class InboxViewModel @Inject constructor(
         }
     }
 
-    fun confirmExploreInboxAll() {
-        viewModelScope.launch {
-            try {
-                inboxClassificationRepository.confirmExploreInboxAll()
-            } catch (e: Throwable) {
-                if (e is CancellationException) throw e
-                Log.e(TAG, "confirmExploreInboxAll failed", e)
-            }
+    suspend fun confirmExploreInboxAll() {
+        try {
+            inboxClassificationRepository.confirmExploreInboxAll()
+        } catch (e: Throwable) {
+            if (e is CancellationException) throw e
+            Log.e(TAG, "confirmExploreInboxAll failed", e)
         }
     }
 
