@@ -78,7 +78,7 @@ fun ReportInterestGapCard(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 64.dp),
+                        .padding(start = 68.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
