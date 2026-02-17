@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.presentation.report.model.ReportBalanceUiState
@@ -31,7 +32,6 @@ fun BalanceSummaryCard(
             .padding(18.dp)
     ) {
 
-        // ===== 콘텐츠 길이 =====
         BalanceBarRow(
             title = "콘텐츠 길이",
             leftLabel = "10분 미만",
@@ -44,7 +44,6 @@ fun BalanceSummaryCard(
 
         Spacer(Modifier.height(21.dp))
 
-        // ===== 소비 목적 =====
         BalanceBarRow(
             title = "소비 목적",
             leftLabel = "현재 필요",
@@ -52,7 +51,9 @@ fun BalanceSummaryCard(
             leftColor = ArchiveatProjectTheme.colors.sub_2,
             rightLabel = "미래 준비",
             rightPercent = balance.futurePercentage,
-            rightColor = ArchiveatProjectTheme.colors.primary
+            rightColor = ArchiveatProjectTheme.colors.primary,
+            leftLabelColor = Color(0xFF8A2E1C),
+            rightLabelColor = Color(0xFF4A178B),
         )
     }
 }

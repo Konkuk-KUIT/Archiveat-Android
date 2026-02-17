@@ -49,7 +49,7 @@ class NewsletterSimpleViewModel @Inject constructor(
                     userRepository.getNickname()
                 } catch (t: Throwable) {
                     if (t is CancellationException) throw t
-                    "나"
+                    "회원"
                 }
                 val simple = newsletterRepository.getNewsletterSimple(userNewsletterId)
                 _uiState.update {
@@ -100,6 +100,7 @@ private fun NewsletterSimple.toAiUiModel(userName: String): NewsletterDetailsAiU
     return NewsletterDetailsAiUiModel(
         topicText = topicText,
         imageUrl = thumbnailUrl,
+        domainName = domainName?.trim()?.lowercase(),
         tags = tags,
         contentTitle = title,
         userName = userName,

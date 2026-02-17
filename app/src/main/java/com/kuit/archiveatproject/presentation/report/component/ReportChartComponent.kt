@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 
 @Composable
@@ -18,6 +19,8 @@ fun ReportChartComponent(
     lightPercentage: Int,
     nowPercentage: Int,
     interestGaps: List<MainInterestGapUiItem>,
+    onClickStatus: () -> Unit,
+    onClickBalance: () -> Unit,
     onClickInterestGapCard: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -27,16 +30,17 @@ fun ReportChartComponent(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-
         ReportConsumptionSummaryCard(
             totalSavedCount = totalSavedCount,
             totalReadCount = totalReadCount,
-            readPercentage = readPercentage
+            readPercentage = readPercentage,
+            modifier = Modifier.noRippleClickable { onClickStatus() }
         )
 
         ReportConsumptionBalanceCard(
             lengthBalancePercentage = lightPercentage,
-            purposeBalancePercentage = nowPercentage
+            purposeBalancePercentage = nowPercentage,
+            modifier = Modifier.noRippleClickable { onClickBalance() }
         )
 
         ReportInterestGapCard(
@@ -71,6 +75,8 @@ private fun ReportChartComponentPreview() {
                 readCount = 25
             )
         ),
+        onClickStatus = {},
+        onClickBalance = {},
         onClickInterestGapCard = {}
     )
 }

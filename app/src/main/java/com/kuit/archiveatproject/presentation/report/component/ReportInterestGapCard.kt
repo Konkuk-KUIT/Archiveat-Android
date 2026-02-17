@@ -1,7 +1,6 @@
 package com.kuit.archiveatproject.presentation.report.component
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,8 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import kotlin.collections.forEachIndexed
@@ -31,10 +32,12 @@ fun ReportInterestGapCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val leftLabelColor = Color(0xFF55417A)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .noRippleClickable(onClick = onClick)
             .border(
                 width = 1.25.dp,
                 color = ArchiveatProjectTheme.colors.gray100,
@@ -81,7 +84,7 @@ fun ReportInterestGapCard(
                     Text(
                         text = "저장",
                         style = ArchiveatProjectTheme.typography.Caption_medium,
-                        color = ArchiveatProjectTheme.colors.gray600
+                        color = leftLabelColor
                     )
                     Text(
                         text = "소비",
@@ -93,18 +96,17 @@ fun ReportInterestGapCard(
                 interestGaps.forEachIndexed { index, item ->
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(36.dp),
+                            .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = item.topicName.toDisplayTopicName(),
                             style = ArchiveatProjectTheme.typography.Body_2_medium,
                             color = ArchiveatProjectTheme.colors.gray600,
-                            modifier = Modifier.width(52.dp)
+                            modifier = Modifier.width(62.dp)
                         )
 
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
 
                         BasicProgressBar(
                             percentage = item.toConsumptionPercentage(),

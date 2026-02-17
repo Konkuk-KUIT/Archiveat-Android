@@ -17,18 +17,15 @@ fun ReportResponseDto.toDomain(): Report {
     val status = ReportStatus(
         totalSavedCount = totalSavedCount,
         totalReadCount = totalReadCount,
-        percentage = if (totalSavedCount == 0) {
-            0
-        } else {
-            (totalReadCount * 100) / totalSavedCount
-        }
+        percentage = if (totalSavedCount == 0) 0
+        else ((totalReadCount.toDouble() * 100.0) / totalSavedCount.toDouble()).toInt().coerceIn(0, 100)
     )
 
     val balance = ReportBalanceDto(
         lightCount = lightCount,
         deepCount = deepCount,
         nowCount = nowCount,
-        futureCount = futureCount
+        futureCount = futureCount,
     ).toDomain()
 
     return Report(
@@ -45,11 +42,8 @@ fun ReportStatusDto.toDomain(): ReportStatus =
     ReportStatus(
         totalSavedCount = totalSavedCount,
         totalReadCount = totalReadCount,
-        percentage = if (totalSavedCount == 0) {
-            0
-        } else {
-            (totalReadCount * 100) / totalSavedCount
-        },
+        percentage = if (totalSavedCount == 0) 0
+        else ((totalReadCount.toDouble() * 100.0) / totalSavedCount.toDouble()).toInt().coerceIn(0, 100),
         recentReadNewsletters = recentReadNewsletters.map { it.toDomain() }
     )
 
@@ -61,16 +55,31 @@ fun RecentReadNewsletterDto.toDomain(): RecentReadNewsletter =
         lastViewedAt = lastViewedAt
     )
 
-
+/**
+ * 여기만 "안전한 퍼센트 계산"으로 교체됨 (UI 안 건드리고 음수/이상치 방지)
+ */
 fun ReportBalanceDto.toDomain(): ReportBalance {
-    val readingTotal = lightCount + deepCount
-    val timeTotal = nowCount + futureCount
+
+    fun percentPair(left: Int, right: Int): Pair<Int, Int> {
+        val l = left.coerceAtLeast(0)
+        val r = right.coerceAtLeast(0)
+        val total = l + r
+
+        if (total == 0) return 50 to 50 // 데이터 없으면 중립(합 100)
+
+        val leftPercent = ((l * 100.0) / total).toInt().coerceIn(0, 100)
+        val rightPercent = (100 - leftPercent).coerceIn(0, 100) // 합 100 보정
+        return leftPercent to rightPercent
+    }
+
+    val (lightP, deepP) = percentPair(lightCount, deepCount)
+    val (nowP, futureP) = percentPair(nowCount, futureCount)
 
     return ReportBalance(
-        lightPercentage = if (readingTotal == 0) 0 else (lightCount * 100) / readingTotal,
-        deepPercentage = if (readingTotal == 0) 0 else 100 - (lightCount * 100) / readingTotal,
-        nowPercentage = if (timeTotal == 0) 0 else (nowCount * 100) / timeTotal,
-        futurePercentage = if (timeTotal == 0) 0 else 100 - (nowCount * 100) / timeTotal,
+        lightPercentage = lightP,
+        deepPercentage = deepP,
+        nowPercentage = nowP,
+        futurePercentage = futureP,
         patternTitle = patternTitle.orEmpty(),
         patternDescription = patternDescription.orEmpty(),
         patternQuote = patternQuote.orEmpty()
@@ -79,6 +88,7 @@ fun ReportBalanceDto.toDomain(): ReportBalance {
 
 fun ReportMainInterestGapDto.toDomain(): ReportMainInterestGap =
     ReportMainInterestGap(
+        topicId = topicId,
         topicName = topicName,
         savedCount = savedCount,
         readCount = readCount
