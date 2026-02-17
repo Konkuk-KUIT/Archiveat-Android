@@ -100,6 +100,7 @@ private fun NewsletterSimple.toAiUiModel(userName: String): NewsletterDetailsAiU
     return NewsletterDetailsAiUiModel(
         topicText = topicText,
         imageUrl = thumbnailUrl,
+        domainName = domainName?.trim()?.lowercase(),
         tags = tags,
         contentTitle = title,
         userName = userName,
