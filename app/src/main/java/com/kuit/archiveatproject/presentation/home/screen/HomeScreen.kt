@@ -1,16 +1,20 @@
 package com.kuit.archiveatproject.presentation.home.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -90,35 +94,46 @@ fun HomeScreenContent(
     onCardClick: (HomeContentCardUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
     ) {
-        TopLogoBar(
-            modifier = Modifier.padding(top = 11.dp)
-        )
-
-        uiState.greeting?.let {
-            GreetingBar(
-                nickname = uiState.nickname,
-                firstGreetingMessage = it.firstMessage,
-                secondGreetingMessage = it.secondMessage,
+        if (uiState.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = ArchiveatProjectTheme.colors.primary
             )
+        } else {
+            Column(
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                TopLogoBar(
+                    modifier = Modifier.padding(top = 11.dp)
+                )
+
+                uiState.greeting?.let {
+                    GreetingBar(
+                        nickname = uiState.nickname,
+                        firstGreetingMessage = it.firstMessage,
+                        secondGreetingMessage = it.secondMessage,
+                    )
+                }
+
+                HomeCategoryTabBar(
+                    tabs = uiState.tabs,
+                    selectedTab = uiState.selectedTab,
+                    onTabSelected = onTabSelected
+                )
+
+                Spacer(Modifier.height(27.dp))
+
+                HomeContentCardCarousel(
+                    cards = uiState.contentCards,
+                    onCenterCardClick = onCardClick
+                )
+            }
         }
-
-        HomeCategoryTabBar(
-            tabs = uiState.tabs,
-            selectedTab = uiState.selectedTab,
-            onTabSelected = onTabSelected
-        )
-
-        Spacer(Modifier.height(27.dp))
-
-        HomeContentCardCarousel(
-            cards = uiState.contentCards,
-            onCenterCardClick = onCardClick
-        )
     }
 }
 
