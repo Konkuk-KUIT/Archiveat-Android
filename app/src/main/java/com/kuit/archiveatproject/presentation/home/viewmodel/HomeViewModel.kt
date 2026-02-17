@@ -62,20 +62,24 @@ class HomeViewModel @Inject constructor(
                 _uiState.update {
                     val currentTab = it.selectedTab
                     it.copy(
-                        isLoading = false,
                         greeting = GreetingUiModel(
                             result.firstGreetingMessage,
                             result.secondGreetingMessage
                         ),
                         tabs = result.tabs,
-                        selectedTab = currentTab
+                        selectedTab = currentTab,
+                        errorMessage = null
                     )
                 }
                 updateVisibleContent(_uiState.value.selectedTab)
 
                 runCatching { userRepository.getNickname() }
                     .onSuccess { nickname ->
-                        _uiState.update { it.copy(nickname = nickname) }
+                        _uiState.update { it.copy(nickname = nickname, isLoading = false) }
+                    }
+                    .onFailure { throwable ->
+                        Log.e("HomeViewModel", "닉네임 조회 실패", throwable)
+                        _uiState.update { it.copy(isLoading = false) }
                     }
             }.onFailure { e ->
                 Log.e("HomeViewModel", "홈 조회 실패", e)

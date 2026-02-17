@@ -1,16 +1,21 @@
 package com.kuit.archiveatproject.presentation.home.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
 import com.kuit.archiveatproject.core.component.TopLogoBar
 import com.kuit.archiveatproject.domain.entity.HomeCardType
 import com.kuit.archiveatproject.domain.entity.HomeTab
@@ -73,6 +79,7 @@ fun HomeScreen(
     HomeScreenContent(
         uiState = uiState,
         onTabSelected = viewModel::onTabSelected,
+        onRetry = viewModel::refreshHome,
         onCardClick = { card ->
             when (card.cardType) {
                 HomeCardType.COLLECTION -> onClickCollectionCard(card.archiveId)
@@ -87,38 +94,72 @@ fun HomeScreen(
 fun HomeScreenContent(
     uiState: HomeUiState,
     onTabSelected: (HomeTabType) -> Unit,
+    onRetry: () -> Unit,
     onCardClick: (HomeContentCardUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
     ) {
-        TopLogoBar(
-            modifier = Modifier.padding(top = 11.dp)
-        )
-
-        uiState.greeting?.let {
-            GreetingBar(
-                nickname = uiState.nickname,
-                firstGreetingMessage = it.firstMessage,
-                secondGreetingMessage = it.secondMessage,
+        if (uiState.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = ArchiveatProjectTheme.colors.primary
             )
+        } else if (uiState.errorMessage != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = uiState.errorMessage,
+                    style = ArchiveatProjectTheme.typography.Body_2_medium,
+                    color = ArchiveatProjectTheme.colors.gray700
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                PrimaryRoundedButton(
+                    text = "다시 시도",
+                    onClick = onRetry,
+                    fullWidth = false,
+                    containerColor = ArchiveatProjectTheme.colors.black,
+                    cornerRadiusDp = 12
+                )
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                TopLogoBar(
+                    modifier = Modifier.padding(top = 11.dp)
+                )
+
+                uiState.greeting?.let {
+                    GreetingBar(
+                        nickname = uiState.nickname,
+                        firstGreetingMessage = it.firstMessage,
+                        secondGreetingMessage = it.secondMessage,
+                    )
+                }
+
+                HomeCategoryTabBar(
+                    tabs = uiState.tabs,
+                    selectedTab = uiState.selectedTab,
+                    onTabSelected = onTabSelected
+                )
+
+                Spacer(Modifier.height(27.dp))
+
+                HomeContentCardCarousel(
+                    cards = uiState.contentCards,
+                    onCenterCardClick = onCardClick
+                )
+            }
         }
-
-        HomeCategoryTabBar(
-            tabs = uiState.tabs,
-            selectedTab = uiState.selectedTab,
-            onTabSelected = onTabSelected
-        )
-
-        Spacer(Modifier.height(27.dp))
-
-        HomeContentCardCarousel(
-            cards = uiState.contentCards,
-            onCenterCardClick = onCardClick
-        )
     }
 }
 
@@ -163,6 +204,7 @@ private fun HomeScreenPreview() {
             contentCards = emptyList()
         ),
         onTabSelected = {},
+        onRetry = {},
         onCardClick = {}
     )
 }
