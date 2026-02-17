@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -144,79 +145,91 @@ fun ReportBalanceContent(
             )
         },
         bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(ArchiveatProjectTheme.colors.white)
-                    .padding(horizontal = 20.dp, vertical = 14.dp)
-                    .navigationBarsPadding()
-            ) {
-                ReportButtonComponent(
-                    text = cta.buttonText,
-                    enabled = true,
-                    onClick = { onClickCta(cta.destinationTab) },
-                    modifier = Modifier.fillMaxWidth()
-                )
+            if (!uiState.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(ArchiveatProjectTheme.colors.white)
+                        .padding(horizontal = 20.dp, vertical = 14.dp)
+                        .navigationBarsPadding()
+                ) {
+                    ReportButtonComponent(
+                        text = cta.buttonText,
+                        enabled = true,
+                        onClick = { onClickCta(cta.destinationTab) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         },
         containerColor = ArchiveatProjectTheme.colors.white
     ) { paddingValues ->
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            item {
-                Spacer(Modifier.height(21.dp))
-
-                val nickname = uiState.nickname.takeIf { it.isNotBlank() } ?: "사용자"
-
-                StatusTextTag(
-                    text = "${nickname}님의 지식 좌표",
-                    ArchiveatProjectTheme.colors.primary
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(ArchiveatProjectTheme.colors.white)
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = ArchiveatProjectTheme.colors.primary
                 )
-
-
-
-
-                Spacer(Modifier.height(21.dp))
-                BalanceCanvasComponent(
-                    position = position,
-                    modifier = Modifier.size(255.dp)
-                )
-
-                Spacer(Modifier.height(31.dp))
             }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    Spacer(Modifier.height(21.dp))
 
-            item {
-                BalancePatternInsightCard(
-                    title = uiState.balance.patternTitle,
-                    description = uiState.balance.patternDescription,
-                    quote = uiState.balance.patternQuote
-                )
+                    val nickname = uiState.nickname.takeIf { it.isNotBlank() } ?: "사용자"
 
-                Spacer(Modifier.height(21.dp))
-            }
+                    StatusTextTag(
+                        text = "${nickname}님의 지식 좌표",
+                        ArchiveatProjectTheme.colors.primary
+                    )
 
-            item {
-                Text(
-                    text = "상세 비율 분석",
-                    style = ArchiveatProjectTheme.typography.Subhead_2_semibold,
-                    color = ArchiveatProjectTheme.colors.gray800,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
+                    Spacer(Modifier.height(21.dp))
+                    BalanceCanvasComponent(
+                        position = position,
+                        modifier = Modifier.size(255.dp)
+                    )
 
-                Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(31.dp))
+                }
 
-                BalanceSummaryCard(
-                    balance = uiState.balance
-                )
+                item {
+                    BalancePatternInsightCard(
+                        title = uiState.balance.patternTitle,
+                        description = uiState.balance.patternDescription,
+                        quote = uiState.balance.patternQuote
+                    )
 
-                Spacer(Modifier.height(14.dp))
+                    Spacer(Modifier.height(21.dp))
+                }
+
+                item {
+                    Text(
+                        text = "상세 비율 분석",
+                        style = ArchiveatProjectTheme.typography.Subhead_2_semibold,
+                        color = ArchiveatProjectTheme.colors.gray800,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
+
+                    Spacer(Modifier.height(12.dp))
+
+                    BalanceSummaryCard(
+                        balance = uiState.balance
+                    )
+
+                    Spacer(Modifier.height(14.dp))
+                }
             }
         }
     }

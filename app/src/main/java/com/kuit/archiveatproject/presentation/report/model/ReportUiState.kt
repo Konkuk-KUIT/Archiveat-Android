@@ -3,6 +3,7 @@ package com.kuit.archiveatproject.presentation.report.model
 import com.kuit.archiveatproject.domain.entity.RecentReadNewsletter
 
 data class ReportUiState(
+    val isLoading: Boolean = false,
     val referenceDate: String = "",
     // 사용자 닉네임
     val nickname: String = "",
