@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class ReportBalanceViewModel @Inject constructor(
@@ -29,6 +30,7 @@ class ReportBalanceViewModel @Inject constructor(
                 _uiState.update { it.copy(nickname = nickname) }
             }
             .onFailure { e ->
+                if (e is CancellationException) throw e
                 Log.e("ReportBalanceVM", "getNickname failed", e)
             }
 
@@ -37,6 +39,7 @@ class ReportBalanceViewModel @Inject constructor(
         }.onSuccess { balance ->
             _uiState.update { it.copy(balance = balance.toUiState(), isLoading = false) }
         }.onFailure { e ->
+            if (e is CancellationException) throw e
             Log.e("ReportBalanceVM", "fetchReportBalance failed", e)
             _uiState.update {
                 it.copy(

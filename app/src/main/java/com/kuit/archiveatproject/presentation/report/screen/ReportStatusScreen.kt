@@ -44,7 +44,6 @@ fun ReportStatusScreen(
     onBackClick: () -> Unit,
     onClickNewsletter: () -> Unit,
     onClickExplore: () -> Unit,
-
     viewModel: ReportStatusViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -71,23 +70,8 @@ fun ReportStatusContent(
     onBackClick: () -> Unit,
     onClickNewsletter: () -> Unit,
     onClickExplore: () -> Unit,
-
     modifier: Modifier = Modifier
 ) {
-    if (uiState.isLoading) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(ArchiveatProjectTheme.colors.white)
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = ArchiveatProjectTheme.colors.primary
-            )
-        }
-        return
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -104,111 +88,124 @@ fun ReportStatusContent(
                 onBack = onBackClick
             )
         }
-        
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-        ) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(ArchiveatProjectTheme.colors.white)
-                ) {
-                    Column(
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .background(ArchiveatProjectTheme.colors.white)
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = ArchiveatProjectTheme.colors.primary
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                item {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .background(ArchiveatProjectTheme.colors.white)
                     ) {
-                        Spacer(Modifier.height(21.dp))
-
-                        StatusTextTag(
-                            "이번 주 달성률",
-                            ArchiveatProjectTheme.colors.primary
-                        )
-
-                        Spacer(Modifier.height(24.dp))
-
-                        CircularProgressComponent(
-                            percentage = uiState.readPercentage
-                        )
-
-                        Spacer(Modifier.height(32.dp))
-
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            modifier = Modifier.fillMaxWidth()
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            ReportStatusBoxComponent(
-                                text = "총 저장",
-                                count = uiState.totalSavedCount,
-                                textColor_1 = ArchiveatProjectTheme.colors.gray600,
-                                textColor_2 = ArchiveatProjectTheme.colors.black,
-                                boxColor = ArchiveatProjectTheme.colors.gray50,
-                                borderColor = ArchiveatProjectTheme.colors.gray100,
-                                modifier = Modifier.weight(1f)
+                            Spacer(Modifier.height(21.dp))
+
+                            StatusTextTag(
+                                "이번 주 달성률",
+                                ArchiveatProjectTheme.colors.primary
                             )
 
-                            ReportStatusBoxComponent(
-                                text = "읽음 완료",
-                                count = uiState.totalReadCount,
-                                textColor_1 = ArchiveatProjectTheme.colors.primary.copy(alpha = 0.7F),
-                                textColor_2 = ArchiveatProjectTheme.colors.primary,
-                                boxColor = ArchiveatProjectTheme.colors.primary.copy(alpha = 0.1F),
-                                borderColor = Color(0xFFE7DCFA),
-                                modifier = Modifier.weight(1f)
+                            Spacer(Modifier.height(24.dp))
+
+                            CircularProgressComponent(
+                                percentage = uiState.readPercentage
                             )
+
+                            Spacer(Modifier.height(32.dp))
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                ReportStatusBoxComponent(
+                                    text = "총 저장",
+                                    count = uiState.totalSavedCount,
+                                    textColor_1 = ArchiveatProjectTheme.colors.gray600,
+                                    textColor_2 = ArchiveatProjectTheme.colors.black,
+                                    boxColor = ArchiveatProjectTheme.colors.gray50,
+                                    borderColor = ArchiveatProjectTheme.colors.gray100,
+                                    modifier = Modifier.weight(1f)
+                                )
+
+                                ReportStatusBoxComponent(
+                                    text = "읽음 완료",
+                                    count = uiState.totalReadCount,
+                                    textColor_1 = ArchiveatProjectTheme.colors.primary.copy(alpha = 0.7F),
+                                    textColor_2 = ArchiveatProjectTheme.colors.primary,
+                                    boxColor = ArchiveatProjectTheme.colors.primary.copy(alpha = 0.1F),
+                                    borderColor = Color(0xFFE7DCFA),
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            Spacer(Modifier.height(24.dp))
                         }
-
-                        Spacer(Modifier.height(24.dp))
                     }
+                }
+
+                item {
+                    Text(
+                        text = "최근 학습 기록",
+                        style = ArchiveatProjectTheme.typography.Subhead_2_semibold,
+                        color = ArchiveatProjectTheme.colors.gray800,
+                        modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 12.dp)
+                    )
+                }
+
+                items(uiState.recentReadNewsletters) { item ->
+                    RecentNewsletterComponent(
+                        item = item,
+                        serverTimestamp = item.lastViewedAt,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
-            item {
-                Text(
-                    text = "최근 학습 기록",
-                    style = ArchiveatProjectTheme.typography.Subhead_2_semibold,
-                    color = ArchiveatProjectTheme.colors.gray800,
-                    modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 12.dp)
-                )
-            }
-
-            items(uiState.recentReadNewsletters) { item ->
-                RecentNewsletterComponent(
-                    item = item,
-                    serverTimestamp = item.lastViewedAt,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(ArchiveatProjectTheme.colors.white)
-                .padding(horizontal = 20.dp, vertical = 14.dp)
-        ) {
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .navigationBarsPadding(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    .background(ArchiveatProjectTheme.colors.white)
+                    .padding(horizontal = 20.dp, vertical = 14.dp)
             ) {
-                ReportButtonComponent(
-                    text = "뉴스레터 보러가기",
-                    true,
-                    onClick = onClickNewsletter,
-                    modifier = Modifier.weight(1f)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    ReportButtonComponent(
+                        text = "뉴스레터 보러가기",
+                        true,
+                        onClick = onClickNewsletter,
+                        modifier = Modifier.weight(1f)
+                    )
 
-                ReportButtonComponent(
-                    text = "콘텐츠 탐색하기",
-                    true,
-                    onClick = onClickExplore,
-                    modifier = Modifier.weight(1f)
-                )
+                    ReportButtonComponent(
+                        text = "콘텐츠 탐색하기",
+                        true,
+                        onClick = onClickExplore,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
     }
