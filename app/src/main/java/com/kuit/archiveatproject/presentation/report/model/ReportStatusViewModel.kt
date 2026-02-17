@@ -18,11 +18,13 @@ class ReportStatusViewModel @Inject constructor(
     private val reportRepository: ReportRepository,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ReportUiState())
+    private val _uiState = MutableStateFlow(ReportUiState(isLoading = true))
     val uiState: StateFlow<ReportUiState> = _uiState.asStateFlow()
 
     fun fetchReportStatus() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, isError = false, errorMessage = null)
+
             runCatching { reportRepository.getReportStatus() }
                 .onSuccess { status ->
                     Log.d("ReportStatusVM", "getReportStatus success: saved=${status.totalSavedCount}, read=${status.totalReadCount}")
@@ -33,6 +35,7 @@ class ReportStatusViewModel @Inject constructor(
                     if (e is CancellationException) throw e
                     Log.e("ReportStatusVM", "getReportStatus failed", e)
                     _uiState.value = ReportUiState(
+                        isLoading = false,
                         isError = true,
                         errorMessage = e.message ?: "네트워크 오류"
                     )
@@ -42,6 +45,7 @@ class ReportStatusViewModel @Inject constructor(
 
     private fun ReportStatus.toUiState(): ReportUiState =
         ReportUiState(
+            isLoading = false,
             totalSavedCount = totalSavedCount,
             totalReadCount = totalReadCount,
             readPercentage = percentage,

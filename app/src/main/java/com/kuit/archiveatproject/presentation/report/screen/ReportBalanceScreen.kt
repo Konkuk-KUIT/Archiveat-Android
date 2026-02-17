@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -125,6 +126,20 @@ fun ReportBalanceContent(
     onClickCta: (HomeTabType) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (uiState.isLoading) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(ArchiveatProjectTheme.colors.white)
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = ArchiveatProjectTheme.colors.primary
+            )
+        }
+        return
+    }
+
     val position = uiState.toKnowledgePosition()
 
     val cta = decideCta(

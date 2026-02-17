@@ -18,10 +18,12 @@ class ReportBalanceViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ReportUiState())
+    private val _uiState = MutableStateFlow(ReportUiState(isLoading = true))
     val uiState: StateFlow<ReportUiState> = _uiState
 
     fun fetchReportBalance() = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true, isError = false, errorMessage = null) }
+
         runCatching { userRepository.getNickname() }
             .onSuccess { nickname ->
                 _uiState.update { it.copy(nickname = nickname) }
@@ -33,9 +35,16 @@ class ReportBalanceViewModel @Inject constructor(
         runCatching {
             reportRepository.getReportBalance()
         }.onSuccess { balance ->
-            _uiState.update { it.copy(balance = balance.toUiState()) }
+            _uiState.update { it.copy(balance = balance.toUiState(), isLoading = false) }
         }.onFailure { e ->
             Log.e("ReportBalanceVM", "fetchReportBalance failed", e)
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    isError = true,
+                    errorMessage = e.message ?: "데이터를 불러오지 못했어요"
+                )
+            }
         }
     }
 
