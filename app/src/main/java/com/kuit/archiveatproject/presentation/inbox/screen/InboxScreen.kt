@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +37,7 @@ import com.kuit.archiveatproject.presentation.inbox.edit.InboxEditBottomSheet
 import com.kuit.archiveatproject.presentation.inbox.util.InboxFormatters
 import com.kuit.archiveatproject.presentation.inbox.viewmodel.InboxViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun InboxScreen(
@@ -47,12 +49,15 @@ fun InboxScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var isLeaving by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     val onBackFromInbox = onBackFromInbox@{
         if (isLeaving) return@onBackFromInbox
         isLeaving = true
-        viewModel.confirmExploreInboxAll()
-        onBackToExploreFirstDepth()
+        coroutineScope.launch {
+            viewModel.confirmExploreInboxAll()
+            onBackToExploreFirstDepth()
+        }
     }
 
     BackHandler { onBackFromInbox() }
