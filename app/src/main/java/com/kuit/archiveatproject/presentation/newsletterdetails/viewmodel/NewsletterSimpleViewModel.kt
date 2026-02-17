@@ -85,6 +85,7 @@ class NewsletterSimpleViewModel @Inject constructor(
 }
 
 private fun NewsletterSimple.toAiUiModel(userName: String): NewsletterDetailsAiUiModel {
+
     val topicText = listOf(categoryName, topicName)
         .filter { it.isNotBlank() }
         .joinToString(" - ")
@@ -92,19 +93,31 @@ private fun NewsletterSimple.toAiUiModel(userName: String): NewsletterDetailsAiU
 
     val tags = buildList {
         if (label.isNotBlank()) {
-            add(TagUiModel(text = label, variant = TagVariant.Tab(HomeTabType.fromLabel(label))))
+            add(
+                TagUiModel(
+                    text = label,
+                    variant = TagVariant.Tab(HomeTabType.fromLabel(label))
+                )
+            )
         }
-        add(TagUiModel(text = HomeCardType.AI_SUMMARY.label, variant = TagVariant.CardType(HomeCardType.AI_SUMMARY)))
+        add(
+            TagUiModel(
+                text = HomeCardType.AI_SUMMARY.label,
+                variant = TagVariant.CardType(HomeCardType.AI_SUMMARY)
+            )
+        )
     }
 
     return NewsletterDetailsAiUiModel(
         topicText = topicText,
-        imageUrl = thumbnailUrl,
-        domainName = domainName?.trim()?.lowercase(),
+        imageUrl = thumbnailUrl.takeIf { it.isNotBlank() }, // blank → null 처리
+        domainName = domainName?.trim()?.lowercase(),       // lowercase 정규화
         tags = tags,
         contentTitle = title,
         userName = userName,
-        aiSections = simpleSummary.map { AiSectionUiModel(it.title, it.content) },
+        aiSections = simpleSummary.map {
+            AiSectionUiModel(it.title, it.content)
+        },
         memo = memo
     )
 }
