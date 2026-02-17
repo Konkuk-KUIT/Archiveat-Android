@@ -76,7 +76,8 @@ class HomeViewModel @Inject constructor(
                     .onSuccess { nickname ->
                         _uiState.update { it.copy(nickname = nickname, isLoading = false) }
                     }
-                    .onFailure {
+                    .onFailure { throwable ->
+                        Log.e("HomeViewModel", "닉네임 조회 실패", throwable)
                         _uiState.update { it.copy(isLoading = false) }
                     }
             }.onFailure { e ->
