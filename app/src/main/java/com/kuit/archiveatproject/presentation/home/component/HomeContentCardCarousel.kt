@@ -78,7 +78,7 @@ fun HomeContentCardCarousel(
         val shadowOffsetY = 3.dp
         val shadowPad = shadowBlur + 2.dp  // blur보다 살짝 크게(잘림 방지 여백)
 
-        val maxCardHeight = (maxHeight - shadowPad * 2 - shadowOffsetY).coerceAtLeast(320.dp)
+        val maxCardHeight = (maxHeight - shadowPad * 2 - shadowOffsetY).coerceAtLeast(0.dp)
         val measuredCardHeight =
             if (maxCardHeight >= baseCardHeight) maxCardHeight.coerceAtMost(520.dp)
             else maxCardHeight
@@ -88,7 +88,8 @@ fun HomeContentCardCarousel(
                 frozenCardHeight = measuredCardHeight
             }
         }
-        val dynamicCardHeight = frozenCardHeight ?: measuredCardHeight
+        val dynamicCardHeight =
+            (frozenCardHeight ?: measuredCardHeight).coerceAtMost(measuredCardHeight)
 
         // 그림자 포함 프레임 크기
         val frameWidth = cardWidth + shadowPad * 2
