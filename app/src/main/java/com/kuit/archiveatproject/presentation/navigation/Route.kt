@@ -16,7 +16,6 @@ sealed class Route(
             "home?tab=${tab.name}"
     }
 
-    data object Share : Route(route = "share")
     data object Explore : Route(route = "explore")
     data object ExploreInbox : Route(route = "explore/inbox")
 
