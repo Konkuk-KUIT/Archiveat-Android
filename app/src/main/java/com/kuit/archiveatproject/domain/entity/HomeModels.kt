@@ -22,7 +22,8 @@ data class HomeContentCard(
     val title: String,
     val smallCardSummary: String,
     val mediumCardSummary: String,
-    val thumbnailUrl: String?
+    val thumbnailUrl: String?,
+    val domainName: String?
 )
 
 data class HomeContentCollectionCard(
@@ -33,7 +34,12 @@ data class HomeContentCollectionCard(
     val title: String,
     val smallCardSummary: String,
     val mediumCardSummary: String,
-    val thumbnailUrls: List<String>
+    val thumbnails: List<HomeThumbnail>
+)
+
+data class HomeThumbnail(
+    val thumbnailUrl: String?,
+    val domainName: String?
 )
 
 enum class HomeTabType {

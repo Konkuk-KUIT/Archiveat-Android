@@ -39,16 +39,17 @@ import com.kuit.archiveatproject.core.util.noRippleCircleClickable
 import com.kuit.archiveatproject.domain.entity.HomeCardType
 import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
+import com.kuit.archiveatproject.presentation.home.model.HomeThumbnailUiModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 private fun HomeContentThumbnail(
-    imageUrls: List<String>,
+    thumbnails: List<HomeThumbnailUiModel>,
+    fallbackDomainName: String?,
     modifier: Modifier = Modifier,
 ) {
-    val urls = imageUrls.filter { it.isNotBlank() }
-    val visible = urls.take(4)
-    val extraCount = (urls.size - 4).coerceAtLeast(0)
+    val visible = thumbnails.take(4)
+    val extraCount = (thumbnails.size - 4).coerceAtLeast(0)
 
     val divider = 3.dp
     val dividerColor = ArchiveatProjectTheme.colors.gray200
@@ -56,28 +57,20 @@ private fun HomeContentThumbnail(
     Box(modifier = modifier.background(ArchiveatProjectTheme.colors.primary)) {
         when (visible.size) {
             0 -> {
-                // 0개: 플레이스 홀더
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_logo_simple),
-                        contentDescription = "default logo",
-                        tint = Color.Unspecified,
-                    )
-                }
+                DomainPlaceholder(
+                    domainName = fallbackDomainName,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
 
             1 -> {
-                TileImage(url = visible[0], modifier = Modifier.fillMaxSize())
+                ThumbnailTile(thumbnail = visible[0], modifier = Modifier.fillMaxSize())
             }
 
             2 -> {
                 Row(Modifier.fillMaxSize()) {
-                    TileImage(
-                        url = visible[0],
+                    ThumbnailTile(
+                        thumbnail = visible[0],
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -88,8 +81,8 @@ private fun HomeContentThumbnail(
                             .fillMaxHeight()
                             .background(dividerColor)
                     )
-                    TileImage(
-                        url = visible[1],
+                    ThumbnailTile(
+                        thumbnail = visible[1],
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -99,8 +92,8 @@ private fun HomeContentThumbnail(
 
             3 -> {
                 Row(Modifier.fillMaxSize()) {
-                    TileImage(
-                        url = visible[0],
+                    ThumbnailTile(
+                        thumbnail = visible[0],
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -116,8 +109,8 @@ private fun HomeContentThumbnail(
                             .weight(1f)
                             .fillMaxHeight()
                     ) {
-                        TileImage(
-                            url = visible[1],
+                        ThumbnailTile(
+                            thumbnail = visible[1],
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxWidth()
@@ -128,8 +121,8 @@ private fun HomeContentThumbnail(
                                 .fillMaxWidth()
                                 .background(dividerColor)
                         )
-                        TileImage(
-                            url = visible[2],
+                        ThumbnailTile(
+                            thumbnail = visible[2],
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxWidth()
@@ -146,8 +139,8 @@ private fun HomeContentThumbnail(
                             .weight(1f)
                             .fillMaxWidth()
                     ) {
-                        TileImage(
-                            url = visible[0], modifier = Modifier
+                        ThumbnailTile(
+                            thumbnail = visible[0], modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
                         )
@@ -157,8 +150,8 @@ private fun HomeContentThumbnail(
                                 .fillMaxHeight()
                                 .background(dividerColor)
                         )
-                        TileImage(
-                            url = visible[1], modifier = Modifier
+                        ThumbnailTile(
+                            thumbnail = visible[1], modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
                         )
@@ -174,8 +167,8 @@ private fun HomeContentThumbnail(
                             .weight(1f)
                             .fillMaxWidth()
                     ) {
-                        TileImage(
-                            url = visible[2], modifier = Modifier
+                        ThumbnailTile(
+                            thumbnail = visible[2], modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
                         )
@@ -191,7 +184,7 @@ private fun HomeContentThumbnail(
                                 .weight(1f)
                                 .fillMaxHeight()
                         ) {
-                            TileImage(url = visible[3], modifier = Modifier.fillMaxSize())
+                            ThumbnailTile(thumbnail = visible[3], modifier = Modifier.fillMaxSize())
 
                             // 5개 이상이면 마지막 타일에 +N 오버레이
                             if (extraCount > 0) {
@@ -214,6 +207,49 @@ private fun HomeContentThumbnail(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ThumbnailTile(
+    thumbnail: HomeThumbnailUiModel,
+    modifier: Modifier = Modifier,
+) {
+    val url = thumbnail.thumbnailUrl?.takeIf { it.isNotBlank() }
+    if (url != null) {
+        TileImage(url = url, modifier = modifier)
+    } else {
+        DomainPlaceholder(domainName = thumbnail.domainName, modifier = modifier)
+    }
+}
+
+@Composable
+private fun DomainPlaceholder(
+    domainName: String?,
+    modifier: Modifier = Modifier,
+) {
+    val normalizedDomain = domainName?.trim()?.lowercase()
+    val (backgroundColor, logoResId, description) = when (normalizedDomain) {
+        "tistory" -> Triple(Color(0xFFFC5100), R.drawable.ic_logo_tistory, "tistory logo")
+        "naver news" -> Triple(Color(0xFF2DB300), R.drawable.ic_logo_naver, "naver logo")
+        "youtube" -> Triple(Color(0xFFE7211A), R.drawable.ic_logo_youtube, "youtube logo")
+        else -> Triple(
+            ArchiveatProjectTheme.colors.primary,
+            R.drawable.ic_logo_simple,
+            "default logo"
+        )
+    }
+
+    Column(
+        modifier = modifier.background(backgroundColor),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(logoResId),
+            contentDescription = description,
+            tint = Color.Unspecified,
+        )
     }
 }
 
@@ -248,11 +284,17 @@ fun HomeContentCard(
 ) {
     val shape = RoundedCornerShape(30.dp)
 
-    val urlsForThumb: List<String> =
-        card.imageUrls
-            .ifEmpty { listOfNotNull(card.thumbnailUrl) }
-            .filter { it.isNotBlank() }
-            .toList()
+    val thumbnailsForThumb: List<HomeThumbnailUiModel> =
+        if (card.thumbnails.isNotEmpty()) {
+            card.thumbnails
+        } else {
+            card.imageUrls.map { imageUrl ->
+                HomeThumbnailUiModel(
+                    thumbnailUrl = imageUrl,
+                    domainName = card.domainName
+                )
+            }
+        }
 
     Column(
         modifier = modifier
@@ -266,7 +308,8 @@ fun HomeContentCard(
             .fillMaxWidth()
     ) {
         HomeContentThumbnail(
-            imageUrls = urlsForThumb,
+            thumbnails = thumbnailsForThumb,
+            fallbackDomainName = card.domainName,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(268f / 174f)
@@ -375,7 +418,8 @@ private fun HomeContentCardPrevContent() {
                     title = "0장 케이스 (플레이스홀더)",
                     smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
                     mediumCardSummary = "이미지가 0장일 때 플레이스홀더가 나오는지 확인",
-                    imageUrls = emptyList()
+                    imageUrls = emptyList(),
+                    domainName = ""
                 ),
                 modifier = Modifier
                     .padding(18.dp)

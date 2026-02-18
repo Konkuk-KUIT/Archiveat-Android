@@ -11,6 +11,7 @@ import com.kuit.archiveatproject.domain.repository.HomeRepository
 import com.kuit.archiveatproject.domain.repository.UserRepository
 import com.kuit.archiveatproject.presentation.home.model.GreetingUiModel
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
+import com.kuit.archiveatproject.presentation.home.model.HomeThumbnailUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +39,14 @@ class HomeViewModel @Inject constructor(
             title = title,
             smallCardSummary = smallCardSummary,
             mediumCardSummary = mediumCardSummary,
-            imageUrls = listOfNotNull(thumbnailUrl)
+            imageUrls = listOfNotNull(thumbnailUrl),
+            thumbnails = listOf(
+                HomeThumbnailUiModel(
+                    thumbnailUrl = thumbnailUrl,
+                    domainName = domainName
+                )
+            ),
+            domainName = domainName
         )
 
     private fun HomeContentCollectionCard.toUiModel(): HomeContentCardUiModel =
@@ -50,7 +58,16 @@ class HomeViewModel @Inject constructor(
             title = title,
             smallCardSummary = smallCardSummary,
             mediumCardSummary = mediumCardSummary,
-            imageUrls = thumbnailUrls
+            imageUrls = thumbnails.mapNotNull { it.thumbnailUrl?.takeIf(String::isNotBlank) },
+            thumbnails = thumbnails.map {
+                HomeThumbnailUiModel(
+                    thumbnailUrl = it.thumbnailUrl,
+                    domainName = it.domainName
+                )
+            },
+            domainName = thumbnails.firstNotNullOfOrNull { thumbnail ->
+                thumbnail.domainName?.takeIf(String::isNotBlank)
+            }
         )
 
     private fun loadHome() {
