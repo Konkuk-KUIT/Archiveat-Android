@@ -180,6 +180,10 @@ fun HomeScreenContent(
                 } else {
                     HomeContentCardCarousel(
                         cards = uiState.contentCards,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(bottom = 31.dp),
                         onCenterCardClick = onCardClick
                     )
                 }
