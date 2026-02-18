@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.CollectionComponent
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.CollectionComponentUiModel
@@ -34,6 +38,17 @@ fun NewsletterDetailsCollectionScreen(
     viewModel: NewsletterDetailsCollectionViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refresh()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     if (uiState.items.isNotEmpty()) {
         NewsletterDetailsCollectionContent(
@@ -43,7 +58,6 @@ fun NewsletterDetailsCollectionScreen(
             items = uiState.items,
             onBack = onBack,
             onClickItem = onClickItem,
-            onToggleChecked = { id -> viewModel.toggleChecked(id) },
             modifier = modifier
         )
     } else {
@@ -67,7 +81,6 @@ fun NewsletterDetailsCollectionContent(
     onBack: () -> Unit,
     onClickItem: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    onToggleChecked: (Long) -> Unit = {},
 ) {
     val collectedCount = items.size
     val progressTotal = collectedCount.coerceAtLeast(1)
@@ -113,8 +126,7 @@ fun NewsletterDetailsCollectionContent(
                 ) { model: CollectionComponentUiModel ->
                     CollectionComponent(
                         model = model,
-                        onClick = { onClickItem(model.id) },
-                        onToggleChecked = { id -> onToggleChecked(id) }
+                        onClick = { onClickItem(model.id) }
                     )
                 }
             }
@@ -134,7 +146,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 1L,
                     categoryLabel = "경제정책",
-                    sourceIcon = "", // 프리뷰에서는 빈 값이면 ImageTag가 fallback/깨질 수 있어서 주의
                     sourceLabel = "Youtube",
                     minutesLabel = "30분",
                     thumbnailUrl = "", // 빈 값이면 placeholder 박스
@@ -145,7 +156,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 2L,
                     categoryLabel = "가상자산",
-                    sourceIcon = "",
                     sourceLabel = "다음뉴스",
                     minutesLabel = "35분",
                     thumbnailUrl = "",
@@ -156,7 +166,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 3L,
                     categoryLabel = "주식",
-                    sourceIcon = "",
                     sourceLabel = "브런치",
                     minutesLabel = "5분",
                     thumbnailUrl = "",
@@ -167,7 +176,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 4L,
                     categoryLabel = "국제경제",
-                    sourceIcon = "",
                     sourceLabel = "Instagram",
                     minutesLabel = "3분",
                     thumbnailUrl = "",
@@ -178,7 +186,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 5L,
                     categoryLabel = "국제경제",
-                    sourceIcon = "",
                     sourceLabel = "Instagram",
                     minutesLabel = "3분",
                     thumbnailUrl = "",
@@ -188,8 +195,7 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 )
             ),
             onBack = {},
-            onClickItem = {},
-            onToggleChecked = {}
+            onClickItem = {}
         )
     }
 }

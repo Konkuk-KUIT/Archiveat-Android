@@ -37,20 +37,12 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
         }
     }
 
-    fun load(collectionId: Long) {
+    private fun load(collectionId: Long) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
                 val result = collectionRepository.getCollectionDetails(collectionId)
-                _uiState.update { current ->
-                    current.copy(
-                        isLoading = false,
-                        userName = result.collectionInfo.userNickname,
-                        categoryLabel = result.collectionInfo.topicName,
-                        monthLabel = currentMonthLabel(),
-                        items = result.newsletters.map { it.toUiModel(result) }
-                    )
-                }
+                applyCollectionResult(result)
             } catch (e: Throwable) {
                 if (e is CancellationException) throw e
                 _uiState.update {
@@ -63,12 +55,23 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
         }
     }
 
-    fun toggleChecked(id: Long) {
-        _uiState.update { state ->
-            val updated = state.items.map { item ->
-                if (item.id == id) item.copy(isChecked = !item.isChecked) else item
-            }
-            state.copy(items = updated)
+    fun refresh() {
+        if (argCollectionId == -1L) return
+        if (_uiState.value.isLoading) return
+        load(argCollectionId)
+    }
+
+    private fun applyCollectionResult(result: CollectionDetailsResult) {
+        val topicName = result.collectionInfo.topicName
+        _uiState.update { current ->
+            current.copy(
+                isLoading = false,
+                errorMessage = null,
+                userName = result.collectionInfo.userNickname,
+                categoryLabel = topicName,
+                monthLabel = currentMonthLabel(),
+                items = result.newsletters.map { it.toUiModel(topicName) }
+            )
         }
     }
 
@@ -78,11 +81,10 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
     }
 }
 
-private fun CollectionNewsletter.toUiModel(result: CollectionDetailsResult): CollectionComponentUiModel =
+private fun CollectionNewsletter.toUiModel(topicName: String): CollectionComponentUiModel =
     CollectionComponentUiModel(
-        id = newsletterId,
-        categoryLabel = result.collectionInfo.topicName,
-        sourceIcon = "",
+        id = userNewsletterId,
+        categoryLabel = topicName,
         sourceLabel = domainName,
         minutesLabel = "${consumptionTimeMin}분",
         thumbnailUrl = thumbnailUrl,

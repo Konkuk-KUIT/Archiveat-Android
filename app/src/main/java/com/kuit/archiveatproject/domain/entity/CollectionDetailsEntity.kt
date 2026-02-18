@@ -14,6 +14,7 @@ data class CollectionInfo(
 )
 
 data class CollectionNewsletter(
+    val userNewsletterId: Long,
     val newsletterId: Long,
     val domainName: String,
     val title: String,
