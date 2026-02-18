@@ -31,7 +31,6 @@ import com.kuit.archiveatproject.presentation.report.screen.ReportBalanceScreen
 import com.kuit.archiveatproject.presentation.report.screen.ReportInterestGapAnalysisScreen
 import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
 import com.kuit.archiveatproject.presentation.report.screen.ReportStatusScreen
-import com.kuit.archiveatproject.presentation.share.screen.ShareScreen
 
 @Composable
 fun NavGraph(
@@ -291,9 +290,6 @@ fun NavGraph(
                 )
             }
 
-            composable(route = Route.Share.route) {
-                ShareScreen(modifier = screenModifier)
-            }
         }
     }
 }
