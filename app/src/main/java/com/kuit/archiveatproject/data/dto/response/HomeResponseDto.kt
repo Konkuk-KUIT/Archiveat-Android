@@ -54,7 +54,13 @@ data class HomeContentCardDto(
     val mediumCardSummary: String? = null,
 
     @SerialName("thumbnailUrl")
-    val thumbnailUrl: String?
+    val thumbnailUrl: String?,
+
+    @SerialName("domainName")
+    val domainName: String? = null,
+
+    @SerialName("createdAt")
+    val createdAt: String? = null
 )
 
 @Serializable
@@ -71,6 +77,14 @@ data class HomeContentCollectionCardDto(
     val smallCardSummary: String? = null,
     @SerialName("mediumCardSummary")
     val mediumCardSummary: String? = null,
-    @SerialName("thumbnailUrls")
-    val thumbnailUrls: List<String> = emptyList(),
+    @SerialName("thumbnails")
+    val thumbnails: List<HomeThumbnailDto> = emptyList(),
+)
+
+@Serializable
+data class HomeThumbnailDto(
+    @SerialName("thumbnailUrl")
+    val thumbnailUrl: String? = null,
+    @SerialName("domainName")
+    val domainName: String? = null,
 )

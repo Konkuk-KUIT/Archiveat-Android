@@ -5,6 +5,7 @@ import com.kuit.archiveatproject.domain.entity.Home
 import com.kuit.archiveatproject.domain.entity.HomeCardType
 import com.kuit.archiveatproject.domain.entity.HomeContentCard
 import com.kuit.archiveatproject.domain.entity.HomeContentCollectionCard
+import com.kuit.archiveatproject.domain.entity.HomeThumbnail
 import com.kuit.archiveatproject.domain.entity.HomeTab
 import com.kuit.archiveatproject.domain.entity.HomeTabType
 
@@ -36,7 +37,8 @@ fun HomeResponseDto.toDomain(): Home {
                 title = title,
                 smallCardSummary = smallSummary,
                 mediumCardSummary = mediumSummary,
-                thumbnailUrl = dto.thumbnailUrl
+                thumbnailUrl = dto.thumbnailUrl,
+                domainName = dto.domainName
             )
         },
         contentCollectionCards = contentCollectionCards.mapNotNull { dto ->
@@ -52,7 +54,12 @@ fun HomeResponseDto.toDomain(): Home {
                 title = title,
                 smallCardSummary = smallSummary,
                 mediumCardSummary = mediumSummary,
-                thumbnailUrls = dto.thumbnailUrls
+                thumbnails = dto.thumbnails.map { thumbnail ->
+                    HomeThumbnail(
+                        thumbnailUrl = thumbnail.thumbnailUrl,
+                        domainName = thumbnail.domainName
+                    )
+                }
             )
         }
     )
