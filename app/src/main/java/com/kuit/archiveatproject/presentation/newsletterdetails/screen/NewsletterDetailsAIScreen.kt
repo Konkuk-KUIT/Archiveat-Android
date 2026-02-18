@@ -395,7 +395,7 @@ private fun NewsletterDetailsAIScreenPreview_YouTube() {
                 imageUrl = null,
                 domainName = "YouTube",
                 tags = emptyList(),
-                contentTitle = "Naver 뉴스레터 예시",
+                contentTitle = "YouTube 뉴스레터 예시",
                 userName = "잉비",
                 aiSections = emptyList(),
                 memo = ""
