@@ -67,7 +67,7 @@ fun ExploreSearchBar(
             decorationBox = { innerTextField ->
                 if (query.isEmpty()) {
                     Text(
-                        text = "기억나지 않는 아티클을 검색해보세요",
+                        text = "기억나지 않는 콘텐츠를 검색해보세요",
                         style = ArchiveatProjectTheme.typography.Caption_medium,
                         color = ArchiveatProjectTheme.colors.gray500
                     )
