@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.domain.entity.HomeCardType
 import com.kuit.archiveatproject.domain.entity.HomeTabType
@@ -25,7 +26,9 @@ fun TextTag(
     variant: TagVariant,
     modifier: Modifier = Modifier,
     colors: TagColors? = null, // 필요하면 직접 색 지정(override)
-    style: TextStyle = ArchiveatProjectTheme.typography.Body_1_semibold
+    style: TextStyle = ArchiveatProjectTheme.typography.Body_1_semibold,
+    horizontalPadding: Dp = 10.dp,
+    verticalPadding: Dp = 6.dp,
 ) {
     val resolved = colors ?: tagColorsFor(variant)
 
@@ -33,7 +36,7 @@ fun TextTag(
         modifier = modifier
             .clip(RoundedCornerShape(44.79.dp))
             .background(resolved.background)
-            .padding(horizontal = 10.dp, vertical = 6.dp)
+            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
     ) {
         Text(
             text = text,

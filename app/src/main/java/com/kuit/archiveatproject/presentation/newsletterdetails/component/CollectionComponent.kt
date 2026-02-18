@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,14 +17,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,15 +36,14 @@ import com.kuit.archiveatproject.core.component.tag.ImageSource
 import com.kuit.archiveatproject.core.component.tag.ImageTag
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
+import com.kuit.archiveatproject.presentation.inbox.util.DomainLogoMapper
 import com.kuit.archiveatproject.ui.theme.ArchiveatFontMedium
 import com.kuit.archiveatproject.ui.theme.ArchiveatFontSemiBold
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
-// 임시 //
 data class CollectionComponentUiModel(
     val id: Long,
     val categoryLabel: String,      // 경제정책
-    val sourceIcon: String,         // 로고 url
     val sourceLabel: String,        // Youtube
     val minutesLabel: String,       // 30분
     val thumbnailUrl: String,
@@ -59,7 +55,6 @@ data class CollectionComponentUiModel(
 @Composable
 fun CollectionComponent(
     model: CollectionComponentUiModel,
-    onToggleChecked: (Long) -> Unit,
     onClick: (Long) -> Unit, // id ->
     modifier: Modifier = Modifier,
 //        .width(335.dp)
@@ -93,11 +88,15 @@ fun CollectionComponent(
                     text = model.categoryLabel,
                     variant = TagVariant.Custom,
                     modifier = Modifier.height(25.dp),
-                    style = ArchiveatProjectTheme.typography.Caption_semibold
+                    style = ArchiveatProjectTheme.typography.Caption_semibold,
+                    verticalPadding = 4.dp
                 )
+                val logoRes = DomainLogoMapper.logoResIdOrNull(model.sourceLabel)
                 ImageTag(
-                    text = model.sourceLabel,
-                    icon = ImageSource.Url(model.sourceIcon)
+                    text = model.sourceLabel.toDisplayDomainName(),
+                    icon = ImageSource.Res(logoRes ?: R.drawable.ic_link),
+                    textStyle = ArchiveatProjectTheme.typography.Caption_medium_sec,
+                    textColor = ArchiveatProjectTheme.colors.gray800,
                 )
             }
 
@@ -111,7 +110,6 @@ fun CollectionComponent(
                 )
                 CheckButton(
                     checked = model.isChecked,
-                    onClick = { onToggleChecked(model.id) },
                     modifier = Modifier.size(25.dp)
                 )
             }
@@ -177,10 +175,18 @@ fun CollectionComponent(
     }
 }
 
+private fun String.toDisplayDomainName(): String {
+    return when (this.lowercase()) {
+        "tistory" -> "Tistory"
+        "naver news" -> "Naver News"
+        "youtube" -> "YouTube"
+        else -> this
+    }
+}
+
 @Composable
 private fun CheckButton(
     checked: Boolean,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val checkedR = R.drawable.ic_check_filled
@@ -191,12 +197,7 @@ private fun CheckButton(
     Image(
         painter = painterResource(id = resId),
         contentDescription = if (checked) "checked" else "unchecked",
-        modifier = modifier.clickable(
-            role = Role.Checkbox,
-            indication = null, // 원하면 ripple 빼기(피그마 느낌)
-            interactionSource = remember { MutableInteractionSource() },
-            onClick = onClick
-        )
+        modifier = modifier
     )
 }
 
@@ -207,7 +208,6 @@ private fun CollectionComponentPrev() {
         CollectionComponentUiModel(
             id = 1,
             categoryLabel = "경제정책",
-            sourceIcon = "ㅇ",
             sourceLabel = "Youtube",
             minutesLabel = "30분",
             thumbnailUrl = "ㅇ",
@@ -215,7 +215,6 @@ private fun CollectionComponentPrev() {
             isChecked = true,
             subtitle = "비트코인 팔 때 참고할 것"
         ),
-        onClick = {},
-        onToggleChecked = {}
+        onClick = {}
     )
 }

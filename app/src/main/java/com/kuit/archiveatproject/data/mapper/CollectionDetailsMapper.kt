@@ -24,6 +24,7 @@ private fun CollectionInfoDto.toEntity(): CollectionInfo =
 
 private fun CollectionNewsletterDto.toEntity(): CollectionNewsletter =
     CollectionNewsletter(
+        userNewsletterId = userNewsletterId,
         newsletterId = newsletterId,
         domainName = domainName,
         title = title,

@@ -86,7 +86,7 @@ fun ExploreTopicItem(
             Spacer(Modifier.height(2.dp))
 
             Text(
-                text = "${topic.newsletterCount}건의 아티클",
+                text = "${topic.newsletterCount}건의 콘텐츠",
                 style = ArchiveatProjectTheme.typography.Caption_semibold,
                 color = ArchiveatProjectTheme.colors.gray600
             )

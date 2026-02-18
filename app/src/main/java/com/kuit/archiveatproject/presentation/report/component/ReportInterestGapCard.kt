@@ -69,7 +69,7 @@ fun ReportInterestGapCard(
             /** 저장 / 소비 헤더 */
             if (interestGaps.isEmpty()) {
                 Text(
-                    text = "아직 저장한 아티클이 없습니다",
+                    text = "아직 저장한 콘텐츠가 없습니다",
                     style = ArchiveatProjectTheme.typography.Body_2_medium,
                     color = ArchiveatProjectTheme.colors.gray500,
                     modifier = Modifier.fillMaxWidth(),

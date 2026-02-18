@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -94,11 +95,61 @@ fun Modifier.bottomBorderWithRoundedCorners(
     }
 }
 
+@Composable
+private fun DomainPlaceholder(
+    domainName: String?,
+    modifier: Modifier = Modifier,
+) {
+    val normalizedDomain = domainName?.trim()?.lowercase()
+    val (backgroundColor, logoResId, description) = when (normalizedDomain) {
+        "tistory" -> Triple(Color(0xFFFC5100), R.drawable.ic_logo_tistory, "tistory logo")
+        "naver news" -> Triple(Color(0xFF2DB300), R.drawable.ic_logo_naver, "naver logo")
+        "youtube" -> Triple(Color(0xFFE7211A), R.drawable.ic_logo_youtube, "youtube logo")
+        else -> Triple(
+            ArchiveatProjectTheme.colors.primary,
+            R.drawable.ic_logo_simple,
+            "default logo"
+        )
+    }
 
+    Column(
+        modifier = modifier.background(backgroundColor),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(logoResId),
+            contentDescription = description,
+            tint = Color.Unspecified,
+        )
+    }
+}
+
+@Composable
+private fun TileImage(
+    url: String,
+    modifier: Modifier = Modifier,
+) {
+    // // // // //
+    if (LocalInspectionMode.current) {
+        // Preview에서는 네트워크 이미지 대신 더미 박스
+        Box(modifier = modifier.background(ArchiveatProjectTheme.colors.primary))
+        return
+    }
+    // // // // //
+
+    AsyncImage(
+        model = url,
+        contentDescription = null,  // 서버에서 받아와야할 듯
+        modifier = modifier,
+        contentScale = ContentScale.Crop,
+    )
+}
 @Composable
 fun ExploreTopicContentCard(
     title: String,
     thumbnailUrl: String?,
+    domainName: String?,
     isRead: Boolean,
     onClickCard: () -> Unit,
     modifier: Modifier = Modifier,
@@ -119,19 +170,16 @@ fun ExploreTopicContentCard(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                if (thumbnailUrl != null) {
-                    AsyncImage(
-                        model = thumbnailUrl,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+
+                if (!thumbnailUrl.isNullOrBlank()) {
+                    TileImage(
+                        url = thumbnailUrl,
+                        modifier = Modifier.fillMaxSize()
                     )
                 } else {
-                    // TODO: 플랫폼 별 placeholder로 교체
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(ArchiveatProjectTheme.colors.gray200)
+                    DomainPlaceholder(
+                        domainName = domainName,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
             }
@@ -165,12 +213,9 @@ fun ExploreTopicContentCard(
                     .matchParentSize()
                     .background(Color(0xFFD5DAE3).copy(alpha = 0.8f))
             )
-        }
 
-        if (isRead) {
             ReadBadge(
-                modifier = Modifier
-                    .align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center)
             )
         }
     }
@@ -209,6 +254,7 @@ private fun ExploreContentCardPrev() {
     ExploreTopicContentCard(
         "알고리즘을 이해하다 · 추천 시스템 뒤에 숨은 계산법 fsadjl asfdjl fsd;l asfd",
         null,
+        "Naver News",
         false,
         {},
         modifier = Modifier.size(188.dp)

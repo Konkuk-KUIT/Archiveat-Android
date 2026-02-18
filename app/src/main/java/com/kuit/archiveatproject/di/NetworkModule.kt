@@ -28,13 +28,9 @@ object NetworkModule {
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
-            // 일단 BODY로 두고, 나중에 debug/release 분기
-            level = HttpLoggingInterceptor.Level.BODY
-            /*
             level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
                 else HttpLoggingInterceptor.Level.NONE
             redactHeader("Authorization")
-             */
         }
     }
 
