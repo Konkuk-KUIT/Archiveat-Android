@@ -146,7 +146,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 1L,
                     categoryLabel = "경제정책",
-                    sourceIcon = "", // 프리뷰에서는 빈 값이면 ImageTag가 fallback/깨질 수 있어서 주의
                     sourceLabel = "Youtube",
                     minutesLabel = "30분",
                     thumbnailUrl = "", // 빈 값이면 placeholder 박스
@@ -157,7 +156,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 2L,
                     categoryLabel = "가상자산",
-                    sourceIcon = "",
                     sourceLabel = "다음뉴스",
                     minutesLabel = "35분",
                     thumbnailUrl = "",
@@ -168,7 +166,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 3L,
                     categoryLabel = "주식",
-                    sourceIcon = "",
                     sourceLabel = "브런치",
                     minutesLabel = "5분",
                     thumbnailUrl = "",
@@ -179,7 +176,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 4L,
                     categoryLabel = "국제경제",
-                    sourceIcon = "",
                     sourceLabel = "Instagram",
                     minutesLabel = "3분",
                     thumbnailUrl = "",
@@ -190,7 +186,6 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 CollectionComponentUiModel(
                     id = 5L,
                     categoryLabel = "국제경제",
-                    sourceIcon = "",
                     sourceLabel = "Instagram",
                     minutesLabel = "3분",
                     thumbnailUrl = "",

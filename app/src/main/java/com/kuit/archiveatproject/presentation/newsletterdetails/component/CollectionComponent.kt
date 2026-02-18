@@ -44,7 +44,6 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 data class CollectionComponentUiModel(
     val id: Long,
     val categoryLabel: String,      // 경제정책
-    val sourceIcon: String,         // 로고 url
     val sourceLabel: String,        // Youtube
     val minutesLabel: String,       // 30분
     val thumbnailUrl: String,
@@ -209,7 +208,6 @@ private fun CollectionComponentPrev() {
         CollectionComponentUiModel(
             id = 1,
             categoryLabel = "경제정책",
-            sourceIcon = "ㅇ",
             sourceLabel = "Youtube",
             minutesLabel = "30분",
             thumbnailUrl = "ㅇ",

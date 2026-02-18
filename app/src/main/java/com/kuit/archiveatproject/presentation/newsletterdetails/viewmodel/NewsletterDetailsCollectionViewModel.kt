@@ -37,7 +37,7 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
         }
     }
 
-    fun load(collectionId: Long) {
+    private fun load(collectionId: Long) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
@@ -57,6 +57,7 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
 
     fun refresh() {
         if (argCollectionId == -1L) return
+        if (_uiState.value.isLoading) return
         load(argCollectionId)
     }
 
@@ -82,7 +83,6 @@ private fun CollectionNewsletter.toUiModel(result: CollectionDetailsResult): Col
     CollectionComponentUiModel(
         id = userNewsletterId,
         categoryLabel = result.collectionInfo.topicName,
-        sourceIcon = "",
         sourceLabel = domainName,
         minutesLabel = "${consumptionTimeMin}분",
         thumbnailUrl = thumbnailUrl,
