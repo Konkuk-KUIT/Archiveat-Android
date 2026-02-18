@@ -62,13 +62,15 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
     }
 
     private fun applyCollectionResult(result: CollectionDetailsResult) {
+        val topicName = result.collectionInfo.topicName
         _uiState.update { current ->
             current.copy(
                 isLoading = false,
+                errorMessage = null,
                 userName = result.collectionInfo.userNickname,
-                categoryLabel = result.collectionInfo.topicName,
+                categoryLabel = topicName,
                 monthLabel = currentMonthLabel(),
-                items = result.newsletters.map { it.toUiModel(result) }
+                items = result.newsletters.map { it.toUiModel(topicName) }
             )
         }
     }
@@ -79,10 +81,10 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
     }
 }
 
-private fun CollectionNewsletter.toUiModel(result: CollectionDetailsResult): CollectionComponentUiModel =
+private fun CollectionNewsletter.toUiModel(topicName: String): CollectionComponentUiModel =
     CollectionComponentUiModel(
         id = userNewsletterId,
-        categoryLabel = result.collectionInfo.topicName,
+        categoryLabel = topicName,
         sourceLabel = domainName,
         minutesLabel = "${consumptionTimeMin}분",
         thumbnailUrl = thumbnailUrl,

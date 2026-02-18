@@ -175,12 +175,12 @@ fun CollectionComponent(
     }
 }
 
-private fun String?.toDisplayDomainName(): String {
-    return when (this?.lowercase()) {
+private fun String.toDisplayDomainName(): String {
+    return when (this.lowercase()) {
         "tistory" -> "Tistory"
         "naver news" -> "Naver News"
         "youtube" -> "YouTube"
-        else -> this ?: "웹사이트"
+        else -> this
     }
 }
 
