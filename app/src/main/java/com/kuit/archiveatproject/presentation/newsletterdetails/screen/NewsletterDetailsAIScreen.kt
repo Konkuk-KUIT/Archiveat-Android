@@ -175,7 +175,7 @@ fun NewsletterDetailsAIContent(
                 }
 
                 // 썸네일 없고 Tistory
-                model.domainName == "tistory" -> {
+                model.domainName?.lowercase() == "tistory" -> {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -205,6 +205,24 @@ fun NewsletterDetailsAIContent(
                         Icon(
                             painter = painterResource(R.drawable.ic_logo_naver),
                             contentDescription = "naver logo",
+                            tint = Color.Unspecified,
+                        )
+                    }
+                }
+
+                // 썸네일 없고 YouTube
+                model.domainName?.lowercase() == "youtube" -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(219.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFE7211A)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_logo_youtube),
+                            contentDescription = "youtube logo",
                             tint = Color.Unspecified,
                         )
                     }
@@ -353,6 +371,29 @@ private fun NewsletterDetailsAIScreenPreview_Naver() {
                 topicText = "AI - 디자인",
                 imageUrl = null,
                 domainName = "Naver News",
+                tags = emptyList(),
+                contentTitle = "Naver 뉴스레터 예시",
+                userName = "잉비",
+                aiSections = emptyList(),
+                memo = ""
+            ),
+            onBack = {},
+            onClickWebView = {},
+            onClickDone = {},
+            fromAI = false
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "YouTube Placeholder")
+@Composable
+private fun NewsletterDetailsAIScreenPreview_YouTube() {
+    ArchiveatProjectTheme {
+        NewsletterDetailsAIContent(
+            model = NewsletterDetailsAiUiModel(
+                topicText = "AI - 디자인",
+                imageUrl = null,
+                domainName = "YouTube",
                 tags = emptyList(),
                 contentTitle = "Naver 뉴스레터 예시",
                 userName = "잉비",
