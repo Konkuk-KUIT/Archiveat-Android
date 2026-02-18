@@ -26,22 +26,16 @@ fun CollectionProgressBar(
     checkedCount: Int,  // 체크된 카드 수
     modifier: Modifier = Modifier,
 ) {
-    val steps = max(1, totalSteps)
-    val clampedChecked = checkedCount.coerceIn(0, steps)
+    val baseSteps = max(0, totalSteps)
+    val steps = baseSteps + 1
+    val clampedChecked = checkedCount.coerceIn(0, baseSteps)
 
-    // 체크 0 : null, 체크 1 : 0, 체크 2 : 1, 체크 3 : 2
-    val selectedIndex: Int? = if (clampedChecked == 0) null else (clampedChecked - 1)
+    // 표시 스텝을 +1 오프셋으로 사용한다.
+    // 체크 0 -> 1번째 점, 체크 n -> (n+1)번째 점
+    val selectedIndex = clampedChecked
 
     // progress: 0..1
-    val targetProgress = when {
-        steps == 1 -> if (clampedChecked > 0) // 점 1개
-            1f
-        else
-            0f
-
-        selectedIndex == null -> 0f
-        else -> selectedIndex.toFloat() / (steps - 1).toFloat()
-    }
+    val targetProgress = if (steps == 1) 1f else selectedIndex.toFloat() / (steps - 1).toFloat()
 
     val animatedProgress by animateFloatAsState(
         targetValue = targetProgress,
@@ -83,21 +77,19 @@ fun CollectionProgressBar(
 
         // fill
         val fillEndX = startX + (endX - startX) * animatedProgress
-        if(clampedChecked!=0){
-            drawLine(
-                color = fillColor,
-                start = Offset(startX, cy),
-                end = Offset(fillEndX, cy),
-                strokeWidth = stroke,
-                cap = StrokeCap.Round
-            )
-        }
+        drawLine(
+            color = fillColor,
+            start = Offset(startX, cy),
+            end = Offset(fillEndX, cy),
+            strokeWidth = stroke,
+            cap = StrokeCap.Round
+        )
 
         // dots
         for (i in 0 until steps) {
             val x = startX + spacing * i
 
-            val isCompletedOrSelected = selectedIndex?.let { i <= it } ?: false
+            val isCompletedOrSelected = i <= selectedIndex
             val c = if (isCompletedOrSelected) selectedColor
             else dotColor
 
@@ -110,20 +102,17 @@ fun CollectionProgressBar(
         }
 
         // 선택 점
-        selectedIndex?.let { idx ->
-            val x = startX + spacing * idx
-
-            drawCircle(
-                color = selectedBackColor.copy(alpha = 0.6f),
-                radius = haloR,
-                center = Offset(x, cy)
-            )
-            drawCircle(
-                color = selectedColor,
-                radius = selR,
-                center = Offset(x, cy)
-            )
-        }
+        val selectedX = startX + spacing * selectedIndex
+        drawCircle(
+            color = selectedBackColor.copy(alpha = 0.6f),
+            radius = haloR,
+            center = Offset(selectedX, cy)
+        )
+        drawCircle(
+            color = selectedColor,
+            radius = selR,
+            center = Offset(selectedX, cy)
+        )
     }
 }
 
@@ -136,7 +125,7 @@ private fun CollectionProgressBarPreview() {
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            // totalSteps=4 기준: checkedCount 0~4
+            // totalSteps=4 기준: 점 5개, checkedCount 0~4
             CollectionProgressBar(
                 totalSteps = 4,
                 checkedCount = 0,
