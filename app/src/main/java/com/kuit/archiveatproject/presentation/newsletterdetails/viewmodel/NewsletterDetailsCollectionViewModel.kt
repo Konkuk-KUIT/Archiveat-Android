@@ -42,15 +42,7 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
                 val result = collectionRepository.getCollectionDetails(collectionId)
-                _uiState.update { current ->
-                    current.copy(
-                        isLoading = false,
-                        userName = result.collectionInfo.userNickname,
-                        categoryLabel = result.collectionInfo.topicName,
-                        monthLabel = currentMonthLabel(),
-                        items = result.newsletters.map { it.toUiModel(result) }
-                    )
-                }
+                applyCollectionResult(result)
             } catch (e: Throwable) {
                 if (e is CancellationException) throw e
                 _uiState.update {
@@ -63,12 +55,20 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
         }
     }
 
-    fun toggleChecked(id: Long) {
-        _uiState.update { state ->
-            val updated = state.items.map { item ->
-                if (item.id == id) item.copy(isChecked = !item.isChecked) else item
-            }
-            state.copy(items = updated)
+    fun refresh() {
+        if (argCollectionId == -1L) return
+        load(argCollectionId)
+    }
+
+    private fun applyCollectionResult(result: CollectionDetailsResult) {
+        _uiState.update { current ->
+            current.copy(
+                isLoading = false,
+                userName = result.collectionInfo.userNickname,
+                categoryLabel = result.collectionInfo.topicName,
+                monthLabel = currentMonthLabel(),
+                items = result.newsletters.map { it.toUiModel(result) }
+            )
         }
     }
 
@@ -80,7 +80,7 @@ class NewsletterDetailsCollectionViewModel @Inject constructor(
 
 private fun CollectionNewsletter.toUiModel(result: CollectionDetailsResult): CollectionComponentUiModel =
     CollectionComponentUiModel(
-        id = newsletterId,
+        id = userNewsletterId,
         categoryLabel = result.collectionInfo.topicName,
         sourceIcon = "",
         sourceLabel = domainName,

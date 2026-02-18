@@ -28,6 +28,8 @@ data class CollectionInfoDto(
 
 @Serializable
 data class CollectionNewsletterDto(
+    @SerialName("userNewsletterId")
+    val userNewsletterId: Long,
     @SerialName("newsletterId")
     val newsletterId: Long,
     @SerialName("domainName")

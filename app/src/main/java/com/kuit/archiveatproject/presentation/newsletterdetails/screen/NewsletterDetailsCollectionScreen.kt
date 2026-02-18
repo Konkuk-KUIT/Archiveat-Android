@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.CollectionComponent
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.CollectionComponentUiModel
@@ -34,6 +38,17 @@ fun NewsletterDetailsCollectionScreen(
     viewModel: NewsletterDetailsCollectionViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refresh()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     if (uiState.items.isNotEmpty()) {
         NewsletterDetailsCollectionContent(
@@ -43,7 +58,6 @@ fun NewsletterDetailsCollectionScreen(
             items = uiState.items,
             onBack = onBack,
             onClickItem = onClickItem,
-            onToggleChecked = { id -> viewModel.toggleChecked(id) },
             modifier = modifier
         )
     } else {
@@ -67,7 +81,6 @@ fun NewsletterDetailsCollectionContent(
     onBack: () -> Unit,
     onClickItem: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    onToggleChecked: (Long) -> Unit = {},
 ) {
     val collectedCount = items.size
     val progressTotal = collectedCount.coerceAtLeast(1)
@@ -113,8 +126,7 @@ fun NewsletterDetailsCollectionContent(
                 ) { model: CollectionComponentUiModel ->
                     CollectionComponent(
                         model = model,
-                        onClick = { onClickItem(model.id) },
-                        onToggleChecked = { id -> onToggleChecked(id) }
+                        onClick = { onClickItem(model.id) }
                     )
                 }
             }
@@ -188,8 +200,7 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 )
             ),
             onBack = {},
-            onClickItem = {},
-            onToggleChecked = {}
+            onClickItem = {}
         )
     }
 }
