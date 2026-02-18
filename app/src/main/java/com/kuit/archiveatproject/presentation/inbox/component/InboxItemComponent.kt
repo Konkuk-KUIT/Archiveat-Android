@@ -47,8 +47,9 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 fun String?.toDisplayDomainName(): String {
     return when (this?.lowercase()) {
-        "tistory" -> "Tistroy"
-        "Naver News" -> "Naver News"
+        "tistory" -> "Tistory"
+        "naver news" -> "Naver News"
+        "youtube" -> "YouTube"
         else -> this ?: "웹사이트"
     }
 }
