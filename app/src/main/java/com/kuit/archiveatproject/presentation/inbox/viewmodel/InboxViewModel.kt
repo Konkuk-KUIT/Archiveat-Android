@@ -6,6 +6,7 @@ import android.util.Log
 import com.kuit.archiveatproject.domain.entity.Inbox
 import com.kuit.archiveatproject.domain.entity.InboxItem
 import com.kuit.archiveatproject.domain.entity.LlmStatus
+import com.kuit.archiveatproject.domain.repository.InboxClassificationRepository
 import com.kuit.archiveatproject.domain.repository.InboxRepository
 import com.kuit.archiveatproject.domain.repository.NewsletterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ import kotlinx.coroutines.delay
 class InboxViewModel @Inject constructor(
     private val inboxRepository: InboxRepository,
     private val newsletterRepository: NewsletterRepository,
+    private val inboxClassificationRepository: InboxClassificationRepository,
 ) : ViewModel() {
 
     private companion object {
@@ -43,6 +45,15 @@ class InboxViewModel @Inject constructor(
         viewModelScope.launch {
             val inbox = fetchInbox(showLoading = true)
             if (inbox != null) updatePolling(inbox)
+        }
+    }
+
+    suspend fun confirmExploreInboxAll() {
+        try {
+            inboxClassificationRepository.confirmExploreInboxAll()
+        } catch (e: Throwable) {
+            if (e is CancellationException) throw e
+            Log.e(TAG, "confirmExploreInboxAll failed", e)
         }
     }
 
@@ -90,12 +101,12 @@ class InboxViewModel @Inject constructor(
     }
 
     private fun updatePolling(inbox: Inbox) {
-        val hasRunning = hasRunning(inbox)
+        val hasInProgress = hasInProgress(inbox)
 
-        if (!hasRunning) {
+        if (!hasInProgress) {
             pollingJob?.cancel()
             pollingJob = null
-            Log.d(TAG, "polling stop: no RUNNING items")
+            Log.d(TAG, "polling stop: no in-progress items")
             return
         }
 
@@ -107,18 +118,18 @@ class InboxViewModel @Inject constructor(
         pollingJob = viewModelScope.launch {
             Log.d(TAG, "polling start")
             while (true) {
-                delay(5000L) // nn초로 변경 가능
-                val stillRunning = hasRunning(_uiState.value.inbox)
-                if (!stillRunning) {
-                    Log.d(TAG, "polling stop: RUNNING cleared")
+                delay(5000L)
+                val stillInProgress = hasInProgress(_uiState.value.inbox)
+                if (!stillInProgress) {
+                    Log.d(TAG, "polling stop: in-progress cleared")
                     break
                 }
                 Log.d(TAG, "polling tick: refresh inbox")
                 try {
                     val refreshed = inboxRepository.getInbox()
                     _uiState.update { it.copy(inbox = refreshed, errorMessage = null) }
-                    if (!hasRunning(refreshed)) {
-                        Log.d(TAG, "polling stop: RUNNING cleared")
+                    if (!hasInProgress(refreshed)) {
+                        Log.d(TAG, "polling stop: in-progress cleared")
                         break
                     }
                 } catch (e: Throwable) {
@@ -152,8 +163,10 @@ class InboxViewModel @Inject constructor(
         }
     }
 
-    private fun hasRunning(inbox: Inbox): Boolean =
+    private fun hasInProgress(inbox: Inbox): Boolean =
         inbox.inbox.any { group ->
-            group.items.any { it.llmStatus == LlmStatus.RUNNING }
+            group.items.any { item ->
+                item.llmStatus != LlmStatus.DONE && item.llmStatus != LlmStatus.FAILED
+            }
         }
 }

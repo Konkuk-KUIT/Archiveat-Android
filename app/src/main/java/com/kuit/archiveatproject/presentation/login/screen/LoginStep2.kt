@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
+import com.kuit.archiveatproject.core.util.noRippleCircleClickable
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
@@ -119,7 +120,7 @@ private fun AgreementAllRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onToggle() }
+            .noRippleCircleClickable { onToggle() }
             .padding(bottom = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

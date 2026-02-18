@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.domain.entity.NewsletterSimple
 import com.kuit.archiveatproject.domain.repository.NewsletterRepository
+import com.kuit.archiveatproject.domain.repository.UserRepository
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.AiSectionUiModel
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsAiUiModel
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.TagUiModel
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class NewsletterSimpleViewModel @Inject constructor(
     private val newsletterRepository: NewsletterRepository,
+    private val userRepository: UserRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -42,11 +45,17 @@ class NewsletterSimpleViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
+                val nickname = try {
+                    userRepository.getNickname()
+                } catch (t: Throwable) {
+                    if (t is CancellationException) throw t
+                    "회원"
+                }
                 val simple = newsletterRepository.getNewsletterSimple(userNewsletterId)
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        model = simple.toAiUiModel(),
+                        model = simple.toAiUiModel(userName = nickname),
                         contentUrl = simple.contentUrl,
                     )
                 }
@@ -75,7 +84,8 @@ class NewsletterSimpleViewModel @Inject constructor(
     }
 }
 
-private fun NewsletterSimple.toAiUiModel(): NewsletterDetailsAiUiModel {
+private fun NewsletterSimple.toAiUiModel(userName: String): NewsletterDetailsAiUiModel {
+
     val topicText = listOf(categoryName, topicName)
         .filter { it.isNotBlank() }
         .joinToString(" - ")
@@ -83,18 +93,31 @@ private fun NewsletterSimple.toAiUiModel(): NewsletterDetailsAiUiModel {
 
     val tags = buildList {
         if (label.isNotBlank()) {
-            add(TagUiModel(text = label, variant = TagVariant.Custom))
+            add(
+                TagUiModel(
+                    text = label,
+                    variant = TagVariant.Tab(HomeTabType.fromLabel(label))
+                )
+            )
         }
-        add(TagUiModel(text = HomeCardType.AI_SUMMARY.label, variant = TagVariant.CardType(HomeCardType.AI_SUMMARY)))
+        add(
+            TagUiModel(
+                text = HomeCardType.AI_SUMMARY.label,
+                variant = TagVariant.CardType(HomeCardType.AI_SUMMARY)
+            )
+        )
     }
 
     return NewsletterDetailsAiUiModel(
         topicText = topicText,
-        imageUrl = thumbnailUrl,
+        imageUrl = thumbnailUrl.takeIf { it.isNotBlank() }, // blank → null 처리
+        domainName = domainName?.trim()?.lowercase(),       // lowercase 정규화
         tags = tags,
         contentTitle = title,
-        userName = "나",
-        aiSections = simpleSummary.map { AiSectionUiModel(it.title, it.content) },
+        userName = userName,
+        aiSections = simpleSummary.map {
+            AiSectionUiModel(it.title, it.content)
+        },
         memo = memo
     )
 }

@@ -18,6 +18,17 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+import kotlin.math.roundToInt
+
+private const val MIN_WEIGHT = 0.0001f
+
+private fun safeWeight(value: Float): Float {
+    return when {
+        value.isNaN() || value.isInfinite() -> MIN_WEIGHT
+        value <= 0f -> MIN_WEIGHT
+        else -> value
+    }
+}
 
 @Composable
 fun BalanceBarRow(
@@ -27,11 +38,25 @@ fun BalanceBarRow(
     leftColor: Color,
     rightLabel: String,
     rightPercent: Int,
-    rightColor: Color
+    rightColor: Color,
+    leftLabelColor: Color = Color(0xFF7A5A00),
+    rightLabelColor: Color = Color(0xFF1E4E9E),
 ) {
-    Column {
+    val leftRaw = leftPercent.coerceAtLeast(0)
+    val rightRaw = rightPercent.coerceAtLeast(0)
 
-        // 상단 타이틀
+    val sum = leftRaw + rightRaw
+    val leftRatio = if (sum > 0) leftRaw.toFloat() / sum.toFloat() else 0.5f
+    val rightRatio = 1f - leftRatio
+
+    val displayLeftP = if (sum > 0) (leftRatio * 100f).roundToInt().coerceIn(0, 100) else 0
+    val displayRightP = if (sum > 0) 100 - displayLeftP else 0
+
+    val leftW = if (leftRaw == 0) 0f else safeWeight(leftRatio)
+    val rightW = if (rightRaw == 0) 0f else safeWeight(rightRatio)
+
+
+    Column {
         Text(
             text = title,
             style = ArchiveatProjectTheme.typography.Caption_semibold,
@@ -39,8 +64,6 @@ fun BalanceBarRow(
         )
 
         Spacer(Modifier.height(6.dp))
-
-        // 퍼센트 텍스트
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -49,17 +72,17 @@ fun BalanceBarRow(
                 text = buildAnnotatedString {
                     withStyle(
                         ArchiveatProjectTheme.typography.Caption_medium
-                            .copy(color = ArchiveatProjectTheme.colors.gray500)
+                            .copy(color = leftLabelColor)
                             .toSpanStyle()
                     ) {
                         append("$leftLabel ")
                     }
                     withStyle(
                         ArchiveatProjectTheme.typography.Caption_semibold
-                            .copy(color = ArchiveatProjectTheme.colors.gray500)
+                            .copy(color = leftLabelColor)
                             .toSpanStyle()
                     ) {
-                        append("${leftPercent}%")
+                        append("${displayLeftP}%")
                     }
                 }
             )
@@ -68,17 +91,17 @@ fun BalanceBarRow(
                 text = buildAnnotatedString {
                     withStyle(
                         ArchiveatProjectTheme.typography.Caption_medium
-                            .copy(color = ArchiveatProjectTheme.colors.gray500)
+                            .copy(color = rightLabelColor)
                             .toSpanStyle()
                     ) {
                         append("$rightLabel ")
                     }
                     withStyle(
                         ArchiveatProjectTheme.typography.Caption_semibold
-                            .copy(color = ArchiveatProjectTheme.colors.gray500)
+                            .copy(color = rightLabelColor)
                             .toSpanStyle()
                     ) {
-                        append("${rightPercent}%")
+                        append("${displayRightP}%")
                     }
                 }
             )
@@ -96,30 +119,58 @@ fun BalanceBarRow(
                     shape = RoundedCornerShape(4.dp)
                 )
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(leftPercent.toFloat())
-                    .fillMaxHeight()
-                    .background(
-                        color = leftColor,
-                        shape = RoundedCornerShape(
-                            topStart = 4.dp,
-                            bottomStart = 4.dp
-                        )
+            when {
+                leftRaw == 0 && rightRaw == 0 -> {
+                }
+                leftRaw == 0 -> {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .background(
+                                color = rightColor,
+                                shape = RoundedCornerShape(4.dp)
+                            )
                     )
-            )
-            Box(
-                modifier = Modifier
-                    .weight(rightPercent.toFloat())
-                    .fillMaxHeight()
-                    .background(
-                        color = rightColor,
-                        shape = RoundedCornerShape(
-                            topEnd = 4.dp,
-                            bottomEnd = 4.dp
-                        )
+                }
+
+                rightRaw == 0 -> {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .background(
+                                color = leftColor,
+                                shape = RoundedCornerShape(4.dp) // 양쪽 라운드
+                            )
                     )
-            )
+                }
+
+                else -> {
+                    val leftW = safeWeight(leftRatio)
+                    val rightW = safeWeight(rightRatio)
+
+                    Box(
+                        modifier = Modifier
+                            .weight(leftW)
+                            .fillMaxHeight()
+                            .background(
+                                color = leftColor,
+                                shape = RoundedCornerShape(topStart = 4.dp, bottomStart = 4.dp)
+                            )
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(rightW)
+                            .fillMaxHeight()
+                            .background(
+                                color = rightColor,
+                                shape = RoundedCornerShape(topEnd = 4.dp, bottomEnd = 4.dp)
+                            )
+                    )
+                }
+            }
         }
+
     }
 }

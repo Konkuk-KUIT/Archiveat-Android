@@ -22,7 +22,8 @@ data class HomeContentCard(
     val title: String,
     val smallCardSummary: String,
     val mediumCardSummary: String,
-    val thumbnailUrl: String?
+    val thumbnailUrl: String?,
+    val domainName: String?
 )
 
 data class HomeContentCollectionCard(
@@ -33,7 +34,12 @@ data class HomeContentCollectionCard(
     val title: String,
     val smallCardSummary: String,
     val mediumCardSummary: String,
-    val thumbnailUrls: List<String>
+    val thumbnails: List<HomeThumbnail>
+)
+
+data class HomeThumbnail(
+    val thumbnailUrl: String?,
+    val domainName: String?
 )
 
 enum class HomeTabType {
@@ -42,6 +48,15 @@ enum class HomeTabType {
     companion object {
         fun from(raw: String?): HomeTabType =
             runCatching { valueOf(raw?.trim().orEmpty()) }.getOrElse { ALL }
+
+        fun fromLabel(label: String?): HomeTabType = when (label?.trim()) {
+            "전체" -> ALL
+            "영감수집" -> INSPIRATION
+            "집중탐구" -> DEEP_DIVE
+            "성장한입" -> GROWTH
+            "관점확장" -> VIEW_EXPANSION
+            else -> from(label)
+        }
     }
 }
 

@@ -18,18 +18,19 @@ fun UserMetadataSubmit.toRequestDto(): UserMetadataSubmitRequestDto {
 
 private fun UserAvailability.toDto(): UserAvailabilityDto {
 
-    fun modesFor(slot: TimeSlot): List<String> {
-        val modes = mutableListOf<String>()
-        if (slot in light) modes.add("LIGHT")
-        if (slot in deep) modes.add("DEEP")
-        return modes
+    fun modeFor(slot: TimeSlot): String {
+        return when {
+            slot in light -> "LIGHT"
+            slot in deep -> "DEEP"
+            else -> ""
+        }
     }
 
     return UserAvailabilityDto(
-        prefMorning = modesFor(TimeSlot.MORNING),
-        prefLunch = modesFor(TimeSlot.LUNCHTIME),
-        prefEvening = modesFor(TimeSlot.EVENING),
-        prefBedtime = modesFor(TimeSlot.BEDTIME)
+        prefMorning = modeFor(TimeSlot.MORNING),
+        prefLunch = modeFor(TimeSlot.LUNCHTIME),
+        prefEvening = modeFor(TimeSlot.EVENING),
+        prefBedtime = modeFor(TimeSlot.BEDTIME)
     )
 }
 

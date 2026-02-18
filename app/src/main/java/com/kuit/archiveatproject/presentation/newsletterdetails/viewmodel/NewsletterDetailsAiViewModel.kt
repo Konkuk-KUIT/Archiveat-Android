@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.domain.entity.HomeCardType
+import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.domain.entity.NewsletterDetail
 import com.kuit.archiveatproject.domain.repository.NewsletterRepository
+import com.kuit.archiveatproject.domain.repository.UserRepository
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.AiSectionUiModel
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsAiUiModel
 import com.kuit.archiveatproject.presentation.newsletterdetails.screen.TagUiModel
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class NewsletterDetailsAiViewModel @Inject constructor(
     private val newsletterRepository: NewsletterRepository,
+    private val userRepository: UserRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -42,11 +45,12 @@ class NewsletterDetailsAiViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
+                val nickname = runCatching { userRepository.getNickname() }.getOrDefault("나")
                 val detail = newsletterRepository.getNewsletterDetail(userNewsletterId)
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        model = detail.toAiUiModel(),
+                        model = detail.toAiUiModel(userName = nickname),
                         contentUrl = detail.contentUrl,
                     )
                 }
@@ -75,7 +79,7 @@ class NewsletterDetailsAiViewModel @Inject constructor(
     }
 }
 
-private fun NewsletterDetail.toAiUiModel(): NewsletterDetailsAiUiModel {
+private fun NewsletterDetail.toAiUiModel(userName: String): NewsletterDetailsAiUiModel {
     val topicText = listOf(categoryName, topicName)
         .filter { it.isNotBlank() }
         .joinToString(" - ")
@@ -83,7 +87,7 @@ private fun NewsletterDetail.toAiUiModel(): NewsletterDetailsAiUiModel {
 
     val tags = buildList {
         if (label.isNotBlank()) {
-            add(TagUiModel(text = label, variant = TagVariant.Custom))
+            add(TagUiModel(text = label, variant = TagVariant.Tab(HomeTabType.fromLabel(label))))
         }
         add(TagUiModel(text = HomeCardType.AI_SUMMARY.label, variant = TagVariant.CardType(HomeCardType.AI_SUMMARY)))
     }
@@ -91,10 +95,11 @@ private fun NewsletterDetail.toAiUiModel(): NewsletterDetailsAiUiModel {
     return NewsletterDetailsAiUiModel(
         topicText = topicText,
         subtitle = "콘텐츠의 핵심만 AI가 요약했어요",
-        imageUrl = thumbnailUrl,
+        imageUrl = thumbnailUrl.takeIf { it.isNotBlank() }, // blank → null 처리
+        domainName = domainName?.trim()?.lowercase(),
         tags = tags,
         contentTitle = title,
-        userName = "나",
+        userName = userName,
         aiSections = summary.map { AiSectionUiModel(it.title, it.content) },
         memo = memo
     )

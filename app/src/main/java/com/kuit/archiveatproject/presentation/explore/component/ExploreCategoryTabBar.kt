@@ -1,7 +1,6 @@
 package com.kuit.archiveatproject.presentation.explore.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -76,12 +74,12 @@ private fun ExploreCategoryTabItem(
             painter = painterResource(id = item.iconResId),
             contentDescription = item.name,
             tint = if (isSelected) primaryColor else inactiveColor,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(28.dp)
         )
 
         Text(
             text = item.name,
-            style = MaterialTheme.typography.labelMedium,
+            style = ArchiveatProjectTheme.typography.Body_1_semibold,
             color = if (isSelected) primaryColor else inactiveColor,
         )
 

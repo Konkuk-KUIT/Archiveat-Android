@@ -10,16 +10,17 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,8 +28,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
@@ -56,7 +61,8 @@ data class TagUiModel(
 data class NewsletterDetailsAiUiModel(
     val topicText: String,          // "최근 저장한 AI - 디자인"에서 "AI - 디자인" 부분
     val subtitle: String = "콘텐츠의 핵심만 AI가 요약했어요",    // "콘텐츠의 핵심만 AI가 요약했어요"
-    val imageUrl: String,
+    val imageUrl: String?,
+    val domainName: String?,
     val tags: List<TagUiModel>,
     val contentTitle: String,       // "2025 UI 디자인 트렌드: ..."
     val userName: String,
@@ -104,13 +110,16 @@ fun NewsletterDetailsAIContent(
     modifier: Modifier = Modifier,
     fromAI: Boolean = true,
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
-            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .navigationBarsPadding()
     ) {
         BackTopBar(
+            modifier = Modifier.statusBarsPadding(),
             title = "",
             onBack = onBack,
             height = 45
@@ -124,7 +133,6 @@ fun NewsletterDetailsAIContent(
         ) {
             Spacer(Modifier.height(12.dp))
 
-            // "최근 저장한 AI - 디자인"
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "최근 저장한 ",
@@ -148,32 +156,99 @@ fun NewsletterDetailsAIContent(
 
             Spacer(Modifier.height(18.dp))
 
-            if (model.imageUrl.isNotBlank()) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(model.imageUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "thumbnail",
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .height(219.dp)
-                        .clip(RoundedCornerShape(16.dp)),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(219.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(ArchiveatProjectTheme.colors.gray100)
-                )
+            when {
+
+                // 서버 이미지 존재
+                !model.imageUrl.isNullOrBlank() -> {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(model.imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "thumbnail",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(219.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                // 썸네일 없고 Tistory
+                model.domainName?.lowercase() == "tistory" -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(219.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFFC5100)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_logo_tistory),
+                            contentDescription = "tistory logo",
+                            tint = Color.Unspecified,
+                        )
+                    }
+                }
+
+                // 썸네일 없고 Naver
+                model.domainName?.lowercase() == "naver news" -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(219.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFF2DB300)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_logo_naver),
+                            contentDescription = "naver logo",
+                            tint = Color.Unspecified,
+                        )
+                    }
+                }
+
+                // 썸네일 없고 YouTube
+                model.domainName?.lowercase() == "youtube" -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(219.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFE7211A)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_logo_youtube),
+                            contentDescription = "youtube logo",
+                            tint = Color.Unspecified,
+                        )
+                    }
+                }
+
+                // 그 외 (simple)
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(219.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(ArchiveatProjectTheme.colors.primary),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_logo_simple),
+                            contentDescription = "default logo",
+                            tint = Color.Unspecified,
+                        )
+                    }
+                }
             }
 
             Spacer(Modifier.height(18.dp))
 
-            // 태그 (영감수집 / AI 요약)
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(7.dp)
@@ -188,7 +263,6 @@ fun NewsletterDetailsAIContent(
 
             Spacer(Modifier.height(14.dp))
 
-            // 컨텐츠 제목
             Text(
                 text = model.contentTitle,
                 style = ArchiveatProjectTheme.typography.Heading_2_bold,
@@ -199,7 +273,6 @@ fun NewsletterDetailsAIContent(
 
             Spacer(Modifier.height(16.dp))
 
-            // AI 요약 카드
             AISummaryComponent(
                 userName = model.userName,
                 sections = model.aiSections
@@ -213,9 +286,8 @@ fun NewsletterDetailsAIContent(
 
             Spacer(Modifier.height(18.dp))
 
-            // 버튼
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .height(46.dp)
                     .clip(RoundedCornerShape(12.dp))
@@ -229,10 +301,11 @@ fun NewsletterDetailsAIContent(
                     style = ArchiveatProjectTheme.typography.Subhead_2_semibold
                 )
             }
-            if (fromAI) { // AI 요약으로 들어온 뉴스레터 상세라면 다 읽었어요 버튼(추후에 분리가 필요하다면 분리)
+
+            if (fromAI) {
                 Spacer(Modifier.height(18.dp))
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .height(46.dp)
                         .clip(RoundedCornerShape(12.dp))
@@ -247,6 +320,7 @@ fun NewsletterDetailsAIContent(
                     )
                 }
             }
+
             Spacer(Modifier.height(4.dp))
         }
     }
@@ -265,42 +339,89 @@ fun TagsFlow(tags: List<TagUiModel>) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Tistory Placeholder")
 @Composable
-private fun NewsletterDetailsAIScreenPreview() {
+private fun NewsletterDetailsAIScreenPreview_Tistory() {
     ArchiveatProjectTheme {
         NewsletterDetailsAIContent(
             model = NewsletterDetailsAiUiModel(
                 topicText = "AI - 디자인",
-                subtitle = "콘텐츠의 핵심만 AI가 요약했어요",
-                imageUrl = "", // 프리뷰에서는 빈 값으로 placeholder 보이게
-                tags = listOf(
-                    TagUiModel(
-                        text = "영감수집",
-                        variant = TagVariant.Tab(HomeTabType.INSPIRATION)
-                    ),
-                    TagUiModel(
-                        text = HomeCardType.AI_SUMMARY.label,
-                        variant = TagVariant.CardType(HomeCardType.AI_SUMMARY)
-                    ),
-                ),
-                contentTitle = "2025 UI 디자인 트렌드:\n글래스모피즘의 귀환",
+                imageUrl = null, // 썸네일 없음
+                domainName = "tistory",
+                tags = emptyList(),
+                contentTitle = "Tistory 뉴스레터 예시",
                 userName = "잉비",
-                aiSections = listOf(
-                    AiSectionUiModel(
-                        heading = "Vision Pro의 나비효과",
-                        body = "애플의 공간 컴퓨팅(Spatial Computing) 도입으로 인해, 배경과 콘텐츠를 겹쳐 보여주는 반투명 소재(Glass)가 다시 표준으로 자리 잡고 있습니다."
-                    ),
-                    AiSectionUiModel(
-                        heading = "심미성보다 깊이감",
-                        body = "과거의 글래스모피즘이 예쁘게 보이기 위함이었다면, 2025년의 트렌드는 정보의 위계(Hierarchy)를 명확히 구분하기 위한 기능적 수단입니다."
-                    ),
-                    AiSectionUiModel(
-                        heading = "접근성(Accessibility) 강화",
-                        body = "가독성을 해치지 않기 위해 배경 블러(Blur) 값을 높이고, 테두리(Border)를 명확하게 사용하는 것이 핵심 차별점입니다."
-                    )
-                ),
-                memo = "가독성을 해치지 않기 위해 배경 블러(Blur) 값을 높이고, 테두리(Border)를 명확하게 사용하는 것이 핵심 차별점입니다."
+                aiSections = emptyList(),
+                memo = ""
+            ),
+            onBack = {},
+            onClickWebView = {},
+            onClickDone = {},
+            fromAI = false
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Naver Placeholder")
+@Composable
+private fun NewsletterDetailsAIScreenPreview_Naver() {
+    ArchiveatProjectTheme {
+        NewsletterDetailsAIContent(
+            model = NewsletterDetailsAiUiModel(
+                topicText = "AI - 디자인",
+                imageUrl = null,
+                domainName = "Naver News",
+                tags = emptyList(),
+                contentTitle = "Naver 뉴스레터 예시",
+                userName = "잉비",
+                aiSections = emptyList(),
+                memo = ""
+            ),
+            onBack = {},
+            onClickWebView = {},
+            onClickDone = {},
+            fromAI = false
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "YouTube Placeholder")
+@Composable
+private fun NewsletterDetailsAIScreenPreview_YouTube() {
+    ArchiveatProjectTheme {
+        NewsletterDetailsAIContent(
+            model = NewsletterDetailsAiUiModel(
+                topicText = "AI - 디자인",
+                imageUrl = null,
+                domainName = "YouTube",
+                tags = emptyList(),
+                contentTitle = "YouTube 뉴스레터 예시",
+                userName = "잉비",
+                aiSections = emptyList(),
+                memo = ""
+            ),
+            onBack = {},
+            onClickWebView = {},
+            onClickDone = {},
+            fromAI = false
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Null Domain → Gray Box")
+@Composable
+private fun NewsletterDetailsAIScreenPreview_NullDomain() {
+    ArchiveatProjectTheme {
+        NewsletterDetailsAIContent(
+            model = NewsletterDetailsAiUiModel(
+                topicText = "AI - 디자인",
+                imageUrl = null,
+                domainName = null,
+                tags = emptyList(),
+                contentTitle = "도메인 없음 예시",
+                userName = "잉비",
+                aiSections = emptyList(),
+                memo = ""
             ),
             onBack = {},
             onClickWebView = {},

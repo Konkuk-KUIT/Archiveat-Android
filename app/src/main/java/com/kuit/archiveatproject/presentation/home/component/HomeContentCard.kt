@@ -1,7 +1,6 @@
 package com.kuit.archiveatproject.presentation.home.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,8 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,64 +25,52 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
 import com.kuit.archiveatproject.core.util.noRippleCircleClickable
 import com.kuit.archiveatproject.domain.entity.HomeCardType
 import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
+import com.kuit.archiveatproject.presentation.home.model.HomeThumbnailUiModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 private fun HomeContentThumbnail(
-    imageUrls: List<String>,
+    thumbnails: List<HomeThumbnailUiModel>,
+    fallbackDomainName: String?,
     modifier: Modifier = Modifier,
 ) {
-    val urls = imageUrls.filter { it.isNotBlank() }
-    val visible = urls.take(4)
-    val extraCount = (urls.size - 4).coerceAtLeast(0)
+    val visible = thumbnails.take(4)
+    val extraCount = (thumbnails.size - 4).coerceAtLeast(0)
 
     val divider = 3.dp
     val dividerColor = ArchiveatProjectTheme.colors.gray200
 
-    Box(modifier = modifier.background(ArchiveatProjectTheme.colors.gray100)) {
+    Box(modifier = modifier.background(ArchiveatProjectTheme.colors.primary)) {
         when (visible.size) {
             0 -> {
-                // 0개: 플레이스 홀더
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Image,
-                        contentDescription = "기본 이미지",
-                        tint = ArchiveatProjectTheme.colors.gray400,
-                        modifier = Modifier.size(28.dp)
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    Text(
-                        text = "이미지 없음",
-                        color = ArchiveatProjectTheme.colors.gray500,
-                        fontSize = 12.sp
-                    )
-                }
+                DomainPlaceholder(
+                    domainName = fallbackDomainName,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
 
             1 -> {
-                TileImage(url = visible[0], modifier = Modifier.fillMaxSize())
+                ThumbnailTile(thumbnail = visible[0], modifier = Modifier.fillMaxSize())
             }
 
             2 -> {
                 Row(Modifier.fillMaxSize()) {
-                    TileImage(
-                        url = visible[0],
+                    ThumbnailTile(
+                        thumbnail = visible[0],
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -96,8 +81,8 @@ private fun HomeContentThumbnail(
                             .fillMaxHeight()
                             .background(dividerColor)
                     )
-                    TileImage(
-                        url = visible[1],
+                    ThumbnailTile(
+                        thumbnail = visible[1],
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -107,8 +92,8 @@ private fun HomeContentThumbnail(
 
             3 -> {
                 Row(Modifier.fillMaxSize()) {
-                    TileImage(
-                        url = visible[0],
+                    ThumbnailTile(
+                        thumbnail = visible[0],
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
@@ -124,8 +109,8 @@ private fun HomeContentThumbnail(
                             .weight(1f)
                             .fillMaxHeight()
                     ) {
-                        TileImage(
-                            url = visible[1],
+                        ThumbnailTile(
+                            thumbnail = visible[1],
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxWidth()
@@ -136,8 +121,8 @@ private fun HomeContentThumbnail(
                                 .fillMaxWidth()
                                 .background(dividerColor)
                         )
-                        TileImage(
-                            url = visible[2],
+                        ThumbnailTile(
+                            thumbnail = visible[2],
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxWidth()
@@ -154,8 +139,8 @@ private fun HomeContentThumbnail(
                             .weight(1f)
                             .fillMaxWidth()
                     ) {
-                        TileImage(
-                            url = visible[0], modifier = Modifier
+                        ThumbnailTile(
+                            thumbnail = visible[0], modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
                         )
@@ -165,8 +150,8 @@ private fun HomeContentThumbnail(
                                 .fillMaxHeight()
                                 .background(dividerColor)
                         )
-                        TileImage(
-                            url = visible[1], modifier = Modifier
+                        ThumbnailTile(
+                            thumbnail = visible[1], modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
                         )
@@ -182,8 +167,8 @@ private fun HomeContentThumbnail(
                             .weight(1f)
                             .fillMaxWidth()
                     ) {
-                        TileImage(
-                            url = visible[2], modifier = Modifier
+                        ThumbnailTile(
+                            thumbnail = visible[2], modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
                         )
@@ -199,7 +184,7 @@ private fun HomeContentThumbnail(
                                 .weight(1f)
                                 .fillMaxHeight()
                         ) {
-                            TileImage(url = visible[3], modifier = Modifier.fillMaxSize())
+                            ThumbnailTile(thumbnail = visible[3], modifier = Modifier.fillMaxSize())
 
                             // 5개 이상이면 마지막 타일에 +N 오버레이
                             if (extraCount > 0) {
@@ -226,6 +211,49 @@ private fun HomeContentThumbnail(
 }
 
 @Composable
+private fun ThumbnailTile(
+    thumbnail: HomeThumbnailUiModel,
+    modifier: Modifier = Modifier,
+) {
+    val url = thumbnail.thumbnailUrl?.takeIf { it.isNotBlank() }
+    if (url != null) {
+        TileImage(url = url, modifier = modifier)
+    } else {
+        DomainPlaceholder(domainName = thumbnail.domainName, modifier = modifier)
+    }
+}
+
+@Composable
+private fun DomainPlaceholder(
+    domainName: String?,
+    modifier: Modifier = Modifier,
+) {
+    val normalizedDomain = domainName?.trim()?.lowercase()
+    val (backgroundColor, logoResId, description) = when (normalizedDomain) {
+        "tistory" -> Triple(Color(0xFFFC5100), R.drawable.ic_logo_tistory, "tistory logo")
+        "naver news" -> Triple(Color(0xFF2DB300), R.drawable.ic_logo_naver, "naver logo")
+        "youtube" -> Triple(Color(0xFFE7211A), R.drawable.ic_logo_youtube, "youtube logo")
+        else -> Triple(
+            ArchiveatProjectTheme.colors.primary,
+            R.drawable.ic_logo_simple,
+            "default logo"
+        )
+    }
+
+    Column(
+        modifier = modifier.background(backgroundColor),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(logoResId),
+            contentDescription = description,
+            tint = Color.Unspecified,
+        )
+    }
+}
+
+@Composable
 private fun TileImage(
     url: String,
     modifier: Modifier = Modifier,
@@ -233,7 +261,7 @@ private fun TileImage(
     // // // // //
     if (LocalInspectionMode.current) {
         // Preview에서는 네트워크 이미지 대신 더미 박스
-        Box(modifier = modifier.background(ArchiveatProjectTheme.colors.gray200))
+        Box(modifier = modifier.background(ArchiveatProjectTheme.colors.primary))
         return
     }
     // // // // //
@@ -249,9 +277,6 @@ private fun TileImage(
 @Composable
 fun HomeContentCard(
     card: HomeContentCardUiModel,
-    // TODO: 서버 문의 - subtitle, contentSnippet
-    subtitle: String,       // "저장한 'Topic' 아티클 요약" / ... <- 서버로부터 Topic 받기
-    contentSnippet: String, // 아래 요약문 <- 삭제 요청 중(?)
     modifier: Modifier = Modifier,
     isClickable: Boolean = true,
     containerColor: Color = ArchiveatProjectTheme.colors.white,
@@ -259,11 +284,17 @@ fun HomeContentCard(
 ) {
     val shape = RoundedCornerShape(30.dp)
 
-    val urlsForThumb: List<String> =
-        card.imageUrls
-            .ifEmpty { listOfNotNull(card.thumbnailUrl) }
-            .filter { it.isNotBlank() }
-            .toList()
+    val thumbnailsForThumb: List<HomeThumbnailUiModel> =
+        if (card.thumbnails.isNotEmpty()) {
+            card.thumbnails
+        } else {
+            card.imageUrls.map { imageUrl ->
+                HomeThumbnailUiModel(
+                    thumbnailUrl = imageUrl,
+                    domainName = card.domainName
+                )
+            }
+        }
 
     Column(
         modifier = modifier
@@ -277,7 +308,8 @@ fun HomeContentCard(
             .fillMaxWidth()
     ) {
         HomeContentThumbnail(
-            imageUrls = urlsForThumb,
+            thumbnails = thumbnailsForThumb,
+            fallbackDomainName = card.domainName,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(268f / 174f)
@@ -304,7 +336,7 @@ fun HomeContentCard(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = subtitle,
+                text = card.smallCardSummary,
                 style = ArchiveatProjectTheme.typography.Caption_semibold,
                 color = ArchiveatProjectTheme.colors.gray900,
                 minLines = 1,
@@ -326,7 +358,7 @@ fun HomeContentCard(
             Spacer(Modifier.height(10.dp))
 
             Text(
-                text = contentSnippet.orEmpty(),
+                text = card.mediumCardSummary,
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 overflow = TextOverflow.Ellipsis,
@@ -384,10 +416,11 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "0장 케이스 (플레이스홀더)",
-                    imageUrls = emptyList()
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "이미지가 0장일 때 플레이스홀더가 나오는지 확인",
+                    imageUrls = emptyList(),
+                    domainName = ""
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "이미지가 0장일 때 플레이스홀더가 나오는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -403,10 +436,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "1장 케이스",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "1장일 때 단일 썸네일이 꽉 차는지 확인",
                     imageUrls = urls1
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "1장일 때 단일 썸네일이 꽉 차는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -422,10 +455,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "2장 케이스 (세로 2분할)",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "2장일 때 세로로 2분할 되는지 확인",
                     imageUrls = urls2
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "2장일 때 세로로 2분할 되는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -441,10 +474,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "3장 케이스 (세로 3분할)",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "3장일 때 세로로 3분할 되는지 확인",
                     imageUrls = urls3
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "3장일 때 세로로 3분할 되는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -460,10 +493,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "4장 케이스 (2x2 격자)",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "4장일 때 2x2로 나뉘는지 확인",
                     imageUrls = urls4
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "4장일 때 2x2로 나뉘는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -479,10 +512,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "6장 케이스 (4장만 + 오버레이)",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "5장 이상일 때 4장만 쓰고 +n 표시되는지 확인",
                     imageUrls = urls6
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "5장 이상일 때 4장만 쓰고 +n 표시되는지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .size(width = 268.dp, height = 395.dp),
@@ -498,10 +531,10 @@ private fun HomeContentCardPrevContent() {
                     tabLabel = "영감수집",
                     cardType = HomeCardType.AI_SUMMARY,
                     title = "fillMaxWidth() 케이스",
+                    smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
+                    mediumCardSummary = "카드가 가로로 늘어났을 때도 이미지 분할이 자연스러운지 확인",
                     imageUrls = urls4
                 ),
-                subtitle = "저장한 'TechCrunch' 아티클 요약",
-                contentSnippet = "카드가 가로로 늘어났을 때도 이미지 분할이 자연스러운지 확인",
                 modifier = Modifier
                     .padding(18.dp)
                     .fillMaxWidth(),
@@ -510,4 +543,3 @@ private fun HomeContentCardPrevContent() {
         }
     }
 }
-

@@ -3,7 +3,11 @@ package com.kuit.archiveatproject.presentation.report.model
 import com.kuit.archiveatproject.domain.entity.RecentReadNewsletter
 
 data class ReportUiState(
+    val isLoading: Boolean = false,
     val referenceDate: String = "",
+    // 사용자 닉네임
+    val nickname: String = "",
+
 
     // 핵심 소비 현황
     val totalSavedCount: Int = 0,
@@ -14,14 +18,24 @@ data class ReportUiState(
     val balance: ReportBalanceUiState = ReportBalanceUiState(),
 
     // 관심사별 소비 격차
-    val interestGaps: List<InterestGapUiItem> = emptyList(),
+    val interestGaps: List<MainInterestGapUiItem> = emptyList(),
 
     // 최근 학습 기록
     val recentReadNewsletters: List<RecentReadNewsletterUiItem> = emptyList(),
 
     // 주간 AI 종합 피드백
-    val weeklyFeedbackDateRange: String = "",
-    val weeklyFeedbackBody: String = ""
+    val weeklyFeedbackWeekLabel: String = "",
+    val weeklyFeedbackBody: String = "",
+
+    // 에러 상태
+    val isError: Boolean = false,
+    val errorMessage: String? = null
+)
+
+data class MainInterestGapUiItem(
+    val topicName: String,
+    val savedCount: Int,
+    val readCount: Int
 )
 
 data class InterestGapUiItem(

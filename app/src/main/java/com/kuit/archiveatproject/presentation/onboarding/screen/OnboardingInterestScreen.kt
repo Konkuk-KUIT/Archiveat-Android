@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,16 +25,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.domain.entity.UserInterests
 import com.kuit.archiveatproject.domain.entity.UserMetadataCategory
 import com.kuit.archiveatproject.domain.entity.UserMetadataTopic
 import com.kuit.archiveatproject.presentation.onboarding.component.OnboardingNextButton
 import com.kuit.archiveatproject.presentation.onboarding.component.interest.InterestCategorySection
 import com.kuit.archiveatproject.presentation.onboarding.component.interest.InterestTextChip
+import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingNavigationEvent
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiEvent
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingUiState
-import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingNavigationEvent
 import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -43,6 +42,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun OnboardingInterestScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),
     onFinished: () -> Unit,
+    onRequireSignup: () -> Unit = {},
     modifier: Modifier = Modifier
 ){
     val uiState by viewModel.uiState.collectAsState()
@@ -51,6 +51,7 @@ fun OnboardingInterestScreen(
         viewModel.navigationEvent.collectLatest { event ->
             when (event) {
                 OnboardingNavigationEvent.SubmitSuccess -> onFinished()
+                OnboardingNavigationEvent.NavigateToSignupStart -> onRequireSignup()
             }
         }
     }
@@ -80,7 +81,7 @@ private fun OnboardingInterestContent(
     }
 
     val selectedCount = selectedTopicIds.size
-    val isSubmitEnabled = selectedCount >= 5
+    val isSubmitEnabled = selectedCount >= 5 && !uiState.isLoading
 
     Column(
         modifier = Modifier
@@ -168,16 +169,27 @@ private fun OnboardingInterestContent(
         Spacer(Modifier.height(14.dp))
         // ===== CTA =====
         OnboardingNextButton(
-            text = if (isSubmitEnabled)
-                "archiveat! 시작하기 (${selectedCount}개 선택)"
-            else
-                "archiveat! 시작하기",
+            text = when {
+                uiState.isLoading -> "처리 중..."
+                selectedCount >= 5 -> "archiveat! 시작하기 (${selectedCount}개 선택)"
+                else -> "archiveat! 시작하기"
+            },
             enabled = isSubmitEnabled,
             onClick = onSubmitClicked,
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .navigationBarsPadding()
         )
+
+        if (!uiState.errorMessage.isNullOrBlank()) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = uiState.errorMessage.orEmpty(),
+                style = ArchiveatProjectTheme.typography.Caption_medium,
+                color = ArchiveatProjectTheme.colors.sub_2,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+        }
 
         Spacer(Modifier.height(34.dp))
     }

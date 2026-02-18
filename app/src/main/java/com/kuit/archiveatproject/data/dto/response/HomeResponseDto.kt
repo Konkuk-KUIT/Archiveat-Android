@@ -35,8 +35,8 @@ data class HomeTabDto(
 
 @Serializable
 data class HomeContentCardDto(
-    @SerialName("newsletterId")
-    val newsletterId: Long,
+    @SerialName("userNewsletterId")
+    val userNewsletterId: Long,
 
     @SerialName("tabLabel")
     val tabLabel: String,     // TabDto.label과 동일 ("영감수집")
@@ -45,16 +45,22 @@ data class HomeContentCardDto(
     val cardType: String,     // "AI 요약"
 
     @SerialName("title")
-    val title: String,
+    val title: String? = null,
 
     @SerialName("smallCardSummary")
-    val smallCardSummary: String,
+    val smallCardSummary: String? = null,
 
     @SerialName("mediumCardSummary")
-    val mediumCardSummary: String,
+    val mediumCardSummary: String? = null,
 
     @SerialName("thumbnailUrl")
-    val thumbnailUrl: String?
+    val thumbnailUrl: String? = null,
+
+    @SerialName("domainName")
+    val domainName: String? = null,
+
+    @SerialName("createdAt")
+    val createdAt: String? = null
 )
 
 @Serializable
@@ -66,11 +72,19 @@ data class HomeContentCollectionCardDto(
     @SerialName("cardType")
     val cardType: String, // "컬렉션"
     @SerialName("title")
-    val title: String,
+    val title: String? = null,
     @SerialName("smallCardSummary")
-    val smallCardSummary: String,
+    val smallCardSummary: String? = null,
     @SerialName("mediumCardSummary")
-    val mediumCardSummary: String,
-    @SerialName("thumbnailUrls")
-    val thumbnailUrls: List<String> = emptyList(),
+    val mediumCardSummary: String? = null,
+    @SerialName("thumbnails")
+    val thumbnails: List<HomeThumbnailDto> = emptyList(),
+)
+
+@Serializable
+data class HomeThumbnailDto(
+    @SerialName("thumbnailUrl")
+    val thumbnailUrl: String? = null,
+    @SerialName("domainName")
+    val domainName: String? = null,
 )

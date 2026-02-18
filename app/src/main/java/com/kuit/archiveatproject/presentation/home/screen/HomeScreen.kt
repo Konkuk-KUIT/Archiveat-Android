@@ -1,17 +1,29 @@
 package com.kuit.archiveatproject.presentation.home.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.kuit.archiveatproject.core.component.PrimaryRoundedButton
 import com.kuit.archiveatproject.core.component.TopLogoBar
 import com.kuit.archiveatproject.domain.entity.HomeCardType
 import com.kuit.archiveatproject.domain.entity.HomeTab
@@ -27,14 +39,54 @@ import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    initialTabName: String? = null,
+    onClickCollectionCard: (Long) -> Unit = {},
+    onClickAiCard: (Long) -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshHome()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    /**
+     * - initialTabName == null 이면 아무 것도 하지 않음 (기존 selectedTab 유지)
+     * - initialTabName이 enum으로 변환 가능하면 그 탭으로 이동
+     */
+    LaunchedEffect(initialTabName) {
+        if (initialTabName.isNullOrBlank()) return@LaunchedEffect
+
+        val tabType = runCatching { HomeTabType.valueOf(initialTabName) }
+            .getOrNull()
+            ?: return@LaunchedEffect
+
+        // 같은 탭이면 불필요한 호출 방지
+        if (uiState.selectedTab != tabType) {
+            viewModel.setInitialTab(tabType)
+        }
+
+    }
 
     HomeScreenContent(
         uiState = uiState,
         onTabSelected = viewModel::onTabSelected,
-        onCardClick = { /* navigate */ }
+        onRetry = viewModel::refreshHome,
+        onCardClick = { card ->
+            when (card.cardType) {
+                HomeCardType.COLLECTION -> onClickCollectionCard(card.archiveId)
+                HomeCardType.AI_SUMMARY -> onClickAiCard(card.archiveId)
+            }
+        },
+        modifier = modifier
     )
 }
 
@@ -42,34 +94,72 @@ fun HomeScreen(
 fun HomeScreenContent(
     uiState: HomeUiState,
     onTabSelected: (HomeTabType) -> Unit,
-    onCardClick: (HomeContentCardUiModel) -> Unit
+    onRetry: () -> Unit,
+    onCardClick: (HomeContentCardUiModel) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = Modifier
+    Box(
+        modifier = modifier
             .fillMaxSize()
             .background(ArchiveatProjectTheme.colors.white)
     ) {
-        TopLogoBar()
-        uiState.greeting?.let {
-            GreetingBar(
-                nickname = uiState.nickname,
-                firstGreetingMessage = it.firstMessage,
-                secondGreetingMessage = it.secondMessage,
+        if (uiState.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = ArchiveatProjectTheme.colors.primary
             )
+        } else if (uiState.errorMessage != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = uiState.errorMessage,
+                    style = ArchiveatProjectTheme.typography.Body_2_medium,
+                    color = ArchiveatProjectTheme.colors.gray700
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                PrimaryRoundedButton(
+                    text = "다시 시도",
+                    onClick = onRetry,
+                    fullWidth = false,
+                    containerColor = ArchiveatProjectTheme.colors.black,
+                    cornerRadiusDp = 12
+                )
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                TopLogoBar(
+                    modifier = Modifier.padding(top = 11.dp)
+                )
+
+                uiState.greeting?.let {
+                    GreetingBar(
+                        nickname = uiState.nickname,
+                        firstGreetingMessage = it.firstMessage,
+                        secondGreetingMessage = it.secondMessage,
+                    )
+                }
+
+                HomeCategoryTabBar(
+                    tabs = uiState.tabs,
+                    selectedTab = uiState.selectedTab,
+                    onTabSelected = onTabSelected
+                )
+
+                Spacer(Modifier.height(27.dp))
+
+                HomeContentCardCarousel(
+                    cards = uiState.contentCards,
+                    onCenterCardClick = onCardClick
+                )
+            }
         }
-
-        HomeCategoryTabBar(
-            tabs = uiState.tabs,
-            selectedTab = uiState.selectedTab,
-            onTabSelected = onTabSelected
-        )
-
-        Spacer(Modifier.height(27.dp))
-
-        HomeContentCardCarousel(
-            cards = uiState.contentCards,
-            onCenterCardClick = onCardClick
-        )
     }
 }
 
@@ -111,29 +201,10 @@ private fun HomeScreenPreview() {
                 )
             ),
             selectedTab = HomeTabType.ALL,
-            contentCards = listOf(
-                HomeContentCardUiModel(
-                    archiveId = 1L,
-                    tabType = HomeTabType.ALL,
-                    tabLabel = "전체",
-                    cardType = HomeCardType.AI_SUMMARY,
-                    title = "2025 UI 디자인 트렌드: 글래스모피즘의 귀환",
-                    imageUrls = listOf("https://picsum.photos/id/10/800/600")
-                ),
-                HomeContentCardUiModel(
-                    archiveId = 2L,
-                    tabType = HomeTabType.ALL,
-                    tabLabel = "전체",
-                    cardType = HomeCardType.COLLECTION,
-                    title = "AI 에이전트, 검색을 넘어 행동으로",
-                    imageUrls = listOf(
-                        "https://picsum.photos/id/11/800/600",
-                        "https://picsum.photos/id/12/800/600"
-                    )
-                )
-            )
+            contentCards = emptyList()
         ),
         onTabSelected = {},
+        onRetry = {},
         onCardClick = {}
     )
 }

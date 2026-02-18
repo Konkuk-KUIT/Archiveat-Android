@@ -8,6 +8,7 @@ import com.kuit.archiveatproject.data.repositoryimpl.HomeRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.InboxClassificationRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.InboxRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.NewsletterRepositoryImpl
+import com.kuit.archiveatproject.data.repositoryimpl.PendingSignupRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.ReportRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.TokenRepositoryImpl
 import com.kuit.archiveatproject.data.repositoryimpl.UserRepositoryImpl
@@ -20,6 +21,7 @@ import com.kuit.archiveatproject.domain.repository.HomeRepository
 import com.kuit.archiveatproject.domain.repository.InboxClassificationRepository
 import com.kuit.archiveatproject.domain.repository.InboxRepository
 import com.kuit.archiveatproject.domain.repository.NewsletterRepository
+import com.kuit.archiveatproject.domain.repository.PendingSignupRepository
 import com.kuit.archiveatproject.domain.repository.ReportRepository
 import com.kuit.archiveatproject.domain.repository.TokenRepository
 import com.kuit.archiveatproject.domain.repository.UserRepository
@@ -104,4 +106,10 @@ abstract class RepositoryModule {
     abstract fun bindNewsletterRepository(
         impl: NewsletterRepositoryImpl
     ): NewsletterRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPendingSignupRepository(
+        impl: PendingSignupRepositoryImpl
+    ): PendingSignupRepository
 }

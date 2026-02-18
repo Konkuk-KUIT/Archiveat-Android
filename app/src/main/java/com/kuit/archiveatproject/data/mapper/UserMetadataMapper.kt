@@ -11,7 +11,7 @@ fun UserMetadataResponseDto.toEntity(): UserMetadataResult {
     return UserMetadataResult(
         employmentTypes = employmentTypes,
         availabilityOptions = availabilityOptions,
-        categories = categories.map { it.toEntity() },
+        categories = categories.sortedBy { it.id }.map { it.toEntity() },
     )
 }
 
@@ -19,7 +19,7 @@ private fun UserMetadataCategoryDto.toEntity(): UserMetadataCategory {
     return UserMetadataCategory(
         id = id,
         name = name,
-        topics = topics.map { it.toEntity() },
+        topics = topics.sortedBy { it.id }.map { it.toEntity() },
     )
 }
 

@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kuit.archiveatproject.core.util.noRippleClickable
 import com.kuit.archiveatproject.domain.entity.HomeCardType
 import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
@@ -184,7 +185,7 @@ fun HomeContentCardCarousel(
         val shadowStrength = centerStrength
 
         // 탭 동작: 옆 카드 탭하면 그 카드로 이동 / 중앙 탭이면 상세
-        val onTap = Modifier.clickable {
+        val onTap = Modifier.noRippleClickable {
             if (page != pagerState.currentPage) {
                 scrollRequests.trySend(page to MutatePriority.UserInput)
             } else {
@@ -213,8 +214,6 @@ fun HomeContentCardCarousel(
             ) {
                 HomeContentCard(
                     card = card,
-                    subtitle = "저장한 'Topic' 아티클 요약", // TODO: 서버에서 ...
-                    contentSnippet = "간단한 설명 요약문. 간단한 설명 요약문. 간단한 설명 요약문. 간단한 설명 요약문.", // TODO: 서버에서 ...
                     modifier = Modifier.fillMaxSize(),
                     isClickable = false, // 바깥 onTap이 담당 -> 내부 클릭은 사용 안 할 듯
                     containerColor = containerColor,
@@ -356,6 +355,8 @@ fun HomeContentCardCarouselPrev() {
             tabLabel = "영감수집",
             cardType = HomeCardType.AI_SUMMARY,
             title = "0장(플레이스홀더)도 캐러셀에서 잘 보이나?",
+            smallCardSummary = "저장한 'Topic' 아티클 요약",
+            mediumCardSummary = "간단한 설명 요약문. 간단한 설명 요약문.",
             imageUrls = emptyList()
         ),
         HomeContentCardUiModel(
@@ -364,6 +365,8 @@ fun HomeContentCardCarouselPrev() {
             tabLabel = "집중탐구",
             cardType = HomeCardType.AI_SUMMARY,
             title = "1장 케이스",
+            smallCardSummary = "저장한 'Topic' 아티클 요약",
+            mediumCardSummary = "간단한 설명 요약문. 간단한 설명 요약문.",
             imageUrls = urls1
         ),
         HomeContentCardUiModel(
@@ -372,6 +375,8 @@ fun HomeContentCardCarouselPrev() {
             tabLabel = "성장한입",
             cardType = HomeCardType.COLLECTION,
             title = "2장 케이스 (세로 2분할)",
+            smallCardSummary = "저장한 'Topic' 아티클 요약",
+            mediumCardSummary = "간단한 설명 요약문. 간단한 설명 요약문.",
             imageUrls = urls2
         ),
         HomeContentCardUiModel(
@@ -380,6 +385,8 @@ fun HomeContentCardCarouselPrev() {
             tabLabel = "관점확장",
             cardType = HomeCardType.COLLECTION,
             title = "3장 케이스 (세로 3분할)",
+            smallCardSummary = "저장한 'Topic' 아티클 요약",
+            mediumCardSummary = "간단한 설명 요약문. 간단한 설명 요약문.",
             imageUrls = urls3
         ),
         HomeContentCardUiModel(
@@ -388,6 +395,8 @@ fun HomeContentCardCarouselPrev() {
             tabLabel = "영감수집",
             cardType = HomeCardType.COLLECTION,
             title = "4장 케이스 (2x2 격자)",
+            smallCardSummary = "저장한 'Topic' 아티클 요약",
+            mediumCardSummary = "간단한 설명 요약문. 간단한 설명 요약문.",
             imageUrls = urls4
         ),
         HomeContentCardUiModel(
@@ -396,6 +405,8 @@ fun HomeContentCardCarouselPrev() {
             tabLabel = "집중탐구",
             cardType = HomeCardType.COLLECTION,
             title = "6장 케이스 (4장만 + 오버레이)",
+            smallCardSummary = "저장한 'Topic' 아티클 요약",
+            mediumCardSummary = "간단한 설명 요약문. 간단한 설명 요약문.",
             imageUrls = urls6
         ),
         HomeContentCardUiModel(
@@ -404,6 +415,8 @@ fun HomeContentCardCarouselPrev() {
             tabLabel = "성장한입",
             cardType = HomeCardType.COLLECTION,
             title = "타이틀 긴 케이스도 체크",
+            smallCardSummary = "저장한 'Topic' 아티클 요약",
+            mediumCardSummary = "간단한 설명 요약문. 간단한 설명 요약문.",
             imageUrls = urls4
         ),
     )

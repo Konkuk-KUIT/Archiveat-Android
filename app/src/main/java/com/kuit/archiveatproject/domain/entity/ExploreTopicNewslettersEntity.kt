@@ -11,6 +11,7 @@ data class ExploreTopicNewsletterItem(
     val userNewsletterId: Long,
     val title: String,
     val thumbnailUrl: String?, // null -> 기본 이미지
+    val domainName: String?,
     val isRead: Boolean,
     val createdAt: String?,
 )

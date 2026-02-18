@@ -26,19 +26,16 @@ data class OnboardingUiState(
     // UI 상태
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
+    val isUsingFallbackData: Boolean = false,
 ) {
     // step2 노출 조건
     val isStep2Visible: Boolean
         get() = selectedEmploymentType != null
     // 다음 버튼 활성화 조건
     val isNextEnabled: Boolean
-        get() {
-            val totalSelected = lightReadingTimes.size + deepReadingTimes.size
-            val allSelected = availabilityOptions.size
-
-            return totalSelected == allSelected ||
-                    (lightReadingTimes.isNotEmpty() && deepReadingTimes.isNotEmpty())
-        }
+        get() = selectedEmploymentType != null &&
+                lightReadingTimes.size == 2 &&
+                deepReadingTimes.size == 2
 }
 
 /**
@@ -78,6 +75,7 @@ sealed interface OnboardingUiEvent {
 
 sealed interface OnboardingNavigationEvent {
     object SubmitSuccess : OnboardingNavigationEvent
+    object NavigateToSignupStart : OnboardingNavigationEvent
 }
 
 enum class TimeSlot {

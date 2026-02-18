@@ -1,7 +1,6 @@
 package com.kuit.archiveatproject.presentation.onboarding.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +12,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.presentation.onboarding.component.OnboardingNextButton
 import com.kuit.archiveatproject.presentation.onboarding.component.job.JobSelectionComponent
@@ -142,12 +140,22 @@ private fun OnboardingJobTimeContent(
 
         OnboardingNextButton(
             text = "다음",
-            enabled = uiState.isNextEnabled,
+            enabled = uiState.isNextEnabled && !uiState.isLoading,
             onClick = onNextClicked,
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .navigationBarsPadding()
         )
+
+        if (!uiState.errorMessage.isNullOrBlank()) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = uiState.errorMessage.orEmpty(),
+                style = ArchiveatProjectTheme.typography.Caption_medium,
+                color = ArchiveatProjectTheme.colors.sub_2,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+        }
 
         Spacer(Modifier.height(34.dp))
     }

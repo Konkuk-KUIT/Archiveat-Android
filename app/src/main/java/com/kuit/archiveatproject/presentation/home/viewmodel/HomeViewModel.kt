@@ -11,6 +11,7 @@ import com.kuit.archiveatproject.domain.repository.HomeRepository
 import com.kuit.archiveatproject.domain.repository.UserRepository
 import com.kuit.archiveatproject.presentation.home.model.GreetingUiModel
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
+import com.kuit.archiveatproject.presentation.home.model.HomeThumbnailUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,10 +30,6 @@ class HomeViewModel @Inject constructor(
 
     private var home: Home? = null
 
-    init {
-        loadHome()
-    }
-
     private fun HomeContentCard.toUiModel(): HomeContentCardUiModel =
         HomeContentCardUiModel(
             archiveId = newsletterId,
@@ -40,7 +37,16 @@ class HomeViewModel @Inject constructor(
             tabLabel = tabLabel,
             cardType = cardType,
             title = title,
-            imageUrls = listOfNotNull(thumbnailUrl)
+            smallCardSummary = smallCardSummary,
+            mediumCardSummary = mediumCardSummary,
+            imageUrls = listOfNotNull(thumbnailUrl),
+            thumbnails = listOf(
+                HomeThumbnailUiModel(
+                    thumbnailUrl = thumbnailUrl,
+                    domainName = domainName
+                )
+            ),
+            domainName = domainName
         )
 
     private fun HomeContentCollectionCard.toUiModel(): HomeContentCardUiModel =
@@ -50,7 +56,18 @@ class HomeViewModel @Inject constructor(
             tabLabel = tabLabel,
             cardType = cardType,
             title = title,
-            imageUrls = thumbnailUrls
+            smallCardSummary = smallCardSummary,
+            mediumCardSummary = mediumCardSummary,
+            imageUrls = thumbnails.mapNotNull { it.thumbnailUrl?.takeIf(String::isNotBlank) },
+            thumbnails = thumbnails.map {
+                HomeThumbnailUiModel(
+                    thumbnailUrl = it.thumbnailUrl,
+                    domainName = it.domainName
+                )
+            },
+            domainName = thumbnails.firstNotNullOfOrNull { thumbnail ->
+                thumbnail.domainName?.takeIf(String::isNotBlank)
+            }
         )
 
     private fun loadHome() {
@@ -60,21 +77,26 @@ class HomeViewModel @Inject constructor(
             }.onSuccess { result ->
                 home = result
                 _uiState.update {
+                    val currentTab = it.selectedTab
                     it.copy(
-                        isLoading = false,
                         greeting = GreetingUiModel(
                             result.firstGreetingMessage,
                             result.secondGreetingMessage
                         ),
                         tabs = result.tabs,
-                        selectedTab = HomeTabType.ALL
+                        selectedTab = currentTab,
+                        errorMessage = null
                     )
                 }
-                updateVisibleContent(HomeTabType.ALL)
+                updateVisibleContent(_uiState.value.selectedTab)
 
                 runCatching { userRepository.getNickname() }
                     .onSuccess { nickname ->
-                        _uiState.update { it.copy(nickname = nickname) }
+                        _uiState.update { it.copy(nickname = nickname, isLoading = false) }
+                    }
+                    .onFailure { throwable ->
+                        Log.e("HomeViewModel", "닉네임 조회 실패", throwable)
+                        _uiState.update { it.copy(isLoading = false) }
                     }
             }.onFailure { e ->
                 Log.e("HomeViewModel", "홈 조회 실패", e)
@@ -89,10 +111,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun refreshHome() {
+        loadHome()
+    }
+
     fun onTabSelected(tabType: HomeTabType) {
         _uiState.update { it.copy(selectedTab = tabType) }
         updateVisibleContent(tabType)
     }
+
+    fun setInitialTab(tabType: HomeTabType) {
+        if (_uiState.value.selectedTab == tabType) return
+        _uiState.update { it.copy(selectedTab = tabType) }
+        updateVisibleContent(tabType)
+    }
+
 
     private fun updateVisibleContent(tabType: HomeTabType) {
         val currentHome = home ?: return
@@ -110,7 +143,7 @@ class HomeViewModel @Inject constructor(
         // 1. 일반 카드
         uiCards += baseCards.map { it.toUiModel() }
 
-        // 2. 컬렉션 카드 (카테고리 탭에서만)
+        // 2. 컬렉션 카드
         if (tabType != HomeTabType.ALL) {
             uiCards += currentHome.contentCollectionCards
                 .filter { it.tabType == tabType }

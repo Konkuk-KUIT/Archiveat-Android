@@ -1,6 +1,7 @@
 package com.kuit.archiveatproject.presentation.report.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,21 +17,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kuit.archiveatproject.presentation.report.model.InterestGapUiItem
+import com.kuit.archiveatproject.core.util.noRippleClickable
+import com.kuit.archiveatproject.presentation.report.model.MainInterestGapUiItem
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import kotlin.collections.forEachIndexed
 import kotlin.collections.lastIndex
 
 @Composable
 fun ReportInterestGapCard(
-    interestGaps: List<InterestGapUiItem>,
+    interestGaps: List<MainInterestGapUiItem>,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val leftLabelColor = Color(0xFF55417A)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .noRippleClickable(onClick = onClick)
             .border(
                 width = 1.25.dp,
                 color = ArchiveatProjectTheme.colors.gray100,
@@ -59,71 +66,108 @@ fun ReportInterestGapCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            interestGaps.forEachIndexed { index, item ->
-
-                Row(
+            /** 저장 / 소비 헤더 */
+            if (interestGaps.isEmpty()) {
+                Text(
+                    text = "아직 저장한 아티클이 없습니다",
+                    style = ArchiveatProjectTheme.typography.Body_2_medium,
+                    color = ArchiveatProjectTheme.colors.gray500,
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                )
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 68.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    /** 토픽 이름 */
                     Text(
-                        text = item.topicName,
-                        style = ArchiveatProjectTheme.typography.Body_2_medium,
-                        color = ArchiveatProjectTheme.colors.gray600,
-                        modifier = Modifier.width(40.dp)
+                        text = "저장",
+                        style = ArchiveatProjectTheme.typography.Caption_medium,
+                        color = leftLabelColor
                     )
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    /** 프로그레스 바 */
-                    LabeledProgressBar(
-                        leftLabel = if (index == 0) "저장" else "",
-                        rightLabel = if (index == 0) "소비" else "",
-                        percentage = item.toConsumptionPercentage(),
-                        modifier = Modifier.weight(1f)
+                    Text(
+                        text = "소비",
+                        style = ArchiveatProjectTheme.typography.Caption_medium,
+                        color = ArchiveatProjectTheme.colors.gray600
                     )
                 }
 
-                if (index != interestGaps.lastIndex) {
-                    Spacer(modifier = Modifier.height(12.dp))
+                interestGaps.forEachIndexed { index, item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = item.topicName.toDisplayTopicName(),
+                            style = ArchiveatProjectTheme.typography.Body_2_medium,
+                            color = ArchiveatProjectTheme.colors.gray600,
+                            modifier = Modifier.width(62.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        BasicProgressBar(
+                            percentage = item.toConsumptionPercentage(),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    if (index != interestGaps.lastIndex) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
         }
     }
 }
 
-private fun InterestGapUiItem.toConsumptionPercentage(): Int {
+private fun MainInterestGapUiItem.toConsumptionPercentage(): Int {
     return if (savedCount == 0) 0
     else (readCount * 100 / savedCount).coerceIn(0, 100)
 }
 
-@Preview(
-    name = "ReportInterestGapCard",
-    showBackground = true,
-    backgroundColor = 0xFFF5F5F5
-)
+private fun String.toDisplayTopicName(): String {
+    return when (this) {
+        "백엔드/인프라" -> "백엔드\n/인프라"
+        "프론트/모바일" -> "프론트\n/모바일"
+        "글로벌 비즈니스" -> "글로벌\n비즈니스"
+        "창업/스타트업" -> "창업/\n스타트업"
+        "브랜드/마케팅" -> "브랜드\n/마케팅"
+        "팝컬쳐/트렌드" -> "팝컬쳐\n/트렌드"
+        "공간/플레이스" -> "공간/\n플레이스"
+        else -> this
+    }
+}
+
+
+@Preview(showBackground = true)
 @Composable
 private fun ReportInterestGapCardPreview() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        ReportInterestGapCard(
-            interestGaps = listOf(
-                InterestGapUiItem(
-                    topicName = "건강",
-                    savedCount = 50,
-                    readCount = 5,
-                    gap = 45
+    ArchiveatProjectTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            ReportInterestGapCard(
+                interestGaps = listOf(
+                    MainInterestGapUiItem("건강", 50, 5),
+                    MainInterestGapUiItem("AI", 30, 25),
+
+                    MainInterestGapUiItem("인공지능", 40, 12),
+                    MainInterestGapUiItem("백엔드/인프라", 32, 8),
+                    MainInterestGapUiItem("프론트/모바일", 27, 15),
+                    MainInterestGapUiItem("글로벌 비즈니스", 22, 10),
+                    MainInterestGapUiItem("창업/스타트업", 18, 4),
+                    MainInterestGapUiItem("브랜드/마케팅", 35, 19),
+                    MainInterestGapUiItem("거시경제", 14, 6),
+                    MainInterestGapUiItem("팝컬쳐/트렌드", 29, 13),
+                    MainInterestGapUiItem("공간/플레이스", 16, 7)
                 ),
-                InterestGapUiItem(
-                    topicName = "AI",
-                    savedCount = 30,
-                    readCount = 25,
-                    gap = 5
-                )
+                onClick = {}
             )
-        )
+        }
     }
 }
