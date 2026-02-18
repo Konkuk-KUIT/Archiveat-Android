@@ -8,7 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.kuit.archiveatproject.presentation.share.screen.ShareBottomSheet
+import com.kuit.archiveatproject.core.util.toast
 import com.kuit.archiveatproject.presentation.share.viewmodel.ShareViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +41,10 @@ class ShareReceiverActivity : ComponentActivity() {
                     }
                 )
 
-                LaunchedEffect(uiState.isSuccess) {
+                LaunchedEffect(uiState.toastMessage) {
+                    val message = uiState.toastMessage ?: return@LaunchedEffect
+                    applicationContext.toast(message)
+                    viewModel.consumeToastMessage()
                     if (uiState.isSuccess) {
                         finish()
                     }
