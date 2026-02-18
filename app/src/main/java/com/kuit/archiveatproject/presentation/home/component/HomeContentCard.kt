@@ -418,7 +418,8 @@ private fun HomeContentCardPrevContent() {
                     title = "0장 케이스 (플레이스홀더)",
                     smallCardSummary = "저장한 'TechCrunch' 아티클 요약",
                     mediumCardSummary = "이미지가 0장일 때 플레이스홀더가 나오는지 확인",
-                    imageUrls = emptyList()
+                    imageUrls = emptyList(),
+                    domainName = ""
                 ),
                 modifier = Modifier
                     .padding(18.dp)

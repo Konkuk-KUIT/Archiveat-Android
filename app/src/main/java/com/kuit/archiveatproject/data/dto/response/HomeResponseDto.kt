@@ -54,7 +54,7 @@ data class HomeContentCardDto(
     val mediumCardSummary: String? = null,
 
     @SerialName("thumbnailUrl")
-    val thumbnailUrl: String?,
+    val thumbnailUrl: String? = null,
 
     @SerialName("domainName")
     val domainName: String? = null,
