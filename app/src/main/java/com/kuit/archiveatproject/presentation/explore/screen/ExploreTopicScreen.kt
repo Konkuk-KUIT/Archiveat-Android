@@ -173,6 +173,7 @@ fun ExploreTopicDetailScreen(
                         ExploreTopicContentCard(
                             title = item.title,
                             thumbnailUrl = item.thumbnailUrl,
+                            domainName = item.domainName,
                             isRead = item.isRead,
                             onClickCard = { onClickOutlink(item.userNewsletterId) },
                             modifier = Modifier
