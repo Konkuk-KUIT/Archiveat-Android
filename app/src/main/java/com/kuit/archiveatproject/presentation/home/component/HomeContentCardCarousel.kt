@@ -39,7 +39,6 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -84,8 +83,10 @@ fun HomeContentCardCarousel(
             if (maxCardHeight >= baseCardHeight) maxCardHeight.coerceAtMost(520.dp)
             else maxCardHeight
         var frozenCardHeight by remember(cards.size) { mutableStateOf<Dp?>(null) }
-        if (frozenCardHeight == null && measuredCardHeight > 0.dp) {
-            frozenCardHeight = measuredCardHeight
+        LaunchedEffect(measuredCardHeight) {
+            if (frozenCardHeight == null && measuredCardHeight > 0.dp) {
+                frozenCardHeight = measuredCardHeight
+            }
         }
         val dynamicCardHeight = frozenCardHeight ?: measuredCardHeight
 
@@ -95,9 +96,8 @@ fun HomeContentCardCarousel(
 
         val pagerHeight = frameHeight
 
-        // 중앙 정렬: 화면 폭으로 좌/우 padding 계산
-        val screenWidth = LocalConfiguration.current.screenWidthDp.dp // 화면 폭 dp
-        val sidePadding = ((screenWidth - frameWidth) / 2).coerceAtLeast(0.dp)
+        // 중앙 정렬: 현재 할당된 폭으로 좌/우 padding 계산
+        val sidePadding = ((maxWidth - frameWidth) / 2).coerceAtLeast(0.dp)
 
         // Int.MAX_VALUE -> 페이지, 실제 데이터: page % cards.size
         val startPage = remember(cards.size) {  // 리스트 크기 바뀌면 다시 계산

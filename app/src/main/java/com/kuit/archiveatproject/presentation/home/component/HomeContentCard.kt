@@ -20,15 +20,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +44,7 @@ import com.kuit.archiveatproject.domain.entity.HomeTabType
 import com.kuit.archiveatproject.presentation.home.model.HomeContentCardUiModel
 import com.kuit.archiveatproject.presentation.home.model.HomeThumbnailUiModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+import kotlin.math.ceil
 
 @Composable
 private fun HomeContentThumbnail(
@@ -367,21 +366,23 @@ fun HomeContentCard(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                val estimatedLineHeight = 20.dp
-                val dynamicMaxLines = (maxHeight / estimatedLineHeight)
-                    .toInt()
-                    .coerceAtLeast(1)
-                var frozenMaxLines by remember { mutableIntStateOf(0) }
-                if (frozenMaxLines == 0 && dynamicMaxLines > 0) {
-                    frozenMaxLines = dynamicMaxLines
+                val density = LocalDensity.current
+                val bodyLineHeight = ArchiveatProjectTheme.typography.Body_1_medium.lineHeight
+                val estimatedLineHeight = with(density) {
+                    if (bodyLineHeight.isSp && bodyLineHeight.value > 0f) bodyLineHeight.toDp() else 20.dp
                 }
-                val lineCount = if (frozenMaxLines > 0) frozenMaxLines else dynamicMaxLines
+                val dynamicMaxLines = if (estimatedLineHeight > 0.dp) {
+                    ceil((maxHeight / estimatedLineHeight).toDouble()).toInt().coerceAtLeast(1)
+                } else {
+                    1
+                }
+                val frozenMaxLines = remember(maxHeight) { dynamicMaxLines }
 
                 Text(
                     text = card.mediumCardSummary,
                     modifier = Modifier.fillMaxWidth(),
-                    minLines = lineCount,
-                    maxLines = lineCount,
+                    minLines = frozenMaxLines,
+                    maxLines = frozenMaxLines,
                     overflow = TextOverflow.Ellipsis,
                     style = ArchiveatProjectTheme.typography.Body_1_medium,
                     color = ArchiveatProjectTheme.colors.gray800
