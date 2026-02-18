@@ -5,5 +5,6 @@ data class ShareUiState(
     val memo: String = "",
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val toastMessage: String? = null
 )
