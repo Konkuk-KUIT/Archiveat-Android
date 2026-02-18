@@ -3,6 +3,7 @@ package com.kuit.archiveatproject.presentation.home.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -302,7 +307,7 @@ fun HomeContentCard(
             .background(containerColor)
             .then(
                 if (isClickable)
-                    Modifier.noRippleCircleClickable { onClick(card) } // 👈 변경
+                    Modifier.noRippleCircleClickable { onClick(card) }
                 else Modifier
             )
             .fillMaxWidth()
@@ -319,8 +324,8 @@ fun HomeContentCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp)
-                .padding(bottom = 2.dp)
+                .weight(1f)
+                .padding(start = 18.dp, top = 18.dp, end = 18.dp, bottom = 20.dp)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
                 TextTag(
@@ -357,14 +362,31 @@ fun HomeContentCard(
 
             Spacer(Modifier.height(10.dp))
 
-            Text(
-                text = card.mediumCardSummary,
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                style = ArchiveatProjectTheme.typography.Body_1_medium,
-                color = ArchiveatProjectTheme.colors.gray800
-            )
+            BoxWithConstraints(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                val estimatedLineHeight = 20.dp
+                val dynamicMaxLines = (maxHeight / estimatedLineHeight)
+                    .toInt()
+                    .coerceAtLeast(1)
+                var frozenMaxLines by remember { mutableIntStateOf(0) }
+                if (frozenMaxLines == 0 && dynamicMaxLines > 0) {
+                    frozenMaxLines = dynamicMaxLines
+                }
+                val lineCount = if (frozenMaxLines > 0) frozenMaxLines else dynamicMaxLines
+
+                Text(
+                    text = card.mediumCardSummary,
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = lineCount,
+                    maxLines = lineCount,
+                    overflow = TextOverflow.Ellipsis,
+                    style = ArchiveatProjectTheme.typography.Body_1_medium,
+                    color = ArchiveatProjectTheme.colors.gray800
+                )
+            }
         }
     }
 }
