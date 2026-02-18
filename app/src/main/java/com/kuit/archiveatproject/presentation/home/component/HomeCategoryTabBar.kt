@@ -29,9 +29,11 @@ fun HomeCategoryTabBar(
     val selectedTabUiModel =
         tabs.firstOrNull { it.type == selectedTab }
 
-    val isRightAligned =
-        selectedTab == HomeTabType.GROWTH ||
-                selectedTab == HomeTabType.VIEW_EXPANSION
+    val subMessageArrangement = when (selectedTab) {
+        HomeTabType.DEEP_DIVE -> Arrangement.Center
+        HomeTabType.GROWTH, HomeTabType.VIEW_EXPANSION -> Arrangement.End
+        else -> Arrangement.Start
+    }
 
     Column(
         modifier = modifier
@@ -63,9 +65,7 @@ fun HomeCategoryTabBar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 21.dp),
-                horizontalArrangement =
-                    if (isRightAligned) Arrangement.End
-                    else Arrangement.Start
+                horizontalArrangement = subMessageArrangement
             ) {
                 SubMessageComponent(
                     subMessage = tab.subMessage,
@@ -91,4 +91,3 @@ fun HomeCategoryTabBarPreview() {
         onTabSelected = {}
     )
 }
-
