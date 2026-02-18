@@ -1,7 +1,6 @@
 package com.kuit.archiveatproject.presentation.home.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,8 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,12 +25,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.kuit.archiveatproject.R
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
 import com.kuit.archiveatproject.core.util.noRippleCircleClickable
@@ -54,7 +53,7 @@ private fun HomeContentThumbnail(
     val divider = 3.dp
     val dividerColor = ArchiveatProjectTheme.colors.gray200
 
-    Box(modifier = modifier.background(ArchiveatProjectTheme.colors.gray100)) {
+    Box(modifier = modifier.background(ArchiveatProjectTheme.colors.primary)) {
         when (visible.size) {
             0 -> {
                 // 0개: 플레이스 홀더
@@ -64,16 +63,9 @@ private fun HomeContentThumbnail(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.Image,
-                        contentDescription = "기본 이미지",
-                        tint = ArchiveatProjectTheme.colors.gray400,
-                        modifier = Modifier.size(28.dp)
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    Text(
-                        text = "이미지 없음",
-                        color = ArchiveatProjectTheme.colors.gray500,
-                        fontSize = 12.sp
+                        painter = painterResource(R.drawable.ic_logo_simple),
+                        contentDescription = "default logo",
+                        tint = Color.Unspecified,
                     )
                 }
             }
@@ -233,7 +225,7 @@ private fun TileImage(
     // // // // //
     if (LocalInspectionMode.current) {
         // Preview에서는 네트워크 이미지 대신 더미 박스
-        Box(modifier = modifier.background(ArchiveatProjectTheme.colors.gray200))
+        Box(modifier = modifier.background(ArchiveatProjectTheme.colors.primary))
         return
     }
     // // // // //
