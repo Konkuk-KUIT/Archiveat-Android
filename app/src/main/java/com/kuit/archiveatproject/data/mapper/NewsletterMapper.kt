@@ -20,6 +20,7 @@ fun NewsletterDetailResponseDto.toEntity(): NewsletterDetail =
         label = label,
         memo = memo,
         contentUrl = contentUrl,
+        isRead = isRead,
         summary = newsletterSummary.map { NewsletterSummaryItem(it.title, it.content) }
     )
 
@@ -33,6 +34,7 @@ fun NewsletterSimpleResponseDto.toEntity(): NewsletterSimple =
         label = label,
         memo = memo,
         contentUrl = contentUrl,
+        isRead = isRead,
         simpleSummary = newsletterSimpleSummary.map {
             NewsletterSimpleSummaryItem(
                 it.title,

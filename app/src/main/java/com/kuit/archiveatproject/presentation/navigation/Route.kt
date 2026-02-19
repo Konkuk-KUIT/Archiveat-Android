@@ -23,8 +23,13 @@ sealed class Route(
         fun createRoute(topicId: Long): String = "explore/topic/$topicId"
     }
 
-    data object NewsletterSimple : Route(route = "newsletters/{userNewsletterId}/simple") {
-        fun createRoute(userNewsletterId: Long): String = "newsletters/$userNewsletterId/simple"
+    data object NewsletterSimple : Route(route = "newsletters/{userNewsletterId}/simple?isRead={isRead}") {
+        fun createRoute(userNewsletterId: Long, isRead: Boolean? = null): String =
+            if (isRead == null) {
+                "newsletters/$userNewsletterId/simple"
+            } else {
+                "newsletters/$userNewsletterId/simple?isRead=$isRead"
+            }
     }
 
     data object NewsletterAI : Route(route = "newsletters/{userNewsletterId}") {

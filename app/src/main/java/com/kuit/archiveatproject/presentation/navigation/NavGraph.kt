@@ -171,8 +171,8 @@ fun NavGraph(
                     topicId = topicId,
                     topicName = topicName,
                     onBack = { navController.popBackStack() },
-                    onClickOutlink = { userNewsletterId ->
-                        navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
+                    onClickOutlink = { userNewsletterId, isRead ->
+                        navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId, isRead))
                     },
                     onSearchSubmit = {}
                 )
@@ -191,7 +191,13 @@ fun NavGraph(
 
             composable(
                 route = Route.NewsletterSimple.route,
-                arguments = listOf(navArgument("userNewsletterId") { type = NavType.LongType })
+                arguments = listOf(
+                    navArgument("userNewsletterId") { type = NavType.LongType },
+                    navArgument("isRead") {
+                        type = NavType.BoolType
+                        defaultValue = true
+                    }
+                )
             ) {
                 NewsletterDetailsSimpleScreen(
                     onBack = { navController.popBackStack() },

@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +42,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kuit.archiveatproject.R
+import com.kuit.archiveatproject.core.component.ArchiveatToastComponent
 import com.kuit.archiveatproject.core.component.BackTopBar
 import com.kuit.archiveatproject.core.component.tag.TagVariant
 import com.kuit.archiveatproject.core.component.tag.TextTag
@@ -51,6 +53,7 @@ import com.kuit.archiveatproject.presentation.newsletterdetails.component.AiSect
 import com.kuit.archiveatproject.presentation.newsletterdetails.component.MemoComponent
 import com.kuit.archiveatproject.presentation.newsletterdetails.viewmodel.NewsletterDetailsAiViewModel
 import com.kuit.archiveatproject.ui.theme.ArchiveatProjectTheme
+import kotlinx.coroutines.delay
 
 // 임시 //
 data class TagUiModel(
@@ -79,16 +82,33 @@ fun NewsletterDetailsAIScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(uiState.showReadToast) {
+        if (!uiState.showReadToast) return@LaunchedEffect
+        delay(2000)
+        viewModel.dismissReadToast()
+    }
+
     val model = uiState.model
     if (model != null) {
-        NewsletterDetailsAIContent(
-            model = model,
-            onBack = onBack,
-            onClickWebView = { onClickWebView(uiState.contentUrl) },
-            onClickDone = viewModel::markRead,
-            modifier = modifier,
-            fromAI = true
-        )
+        Box(modifier = modifier.fillMaxSize()) {
+            NewsletterDetailsAIContent(
+                model = model,
+                onBack = onBack,
+                onClickWebView = { onClickWebView(uiState.contentUrl) },
+                onClickDone = viewModel::markRead,
+                isDoneEnabled = !uiState.isRead,
+                fromAI = true
+            )
+            if (uiState.showReadToast) {
+                ArchiveatToastComponent(
+                    message = "'읽음'처리 되었어요!",
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                )
+            }
+        }
     } else {
         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val message = uiState.errorMessage ?: "로딩 중..."
@@ -107,6 +127,7 @@ fun NewsletterDetailsAIContent(
     onBack: () -> Unit,
     onClickWebView: () -> Unit,
     onClickDone: () -> Unit,
+    isDoneEnabled: Boolean = true,
     modifier: Modifier = Modifier,
     fromAI: Boolean = true,
 ) {
@@ -309,13 +330,19 @@ fun NewsletterDetailsAIContent(
                         .fillMaxWidth()
                         .height(46.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(ArchiveatProjectTheme.colors.gray950)
-                        .clickable(onClick = onClickDone),
+                        .background(
+                            if (isDoneEnabled) ArchiveatProjectTheme.colors.gray950
+                            else ArchiveatProjectTheme.colors.gray300
+                        )
+                        .clickable(
+                            enabled = isDoneEnabled,
+                            onClick = onClickDone
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "다 읽었어요",
-                        color = ArchiveatProjectTheme.colors.white,
+                        color = if (isDoneEnabled) ArchiveatProjectTheme.colors.white else ArchiveatProjectTheme.colors.gray500,
                         style = ArchiveatProjectTheme.typography.Subhead_2_semibold
                     )
                 }
@@ -357,6 +384,7 @@ private fun NewsletterDetailsAIScreenPreview_Tistory() {
             onBack = {},
             onClickWebView = {},
             onClickDone = {},
+            isDoneEnabled = true,
             fromAI = false
         )
     }
@@ -380,6 +408,7 @@ private fun NewsletterDetailsAIScreenPreview_Naver() {
             onBack = {},
             onClickWebView = {},
             onClickDone = {},
+            isDoneEnabled = true,
             fromAI = false
         )
     }
@@ -403,6 +432,7 @@ private fun NewsletterDetailsAIScreenPreview_YouTube() {
             onBack = {},
             onClickWebView = {},
             onClickDone = {},
+            isDoneEnabled = true,
             fromAI = false
         )
     }
@@ -426,6 +456,7 @@ private fun NewsletterDetailsAIScreenPreview_NullDomain() {
             onBack = {},
             onClickWebView = {},
             onClickDone = {},
+            isDoneEnabled = true,
             fromAI = false
         )
     }

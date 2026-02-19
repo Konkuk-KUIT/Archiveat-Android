@@ -52,6 +52,7 @@ class NewsletterDetailsAiViewModel @Inject constructor(
                         isLoading = false,
                         model = detail.toAiUiModel(userName = nickname),
                         contentUrl = detail.contentUrl,
+                        isRead = detail.isRead,
                     )
                 }
             } catch (e: Throwable) {
@@ -69,13 +70,19 @@ class NewsletterDetailsAiViewModel @Inject constructor(
     fun markRead() {
         val id = argUserNewsletterId
         if (id == -1L) return
+        if (_uiState.value.isRead) return
         viewModelScope.launch {
             try {
                 newsletterRepository.patchNewsletterRead(id)
+                _uiState.update { it.copy(isRead = true, showReadToast = true) }
             } catch (e: Throwable) {
                 if (e is CancellationException) throw e
             }
         }
+    }
+
+    fun dismissReadToast() {
+        _uiState.update { it.copy(showReadToast = false) }
     }
 }
 
