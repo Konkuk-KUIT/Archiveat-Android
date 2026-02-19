@@ -96,13 +96,12 @@ class NewsletterSimpleViewModel @Inject constructor(
     fun markReadOnEntryIfNeeded() {
         if (hasHandledEntryRead || argIsReadOnEntry) return
         hasHandledEntryRead = true
-        _uiState.update { it.copy(showReadToast = true) }
         val id = argUserNewsletterId
         if (id == -1L) return
         viewModelScope.launch {
             try {
                 newsletterRepository.patchNewsletterRead(id)
-                _uiState.update { it.copy(isRead = true) }
+                _uiState.update { it.copy(isRead = true, showReadToast = true) }
             } catch (e: Throwable) {
                 if (e is CancellationException) throw e
             }
