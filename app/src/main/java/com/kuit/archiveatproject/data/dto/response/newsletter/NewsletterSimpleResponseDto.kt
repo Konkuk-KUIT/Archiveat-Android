@@ -21,6 +21,8 @@ data class NewsletterSimpleResponseDto(
     val memo: String,
     @SerialName("contentUrl")
     val contentUrl: String,
+    @SerialName("isRead")
+    val isRead: Boolean = false,
     @SerialName("newsletterSimpleSummary")
     val newsletterSimpleSummary: List<NewsletterSimpleSummaryItemDto> = emptyList()
 )

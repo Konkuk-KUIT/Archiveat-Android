@@ -23,6 +23,8 @@ data class NewsletterDetailResponseDto(
     val memo: String,
     @SerialName("contentUrl")
     val contentUrl: String,
+    @SerialName("isRead")
+    val isRead: Boolean = false,
     @SerialName("newsletterSummary")
     val newsletterSummary: List<NewsletterSummaryItemDto> = emptyList()
 )

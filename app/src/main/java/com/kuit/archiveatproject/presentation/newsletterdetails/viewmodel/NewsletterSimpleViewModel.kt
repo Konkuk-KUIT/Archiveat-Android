@@ -29,9 +29,12 @@ class NewsletterSimpleViewModel @Inject constructor(
 
     private val argUserNewsletterId: Long =
         savedStateHandle.get<Long>("userNewsletterId") ?: -1L
+    private val argIsReadOnEntry: Boolean =
+        savedStateHandle.get<Boolean>("isRead") ?: false
 
     private val _uiState = MutableStateFlow(NewsletterSimpleUiState(isLoading = true))
     val uiState: StateFlow<NewsletterSimpleUiState> = _uiState
+    private var hasHandledEntryRead = false
 
     init {
         if (argUserNewsletterId != -1L) {
@@ -57,6 +60,7 @@ class NewsletterSimpleViewModel @Inject constructor(
                         isLoading = false,
                         model = simple.toAiUiModel(userName = nickname),
                         contentUrl = simple.contentUrl,
+                        isRead = simple.isRead,
                     )
                 }
             } catch (e: Throwable) {
@@ -74,9 +78,30 @@ class NewsletterSimpleViewModel @Inject constructor(
     fun markRead() {
         val id = argUserNewsletterId
         if (id == -1L) return
+        if (_uiState.value.isRead) return
         viewModelScope.launch {
             try {
                 newsletterRepository.patchNewsletterRead(id)
+                _uiState.update { it.copy(isRead = true, showReadToast = true) }
+            } catch (e: Throwable) {
+                if (e is CancellationException) throw e
+            }
+        }
+    }
+
+    fun dismissReadToast() {
+        _uiState.update { it.copy(showReadToast = false) }
+    }
+
+    fun markReadOnEntryIfNeeded() {
+        if (hasHandledEntryRead || argIsReadOnEntry) return
+        val id = argUserNewsletterId
+        if (id == -1L) return
+        viewModelScope.launch {
+            try {
+                newsletterRepository.patchNewsletterRead(id)
+                hasHandledEntryRead = true
+                _uiState.update { it.copy(isRead = true, showReadToast = true) }
             } catch (e: Throwable) {
                 if (e is CancellationException) throw e
             }

@@ -10,6 +10,7 @@ data class NewsletterDetail(
     val label: String,
     val memo: String,
     val contentUrl: String,
+    val isRead: Boolean,
     val summary: List<NewsletterSummaryItem>
 )
 
@@ -27,6 +28,7 @@ data class NewsletterSimple(
     val label: String,
     val memo: String,
     val contentUrl: String,
+    val isRead: Boolean,
     val simpleSummary: List<NewsletterSimpleSummaryItem>
 )
 

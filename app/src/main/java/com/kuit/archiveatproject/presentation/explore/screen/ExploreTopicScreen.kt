@@ -56,7 +56,7 @@ fun ExploreTopicDetailScreen(
     topicId: Long,
     topicName: String,
     onBack: () -> Unit,
-    onClickOutlink: (Long) -> Unit,
+    onClickOutlink: (Long, Boolean) -> Unit,
     onSearchSubmit: (String) -> Unit,
     viewModel: ExploreTopicDetailViewModel = hiltViewModel(),
 ) {
@@ -177,7 +177,7 @@ fun ExploreTopicDetailScreen(
                             thumbnailUrl = item.thumbnailUrl,
                             domainName = item.domainName,
                             isRead = item.isRead,
-                            onClickCard = { onClickOutlink(item.userNewsletterId) },
+                            onClickCard = { onClickOutlink(item.userNewsletterId, item.isRead) },
                             modifier = Modifier
                                 .fillMaxWidth(),
                         )

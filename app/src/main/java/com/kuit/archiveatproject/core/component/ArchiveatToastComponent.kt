@@ -56,19 +56,21 @@ fun ArchiveatToastComponent(
             Text(
                 text = it,
                 color = ArchiveatProjectTheme.colors.gray200,
-                modifier = Modifier.clickable {
-                    onActionClick?.invoke()
+                modifier = if (onActionClick != null) {
+                    Modifier.clickable { onActionClick() }
+                } else {
+                    Modifier
                 }
             )
         }
     }
 }
 
-@Composable
 @Preview(
     showBackground = true,
     backgroundColor = 0xFFF2F2F2
 )
+@Composable
 private fun ArchiveatToastComponentPreview() {
     ArchiveatProjectTheme {
         Box(
