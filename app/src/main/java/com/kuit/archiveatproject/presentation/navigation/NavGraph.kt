@@ -1,0 +1,301 @@
+package com.kuit.archiveatproject.presentation.navigation
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import com.kuit.archiveatproject.domain.entity.HomeTabType
+import com.kuit.archiveatproject.presentation.etc.screen.EtcScreen
+import com.kuit.archiveatproject.presentation.explore.screen.ExploreScreen
+import com.kuit.archiveatproject.presentation.explore.screen.ExploreTopicDetailScreen
+import com.kuit.archiveatproject.presentation.home.screen.HomeScreen
+import com.kuit.archiveatproject.presentation.inbox.screen.InboxScreen
+import com.kuit.archiveatproject.presentation.login.screen.LoginScreen
+import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsAIScreen
+import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsCollectionScreen
+import com.kuit.archiveatproject.presentation.newsletterdetails.screen.NewsletterDetailsSimpleScreen
+import com.kuit.archiveatproject.presentation.newsletterdetails.screen.WebViewScreen
+import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingInterestScreen
+import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingJobTimeScreen
+import com.kuit.archiveatproject.presentation.onboarding.screen.OnboardingScreen as OnboardingIntroScreen
+import com.kuit.archiveatproject.presentation.onboarding.viewmodel.OnboardingViewModel
+import com.kuit.archiveatproject.presentation.report.screen.ReportBalanceScreen
+import com.kuit.archiveatproject.presentation.report.screen.ReportInterestGapAnalysisScreen
+import com.kuit.archiveatproject.presentation.report.screen.ReportScreen
+import com.kuit.archiveatproject.presentation.report.screen.ReportStatusScreen
+
+@Composable
+fun NavGraph(
+    navController: NavHostController,
+    padding: PaddingValues,
+    startDestination: String,
+    modifier: Modifier = Modifier
+) {
+    val screenModifier = modifier.padding(padding)
+
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ) {
+        composable(route = Route.Login.route) {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Route.Main.route) {
+                        popUpTo(Route.Login.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onSignupSuccess = {
+                    navController.navigate(Route.OnboardingJobTime.route) {
+                        popUpTo(Route.Login.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(route = Route.OnboardingIntro.route) {
+            OnboardingIntroScreen(
+                onStart = {
+                    navController.navigate(Route.Login.route) {
+                        popUpTo(Route.OnboardingIntro.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(route = Route.OnboardingJobTime.route) { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Route.OnboardingJobTime.route)
+            }
+            val onboardingViewModel: OnboardingViewModel = hiltViewModel(parentEntry)
+
+            OnboardingJobTimeScreen(
+                viewModel = onboardingViewModel,
+                onNext = {
+                    navController.navigate(Route.OnboardingInterest.route) { launchSingleTop = true }
+                }
+            )
+        }
+
+        composable(route = Route.OnboardingInterest.route) { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Route.OnboardingJobTime.route)
+            }
+            val onboardingViewModel: OnboardingViewModel = hiltViewModel(parentEntry)
+
+            OnboardingInterestScreen(
+                viewModel = onboardingViewModel,
+                onFinished = {
+                    navController.navigate(Route.Main.route) {
+                        popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onRequireSignup = {
+                    navController.navigate(Route.Login.route) {
+                        popUpTo(Route.OnboardingJobTime.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        navigation(
+            startDestination = Route.Home.route,
+            route = Route.Main.route
+        ) {
+
+            composable(
+                route = Route.Home.route,
+                arguments = listOf(
+                    navArgument("tab") {
+                        type = NavType.StringType
+                        defaultValue = HomeTabType.ALL.name
+                    }
+                )
+            ) { backStackEntry ->
+                val tabName = backStackEntry.arguments?.getString("tab") ?: HomeTabType.ALL.name
+
+                HomeScreen(
+                    modifier = screenModifier,
+                    initialTabName = tabName,
+                    onClickCollectionCard = { collectionId ->
+                        navController.navigate(Route.NewsletterCollection.createRoute(collectionId))
+                    },
+                    onClickAiCard = { userNewsletterId ->
+                        navController.navigate(Route.NewsletterAI.createRoute(userNewsletterId))
+                    }
+                )
+            }
+
+            composable(route = Route.Explore.route) {
+                ExploreScreen(
+                    modifier = screenModifier,
+                    onInboxClick = { navController.navigate(Route.ExploreInbox.route) },
+                    onTopicClick = { topicId, topicName ->
+                        navController.currentBackStackEntry?.savedStateHandle?.set("topicName", topicName)
+                        navController.navigate(Route.ExploreTopicDetail.createRoute(topicId))
+                    }
+                )
+            }
+
+            composable(route = Route.ExploreInbox.route) {
+                InboxScreen(
+                    onBackToExploreFirstDepth = { navController.popBackStack(Route.Explore.route, inclusive = false) },
+                    onOpenOriginal = { userNewsletterId ->
+                        navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
+                    },
+                    modifier = screenModifier
+                )
+            }
+
+            composable(
+                route = Route.ExploreTopicDetail.route,
+                arguments = listOf(navArgument("topicId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val topicId = backStackEntry.arguments!!.getLong("topicId")
+                val topicName = navController.previousBackStackEntry?.savedStateHandle?.get<String>("topicName") ?: ""
+
+                ExploreTopicDetailScreen(
+                    modifier = screenModifier,
+                    topicId = topicId,
+                    topicName = topicName,
+                    onBack = { navController.popBackStack() },
+                    onClickOutlink = { userNewsletterId, isRead ->
+                        navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId, isRead))
+                    },
+                    onSearchSubmit = {}
+                )
+            }
+
+            composable(
+                route = Route.NewsletterAI.route,
+                arguments = listOf(navArgument("userNewsletterId") { type = NavType.LongType })
+            ) {
+                NewsletterDetailsAIScreen(
+                    onBack = { navController.popBackStack() },
+                    onClickWebView = { url -> navController.navigate(Route.WebView.createRoute(url)) },
+                    modifier = Modifier
+                )
+            }
+
+            composable(
+                route = Route.NewsletterSimple.route,
+                arguments = listOf(
+                    navArgument("userNewsletterId") { type = NavType.LongType },
+                    navArgument("isRead") {
+                        type = NavType.BoolType
+                        defaultValue = false
+                    }
+                )
+            ) {
+                NewsletterDetailsSimpleScreen(
+                    onBack = { navController.popBackStack() },
+                    onClickWebView = { url -> navController.navigate(Route.WebView.createRoute(url)) },
+                    modifier = Modifier
+                )
+            }
+
+            composable(
+                route = Route.NewsletterCollection.route,
+                arguments = listOf(navArgument("collectionId") { type = NavType.LongType })
+            ) {
+                NewsletterDetailsCollectionScreen(
+                    onBack = { navController.popBackStack() },
+                    onClickItem = { userNewsletterId, isRead ->
+                        navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId, isRead))
+                    },
+                    modifier = Modifier
+                )
+            }
+
+            composable(
+                route = Route.WebView.route,
+                arguments = listOf(navArgument("url") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val url = backStackEntry.arguments?.getString("url").orEmpty()
+                WebViewScreen(
+                    url = url,
+                    onBack = { navController.popBackStack() },
+                    modifier = Modifier
+                )
+            }
+
+            composable(route = Route.Report.route) {
+                ReportScreen(
+                    padding = padding,
+                    onClickStatus = { navController.navigate(Route.ReportStatus.route) },
+                    onClickBalance = { navController.navigate(Route.ReportBalance.route) },
+                    onClickInterestGapCard = {
+                        navController.navigate(Route.ReportInterestGapAnalysis.route)
+                    }
+                )
+            }
+            composable(route = Route.ReportInterestGapAnalysis.route) {
+                ReportInterestGapAnalysisScreen(
+                    padding = padding,
+                    onBack = { navController.popBackStack() },
+                    onClickTopicShortcut = { topicId, topicName ->
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("topicName", topicName)
+                        navController.navigate(Route.ExploreTopicDetail.createRoute(topicId))
+                    }
+                )
+            }
+
+            composable(route = Route.ReportStatus.route) {
+                ReportStatusScreen(
+                    onBackClick = { navController.popBackStack() },
+                    onClickNewsletter = {
+                        navController.navigate(Route.Home.createRoute(HomeTabType.ALL)) {
+                            popUpTo(Route.Main.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
+                    onClickExplore = {
+                        navController.navigate(Route.Explore.route) {
+                            popUpTo(Route.Main.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+
+            composable(route = Route.ReportBalance.route) {
+                ReportBalanceScreen(
+                    onBackClick = { navController.popBackStack() },
+                    onClickCta = { tabType ->
+                        navController.navigate(Route.Home.createRoute(tabType)) {
+                            popUpTo(Route.Main.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+
+            composable(route = Route.Etc.route) {
+                EtcScreen(
+                    modifier = screenModifier,
+                    onLogoutSuccess = {
+                        navController.navigate(Route.OnboardingIntro.route) {
+                            popUpTo(Route.Main.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                )
+            }
+
+        }
+    }
+}

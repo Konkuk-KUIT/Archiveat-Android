@@ -1,0 +1,52 @@
+package com.kuit.archiveatproject.presentation.navigation
+
+import com.kuit.archiveatproject.domain.entity.HomeTabType
+
+sealed class Route(
+    val route: String
+) {
+    data object Login : Route(route = "login")
+    data object OnboardingIntro : Route(route = "onboarding/intro")
+    data object OnboardingJobTime : Route(route = "onboarding/job-time")
+    data object OnboardingInterest : Route(route = "onboarding/interest")
+    data object Main : Route(route = "main")
+
+    data object Home : Route(route = "home?tab={tab}") {
+        fun createRoute(tab: HomeTabType = HomeTabType.ALL): String =
+            "home?tab=${tab.name}"
+    }
+
+    data object Explore : Route(route = "explore")
+    data object ExploreInbox : Route(route = "explore/inbox")
+
+    data object ExploreTopicDetail : Route(route = "explore/topic/{topicId}") {
+        fun createRoute(topicId: Long): String = "explore/topic/$topicId"
+    }
+
+    data object NewsletterSimple : Route(route = "newsletters/{userNewsletterId}/simple?isRead={isRead}") {
+        fun createRoute(userNewsletterId: Long, isRead: Boolean? = null): String =
+            if (isRead == null) {
+                "newsletters/$userNewsletterId/simple"
+            } else {
+                "newsletters/$userNewsletterId/simple?isRead=$isRead"
+            }
+    }
+
+    data object NewsletterAI : Route(route = "newsletters/{userNewsletterId}") {
+        fun createRoute(userNewsletterId: Long): String = "newsletters/$userNewsletterId"
+    }
+
+    data object NewsletterCollection : Route(route = "collections/{collectionId}") {
+        fun createRoute(collectionId: Long): String = "collections/$collectionId"
+    }
+
+    data object WebView : Route(route = "webview?url={url}") {
+        fun createRoute(url: String): String =
+            "webview?url=${android.net.Uri.encode(url)}"
+    }
+    data object Report : Route(route = "report")
+    data object ReportInterestGapAnalysis : Route(route = "report/interest-gap-analysis")
+    data object ReportStatus : Route(route = "report/status")
+    data object ReportBalance : Route(route = "report/balance")
+    data object Etc : Route(route = "etc")
+}

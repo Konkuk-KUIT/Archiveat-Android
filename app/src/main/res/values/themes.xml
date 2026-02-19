@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- app 기본 테마 -->
+    <style name="Theme.ArchiveatProject" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Splash Screen 전용 테마 -->
+    <style name="Theme.ArchiveatProject.Splash"
+        parent="Theme.SplashScreen">
+
+        <item name="windowSplashScreenBackground">
+            @color/primary
+        </item>
+
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_inset</item>
+
+        <item name="postSplashScreenTheme">
+            @style/Theme.ArchiveatProject
+        </item>
+
+    </style>
+
+    <!-- ✅ ShareSheet(공유로 들어올 때) 전용 테마: 인스타 위에 뜨는 느낌 -->
+    <style name="Theme.ArchiveatProject.ShareSheet" parent="android:Theme.Material.Light.NoActionBar">
+
+        <!-- 배경 투명 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <!-- 뒤 화면(인스타) 살짝 어둡게 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.35</item>
+
+        <!-- 타이틀 제거 -->
+        <item name="android:windowNoTitle">true</item>
+
+    </style>
+
+</resources>

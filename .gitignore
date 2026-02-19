@@ -1,0 +1,27 @@
+# ===== Android / Gradle =====
+*.iml
+.gradle
+.gradle-local/
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# ===== Local config =====
+local.properties
+
+# ===== IntelliJ / Android Studio =====
+.idea/
+!.idea/codeStyles/
+!.idea/gradle.xml
+
+# IDE backup files
+.idea_backup/
+
+# ===== macOS =====
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ===== Windows =====
+Thumbs.db
