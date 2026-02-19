@@ -212,8 +212,8 @@ fun NavGraph(
             ) {
                 NewsletterDetailsCollectionScreen(
                     onBack = { navController.popBackStack() },
-                    onClickItem = { userNewsletterId ->
-                        navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId))
+                    onClickItem = { userNewsletterId, isRead ->
+                        navController.navigate(Route.NewsletterSimple.createRoute(userNewsletterId, isRead))
                     },
                     modifier = Modifier
                 )

@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun NewsletterDetailsCollectionScreen(
     onBack: () -> Unit,
-    onClickItem: (Long) -> Unit,
+    onClickItem: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: NewsletterDetailsCollectionViewModel = hiltViewModel(),
 ) {
@@ -79,7 +79,7 @@ fun NewsletterDetailsCollectionContent(
     monthLabel: String,
     items: List<CollectionComponentUiModel>,
     onBack: () -> Unit,
-    onClickItem: (Long) -> Unit,
+    onClickItem: (Long, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val collectedCount = items.size
@@ -126,7 +126,7 @@ fun NewsletterDetailsCollectionContent(
                 ) { model: CollectionComponentUiModel ->
                     CollectionComponent(
                         model = model,
-                        onClick = { onClickItem(model.id) }
+                        onClick = { onClickItem(model.id, model.isChecked) }
                     )
                 }
             }
@@ -195,7 +195,7 @@ private fun NewsletterDetailsCollectionScreenPreview() {
                 )
             ),
             onBack = {},
-            onClickItem = {}
+            onClickItem = { _, _ -> }
         )
     }
 }
