@@ -30,7 +30,7 @@ class NewsletterSimpleViewModel @Inject constructor(
     private val argUserNewsletterId: Long =
         savedStateHandle.get<Long>("userNewsletterId") ?: -1L
     private val argIsReadOnEntry: Boolean =
-        savedStateHandle.get<Boolean>("isRead") ?: true
+        savedStateHandle.get<Boolean>("isRead") ?: false
 
     private val _uiState = MutableStateFlow(NewsletterSimpleUiState(isLoading = true))
     val uiState: StateFlow<NewsletterSimpleUiState> = _uiState

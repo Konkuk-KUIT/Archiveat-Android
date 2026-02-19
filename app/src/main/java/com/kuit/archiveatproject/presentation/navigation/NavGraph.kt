@@ -195,7 +195,7 @@ fun NavGraph(
                     navArgument("userNewsletterId") { type = NavType.LongType },
                     navArgument("isRead") {
                         type = NavType.BoolType
-                        defaultValue = true
+                        defaultValue = false
                     }
                 )
             ) {
