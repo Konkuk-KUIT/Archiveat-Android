@@ -27,7 +27,7 @@ fun NewsletterDetailsSimpleScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState.model) {
+    LaunchedEffect(uiState.model != null) {
         if (uiState.model != null) {
             viewModel.markReadOnEntryIfNeeded()
         }
